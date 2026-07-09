@@ -1,0 +1,90 @@
+{
+  "common": {
+    "about": "نبذة عني",
+    "experience": "الخبرة",
+    "projects": "المشاريع",
+    "skills": "المهارات",
+    "contact": "اتصل بي",
+    "downloadCV": "تحميل السيرة الذاتية",
+    "viewGithub": "عرض GitHub",
+    "scheduleCall": "جدولة مكالمة",
+    "emailMe": "أرسل لي بريد إلكتروني",
+    "theme": "المظهر",
+    "fullscreen": "ملء الشاشة",
+    "close": "إغلاق",
+    "minimize": "تصغير",
+    "maximize": "تكبير"
+  },
+  "about": {
+    "title": "نبذة عني",
+    "subtitle": "مطور Full-Stack | متخصص Vue.js • React.js • Laravel",
+    "profile": {
+      "title": "الملف المهني",
+      "description": "مطور Full-Stack متخصص في Vue.js و React.js و Laravel و Next.js و Express.js مع خبرة في قواعد البيانات MySQL و PostgreSQL. متقن لبناء واجهات برمجة تطبيقات RESTful وتحسين الأداء وإدارة مشاريع Agile Scrum. مهارات قوية في تصميم UX/UI ومراقبة الإصدارات Git والتخزين المؤقت Redis والتكامل السلس بين الواجهة الأمامية والخلفية."
+    },
+    "expertise": {
+      "fullstack": {
+        "title": "خبرة Full-Stack",
+        "description": "تطبيقات ويب وموبايل حديثة بتقنيات متطورة"
+      },
+      "performance": {
+        "title": "التركيز على الأداء",
+        "description": "تحسين واجهات برمجة التطبيقات واستراتيجيات التخزين المؤقت وحلول قابلة للتوسع"
+      },
+      "design": {
+        "title": "تصميم UX/UI",
+        "description": "واجهات جميلة وبديهية بمبادئ تصميم حديثة"
+      }
+    }
+  },
+  "experience": {
+    "title": "الرحلة المهنية",
+    "education": {
+      "title": "التعليم",
+      "degree": "الشهادة",
+      "period": "الفترة",
+      "institution": "المؤسسة"
+    }
+  },
+  "projects": {
+    "title": "المشاريع المميزة",
+    "all": "الكل",
+    "web": "ويب",
+    "mobile": "موبايل",
+    "impact": "التأثير"
+  },
+  "skills": {
+    "title": "الخبرة التقنية",
+    "languages": "اللغات البرمجية",
+    "frameworks": "الأطر",
+    "libraries": "المكتبات",
+    "databases": "قواعد البيانات",
+    "methodologies": "المنهجيات",
+    "tools": "الأدوات",
+    "spoken": "اللغات المحكية"
+  },
+  "contact": {
+    "title": "دعنا نتصل",
+    "description": "أنا متحمس دائمًا لمناقشة مشاريع جديدة أو أفكار إبداعية أو فرص لإحياء رؤيتك. دعنا نبني شيئًا رائعًا معًا!",
+    "location": {
+      "title": "الموقع",
+      "available": "متاح للعمل عن بُعد في جميع أنحاء العالم",
+      "timezone": "المنطقة الزمنية"
+    }
+  },
+  "startMenu": {
+    "portfolioSections": "أقسام Portfolio",
+    "quickActions": "إجراءات سريعة",
+    "whoIam": "من أنا",
+    "myJourney": "رحلتي",
+    "myWork": "عملي",
+    "techStack": "المجموعة التقنية",
+    "getInTouch": "تواصل معي",
+    "getResume": "الحصول على السيرة الذاتية",
+    "viewRepos": "عرض المستودعات",
+    "bookMeeting": "حجز اجتماع",
+    "directContact": "اتصال مباشر"
+  }
+}
+
+

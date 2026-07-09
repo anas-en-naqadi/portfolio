@@ -1,0 +1,2449 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio - Web & Mobile Developer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            background: #000;
+        }
+
+        /* ============= DESKTOP OS INTERFACE ============= */
+        .desktop-os {
+            display: none;
+            height: 100vh;
+            background: url('/dark-mode.jpg') no-repeat center center;
+            background-size: cover;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated background particles */
+        .desktop-os::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(72, 52, 212, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(99, 102, 241, 0.05) 0%, transparent 50%);
+            animation: floatBackground 20s ease-in-out infinite;
+        }
+
+        @keyframes floatBackground {
+
+            0%,
+            100% {
+                transform: translate(0, 0);
+            }
+
+            50% {
+                transform: translate(-50px, -50px);
+            }
+        }
+
+        /* Taskbar */
+        .taskbar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 48px;
+            background: rgba(30, 30, 46, 0.95);
+            backdrop-filter: blur(20px) saturate(180%);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            z-index: 9999;
+            box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .start-button {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-right: 10px;
+            font-size: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+        }
+
+        .start-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.6);
+        }
+
+        .taskbar-apps {
+            display: flex;
+            gap: 5px;
+            flex: 1;
+        }
+
+        .taskbar-app {
+            padding: 8px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            color: #fff;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: none;
+        }
+
+        .taskbar-app.active {
+            display: block;
+            background: rgba(102, 126, 234, 0.3);
+            border-color: rgba(102, 126, 234, 0.5);
+        }
+
+        .taskbar-app:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .system-tray {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #fff;
+            font-size: 13px;
+        }
+
+        .system-icon {
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .system-icon:hover {
+            color: #667eea;
+        }
+
+        /* Desktop Icons */
+        .desktop-icons {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            z-index: 1;
+        }
+
+        .desktop-icon {
+            width: 90px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 8px;
+            transition: background 0.2s, transform 0.2s;
+            position: relative;
+        }
+
+        .desktop-icon:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .desktop-icon:active {
+            background: rgba(102, 126, 234, 0.3);
+            transform: scale(0.95);
+        }
+
+        .desktop-icon.selected {
+            background: rgba(102, 126, 234, 0.4);
+        }
+
+        .icon-wrapper {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(240, 240, 255, 0.8));
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            box-shadow:
+                0 8px 20px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            margin-bottom: 8px;
+            position: relative;
+        }
+
+        .icon-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            height: 40%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.4), transparent);
+            border-radius: 12px;
+        }
+
+        .icon-label {
+            color: #fff;
+            font-size: 12px;
+            text-align: center;
+            text-shadow:
+                0 1px 2px rgba(0, 0, 0, 0.8),
+                0 0 10px rgba(0, 0, 0, 0.5);
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+
+        /* Window System */
+        .window {
+            position: fixed;
+            top: 5%;
+            left: 5%;
+            right: 5%;
+            bottom: 53px;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 12px;
+            box-shadow:
+                0 25px 80px rgba(0, 0, 0, 0.6),
+                0 0 0 1px rgba(255, 255, 255, 0.2);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .window.active {
+            display: flex;
+            animation: windowAppear 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .window.minimized {
+            display: none;
+        }
+
+        .window.maximized .window-titlebar {
+            cursor: default;
+        }
+
+        .window-control-btn {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .window-control-btn:hover {
+            filter: brightness(0.85);
+            transform: scale(1.15);
+        }
+
+        .window-control-btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-close {
+            background: #ff5f57;
+        }
+
+        .btn-minimize {
+            background: #ffbd2e;
+        }
+
+        .btn-maximize {
+            background: #28ca42;
+        }
+
+        .btn-close:hover::after {
+            content: '×';
+            margin-top: -2.5px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #4a0000;
+        }
+
+        .btn-minimize:hover::after {
+            content: '−';
+            margin-top: -1.5px;
+            font-size: 12px;
+            color: #4a3000;
+        }
+
+        .btn-maximize:hover::after {
+            content: '□';
+            margin-top: -2.5px;
+            font-size: 10px;
+            color: #004a00;
+        }
+
+        .window-toolbar {
+            background: #fff;
+            padding: 10px 15px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .toolbar-btn {
+            padding: 6px 12px;
+            background: linear-gradient(180deg, #f8f9fa, #e9ecef);
+            border: 1px solid #d0d0d0;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+        }
+
+        .toolbar-btn:hover {
+            background: linear-gradient(180deg, #e9ecef, #dee2e6);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .toolbar-btn:active {
+            transform: translateY(0);
+        }
+
+        .window-titlebar {
+            background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: move;
+            border-bottom: 1px solid #dee2e6;
+            user-select: none;
+            flex-shrink: 0;
+        }
+
+        .window-title {
+            font-weight: 600;
+            font-size: 13px;
+            color: #2d3436;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .window-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            background: #fff;
+        }
+
+        .window-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .window-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .window-content::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        .window-content::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        @keyframes windowAppear {
+            0% {
+                opacity: 0;
+                transform: scale(0.5) translateY(50vh);
+            }
+
+            60% {
+                transform: scale(1.02);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes windowMinimize {
+            0% {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(0.2) translateY(100vh);
+                opacity: 0;
+            }
+        }
+
+        /* START MENU - Developer Portfolio Theme */
+        .start-menu {
+            position: fixed;
+            bottom: 60px;
+            left: 15px;
+            width: 500px;
+            height: 600px;
+            background: rgba(30, 30, 46, 0.98);
+            backdrop-filter: blur(30px);
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: none;
+            flex-direction: column;
+            z-index: 99999;
+            overflow: hidden;
+        }
+
+        .start-menu.active {
+            display: flex;
+            animation: startMenuAppear 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes startMenuAppear {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .start-menu-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+        }
+
+        .start-menu-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .profile-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        /* Small profile photo for desktop icon */
+        .profile-photo-small {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 14px;
+        }
+
+        /* Remove the gradient overlay from icon wrapper when using photo */
+        .icon-wrapper:has(.profile-photo-small)::after {
+            display: none;
+        }
+
+        .user-info h3 {
+            margin: 0;
+            font-size: 16px;
+            color: #fff;
+        }
+
+        .user-info p {
+            margin: 0;
+            font-size: 12px;
+            opacity: 0.9;
+            color: #fff;
+        }
+
+        .start-menu-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .start-menu-section {
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            color: #999;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .start-menu-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .start-menu-item {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid transparent;
+        }
+
+        .start-menu-item:hover {
+            background: rgba(102, 126, 234, 0.3);
+            border-color: rgba(102, 126, 234, 0.5);
+            transform: translateX(3px);
+        }
+
+        .start-menu-item-icon {
+            font-size: 24px;
+        }
+
+        .start-menu-item-text {
+            flex: 1;
+        }
+
+        .start-menu-item-title {
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .start-menu-item-desc {
+            color: #999;
+            font-size: 11px;
+        }
+
+        .start-menu-footer {
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .start-footer-btn {
+            padding: 8px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            color: #fff;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .start-footer-btn:hover {
+            background: rgba(102, 126, 234, 0.3);
+        }
+
+        /* Window Snapshot Preview */
+
+        .window-preview {
+            position: fixed;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(30, 30, 46, 0.98);
+            backdrop-filter: blur(20px);
+            padding: 15px;
+            border-radius: 12px;
+            display: none;
+            z-index: 99998;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            max-width: 350px;
+        }
+
+        .window-preview.active {
+            display: block;
+            animation: previewAppear 0.2s ease-out;
+        }
+
+        @keyframes previewAppear {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        .preview-info {
+            color: #fff;
+            text-align: center;
+        }
+
+        .preview-app-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .preview-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .preview-subtitle {
+            font-size: 11px;
+            color: #999;
+        }
+
+        /* ============= MOBILE OS INTERFACE ============= */
+        .mobile-os {
+            display: none;
+            height: 100vh;
+            background: #1a1a1a;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Realistic Mobile Status Bar */
+        .status-bar {
+            background: transparent;
+            color: #fff;
+            padding: 6px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 500;
+            height: 32px;
+            position: relative;
+        }
+
+        .status-time {
+            font-weight: 600;
+        }
+
+        .status-icons {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        /* Dynamic Island for larger phones */
+        .dynamic-island {
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 35px;
+            background: #000;
+            border-radius: 20px;
+            display: none;
+        }
+
+        /* Mobile Home Screen */
+        .home-screen {
+            flex: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        .home-screen::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 0, 0, 0.1) 0%, transparent 50%);
+        }
+
+        .time-widget {
+            color: #fff;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .widget-time {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .widget-date {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .mobile-app {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .mobile-app:active {
+            transform: scale(0.9);
+        }
+
+        .app-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            box-shadow:
+                0 8px 20px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
+            margin-bottom: 8px;
+            position: relative;
+        }
+
+        .app-icon::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            height: 45%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.3), transparent);
+            border-radius: 14px;
+        }
+
+        .app-label {
+            color: #fff;
+            font-size: 11px;
+            text-align: center;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+            font-weight: 500;
+        }
+
+        /* Small mobile devices */
+        @media (max-width: 375px) {
+            .app-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 15px;
+                padding: 0 10px;
+            }
+
+            .app-icon {
+                width: 55px;
+                height: 55px;
+                font-size: 24px;
+            }
+
+            .app-label {
+                font-size: 10px;
+            }
+
+            .widget-time {
+                font-size: 36px;
+            }
+
+            .widget-date {
+                font-size: 14px;
+            }
+
+            .mobile-content {
+                padding: 15px;
+                padding-bottom: 100px;
+            }
+
+            .section-card {
+                padding: 15px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            h3 {
+                font-size: 16px;
+            }
+        }
+
+        /* Extra small devices */
+        @media (max-width: 320px) {
+            .app-grid {
+                gap: 12px;
+            }
+
+            .app-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 22px;
+            }
+
+            .widget-time {
+                font-size: 32px;
+            }
+
+            .nav-bar {
+                padding: 0 20px;
+            }
+
+            .nav-button {
+                width: 45px;
+                height: 45px;
+            }
+
+            .nav-button.home {
+                width: 50px;
+                height: 50px;
+            }
+        }
+
+        /* Navigation Bar - Modern Android Style */
+
+        .nav-bar {
+            height: 72px;
+            /* Standard mobile/tablet height */
+            background: rgba(20, 20, 30, 0.85);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding: 0 20px 8px;
+            /* Reduced bottom padding */
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 10000;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow:
+                0 -2px 16px rgba(0, 0, 0, 0.2),
+                0 -1px 0 rgba(255, 255, 255, 0.05) inset;
+        }
+
+        /* Back & Recent buttons (Android-inspired) */
+        .nav-button {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.08);
+            color: #8892b0;
+            font-size: 22px;
+            position: relative;
+        }
+
+        .nav-button:active {
+            background: rgba(102, 126, 234, 0.3);
+            color: #667eea;
+            transform: scale(0.94);
+        }
+
+        /* Home button (iOS-inspired) */
+        .nav-button.home {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 24px;
+            box-shadow:
+                0 4px 20px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            margin-bottom: -2px;
+            /* Slightly below nav bar */
+            z-index: 10001;
+        }
+
+        .nav-button.home:active {
+            background: rgba(102, 126, 234, 0.4);
+            color: #ffffff;
+            transform: scale(0.92);
+        }
+
+        /* Home indicator (iOS-style pill) */
+        .home-indicator {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 134px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 3px;
+            opacity: 0.8;
+            display: none;
+            /* Hidden because we have a real home button */
+        }
+
+        /* Recent Apps Modal - Modern UI */
+        .recent-apps-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 72px;
+            /* 👈 Leave space for nav bar (height: 72px) */
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            display: none;
+            flex-direction: column;
+            z-index: 20000;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .recent-apps-modal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .recent-apps-header {
+            color: #fff;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .recent-apps-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding-bottom: 10px;
+            /* Optional: extra space at bottom */
+        }
+
+        .recent-app-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .recent-app-card:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .recent-app-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(145deg, #667eea, #764ba2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .recent-app-info {
+            flex: 1;
+        }
+
+        .recent-app-title {
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .recent-app-subtitle {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 12px;
+        }
+
+        .recent-app-close {
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 20px;
+        }
+
+        .recent-apps-empty {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 16px;
+            margin-top: 50%;
+        }
+
+        .close-recent-btn {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .close-recent-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        /* Mobile App Window */
+        .mobile-window {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #fff;
+            display: none;
+            flex-direction: column;
+            z-index: 10000;
+            transform: translateY(100%);
+        }
+
+        .mobile-window.active {
+            display: flex;
+            animation: slideUpMobile 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        .mobile-window.closing {
+            animation: slideDownMobile 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        .mobile-window .mobile-content {
+            flex: 1;
+            padding: 20px;
+            padding-bottom: 100px;
+            overflow-y: auto;
+        }
+
+        /* Show nav bar in mobile windows */
+        .mobile-os .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 15000;
+        }
+
+        @keyframes slideUpMobile {
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideDownMobile {
+            to {
+                transform: translateY(100%);
+            }
+        }
+
+        .mobile-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-btn {
+            font-size: 24px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .back-btn:active {
+            transform: scale(0.9);
+        }
+
+        .mobile-header-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .mobile-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        /* ============= TABLET DETECTION ============= */
+        .tablet-os {
+            display: none;
+        }
+
+        /* Content Styling */
+        h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        h3 {
+            color: #2d3436;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        @media (max-width: 1023px) {
+            .desktop-os .taskbar {
+                display: none !important;
+            }
+        }
+
+        p {
+            line-height: 1.7;
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        .section-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #e9ecef;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .section-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .tech-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin: 5px 5px 5px 0;
+        }
+
+        .contact-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            text-decoration: none;
+            color: #2d3436;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .contact-link:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .contact-icon {
+            font-size: 24px;
+        }
+
+        /* Responsive Breakpoints */
+        @media (min-width: 1024px) {
+            .desktop-os {
+                display: block;
+            }
+        }
+
+        @media (min-width: 768px) and (max-width: 1023px) {
+            .mobile-os {
+                display: flex;
+            }
+
+            .app-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 25px;
+                padding: 0 30px;
+            }
+
+            .app-icon {
+                width: 70px;
+                height: 70px;
+                font-size: 32px;
+            }
+
+            .widget-time {
+                font-size: 64px;
+            }
+
+            .dynamic-island {
+                display: block;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .mobile-os {
+                display: flex;
+            }
+
+            .window {
+                min-width: 90vw;
+                min-height: 80vh;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- DESKTOP OS -->
+    <div class="desktop-os">
+        <div class="desktop-icons">
+            <div class="desktop-icon" data-app="about">
+                <div class="icon-wrapper">
+                    <img src="me.png" alt="Your Name" class="profile-photo-small">
+                </div>
+                <div class="icon-label">About Me</div>
+            </div>
+            <div class="desktop-icon" data-app="experience">
+                <div class="icon-wrapper">🚀</div>
+                <div class="icon-label">Experience</div>
+            </div>
+            <div class="desktop-icon" data-app="projects">
+                <div class="icon-wrapper">📱</div>
+                <div class="icon-label">Projects</div>
+            </div>
+            <div class="desktop-icon" data-app="skills">
+                <div class="icon-wrapper">⚡</div>
+                <div class="icon-label">Skills</div>
+            </div>
+            <div class="desktop-icon" data-app="contact">
+                <div class="icon-wrapper">📧</div>
+                <div class="icon-label">Contact</div>
+            </div>
+        </div>
+
+
+
+        <!-- START MENU -->
+        <div class="start-menu" id="startMenu">
+            <div class="start-menu-header">
+                <div class="start-menu-user">
+                    <div class="user-avatar">
+                        <img src="me.png" alt="Your Name" class="profile-photo">
+                    </div>
+                    <div class="user-info">
+                        <h3>ANAS EN-NAQADI</h3>
+                        <p>Web & Mobile Developer</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="start-menu-content">
+                <div class="start-menu-section">
+                    <div class="section-title">Portfolio Sections</div>
+                    <div class="start-menu-grid">
+                        <div class="start-menu-item" onclick="openWindow('about'); toggleStartMenu();">
+                            <div class="start-menu-item-icon">💼</div>
+                            <div class="start-menu-item-text">
+                                <div class="start-menu-item-title">About Me</div>
+                                <div class="start-menu-item-desc">Who I am</div>
+                            </div>
+                        </div>
+                        <div class="start-menu-item" onclick="openWindow('experience'); toggleStartMenu();">
+                            <div class="start-menu-item-icon">🚀</div>
+                            <div class="start-menu-item-text">
+                                <div class="start-menu-item-title">Experience</div>
+                                <div class="start-menu-item-desc">My journey</div>
+                            </div>
+                        </div>
+                        <div class="start-menu-item" onclick="openWindow('projects'); toggleStartMenu();">
+                            <div class="start-menu-item-icon">📱</div>
+                            <div class="start-menu-item-text">
+                                <div class="start-menu-item-title">Projects</div>
+                                <div class="start-menu-item-desc">My work</div>
+                            </div>
+                        </div>
+                        <div class="start-menu-item" onclick="openWindow('skills'); toggleStartMenu();">
+                            <div class="start-menu-item-icon">⚡</div>
+                            <div class="start-menu-item-text">
+                                <div class="start-menu-item-title">Skills</div>
+                                <div class="start-menu-item-desc">Tech stack</div>
+                            </div>
+                        </div>
+                        <div class="start-menu-item" onclick="openWindow('contact'); toggleStartMenu();">
+                            <div class="start-menu-item-icon">📧</div>
+                            <div class="start-menu-item-text">
+                                <div class="start-menu-item-title">Contact</div>
+                                <div class="start-menu-item-desc">Get in touch</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="start-menu-section">
+                    <div class="section-title">Quick Actions</div>
+                    <div class="start-menu-grid">
+                        <div class="start-menu-item" onclick="downloadCV()">
+                            <div class="start-menu-item-icon">📥</div>
+                            <div class="start-menu-item-text">
+                                <div class="start-menu-item-title">Download CV</div>
+                                <div class="start-menu-item-desc">Get resume</div>
+                            </div>
+                        </div>
+                        <div class="start-menu-item" onclick="viewGithub()">
+                            <div class="start-menu-item-icon">💻</div>
+                            <div class="start-menu-item-text">
+                                <div class="start-menu-item-title">GitHub</div>
+                                <div class="start-menu-item-desc">View repos</div>
+                            </div>
+                        </div>
+                        <div class="start-menu-item" onclick="scheduleCall()">
+                            <div class="start-menu-item-icon">📞</div>
+                            <div class="start-menu-item-text">
+                                <div class="start-menu-item-title">Schedule Call</div>
+                                <div class="start-menu-item-desc">Book meeting</div>
+                            </div>
+                        </div>
+                        <div class="start-menu-item" onclick="sendEmail()">
+                            <div class="start-menu-item-icon">✉️</div>
+                            <div class="start-menu-item-text">
+                                <div class="start-menu-item-title">Email Me</div>
+                                <div class="start-menu-item-desc">Direct contact</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="start-menu-footer">
+                <div class="start-footer-btn" onclick="changeTheme()">
+                    <span>🎨</span> Theme
+                </div>
+                <div class="start-footer-btn" onclick="toggleFullscreen()">
+                    <span>⛶</span> Fullscreen
+                </div>
+            </div>
+        </div>
+
+        <!-- Window Preview on Hover -->
+        <div class="window-preview" id="windowPreview">
+            <div class="preview-info">
+                <div class="preview-app-icon" id="previewIcon"></div>
+                <div class="preview-title" id="previewTitle"></div>
+                <div class="preview-subtitle" id="previewSubtitle"></div>
+            </div>
+        </div>
+
+
+        <!-- Windows with Toolbars -->
+        <div class="window" id="aboutWindow">
+            <div class="window-titlebar">
+                <div class="window-title"><span>💼</span> About Me</div>
+                <div class="window-controls">
+                    <div class="window-control-btn btn-close" onclick="closeWindow('aboutWindow')"></div>
+                    <div class="window-control-btn btn-minimize" onclick="minimizeWindow('aboutWindow')"></div>
+                    <div class="window-control-btn btn-maximize" onclick="maximizeWindow('aboutWindow')"></div>
+                </div>
+            </div>
+            <div class="window-toolbar">
+                <div class="toolbar-btn" onclick="shareWindow('aboutWindow')">📤 Share</div>
+                <div class="toolbar-btn" onclick="downloadCV()">💾 Save</div>
+            </div>
+            <div class="window-content">
+                <div
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px; border-radius: 16px; margin-bottom: 30px; color: white; text-align: center;">
+                    <h1 style="margin: 0 0 10px 0; font-size: 36px; color: white;">ANAS EN-NAQADI</h1>
+                    <p style="font-size: 18px; margin: 0; opacity: 0.95;">Full-Stack Developer | Vue.js • React.js •
+                        Laravel Specialist</p>
+                    <div style="margin-top: 20px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                        <div
+                            style="background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; font-size: 14px;">
+                            📍 EL JADIDA, Morocco</div>
+                        <div
+                            style="background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; font-size: 14px;">
+                            📧 anas.ennaqadi0@gmail.com</div>
+                        <div
+                            style="background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; font-size: 14px;">
+                            📱 +212 628540272</div>
+                    </div>
+                </div>
+
+                <div class="section-card" style="border-left: 4px solid #667eea;">
+                    <h3 style="color: #667eea; font-size: 22px; margin-bottom: 15px;">🚀 Professional Profile</h3>
+                    <p style="font-size: 15px; line-height: 1.8;">Full-Stack Developer specialized in Vue.js, React.js,
+                        Laravel, Next.js, Express.js with expertise in MySQL and PostgreSQL databases. Proficient in
+                        building RESTful APIs, performance optimization, and Agile Scrum project management. Strong
+                        skills in UX/UI design, Git version control, Redis caching, and seamless front-end/back-end
+                        integration.</p>
+                </div>
+
+                <div
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 25px;">
+                    <div
+                        style="background: linear-gradient(135deg, #667eea15, #764ba215); padding: 25px; border-radius: 12px; border: 2px solid #667eea30;">
+                        <div style="font-size: 32px; margin-bottom: 10px;">💻</div>
+                        <h4 style="color: #667eea; margin: 0 0 8px 0;">Full-Stack Expertise</h4>
+                        <p style="margin: 0; color: #666; font-size: 14px;">Modern web & mobile applications with
+                            cutting-edge technologies</p>
+                    </div>
+                    <div
+                        style="background: linear-gradient(135deg, #667eea15, #764ba215); padding: 25px; border-radius: 12px; border: 2px solid #667eea30;">
+                        <div style="font-size: 32px; margin-bottom: 10px;">⚡</div>
+                        <h4 style="color: #667eea; margin: 0 0 8px 0;">Performance Focus</h4>
+                        <p style="margin: 0; color: #666; font-size: 14px;">API optimization, caching strategies &
+                            scalable solutions</p>
+                    </div>
+                    <div
+                        style="background: linear-gradient(135deg, #667eea15, #764ba215); padding: 25px; border-radius: 12px; border: 2px solid #667eea30;">
+                        <div style="font-size: 32px; margin-bottom: 10px;">🎨</div>
+                        <h4 style="color: #667eea; margin: 0 0 8px 0;">UX/UI Design</h4>
+                        <p style="margin: 0; color: #666; font-size: 14px;">Beautiful, intuitive interfaces with modern
+                            design principles</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="window" id="experienceWindow">
+            <div class="window-titlebar">
+                <div class="window-title"><span>🚀</span> Experience</div>
+                <div class="window-controls">
+                    <div class="window-control-btn btn-close" onclick="closeWindow('experienceWindow')"></div>
+                    <div class="window-control-btn btn-minimize" onclick="minimizeWindow('experienceWindow')"></div>
+                    <div class="window-control-btn btn-maximize" onclick="maximizeWindow('experienceWindow')"></div>
+                </div>
+            </div>
+            <div class="window-toolbar">
+                <div class="toolbar-btn" onclick="downloadWindow('experienceWindow')">📥 Download CV</div>
+                <div class="toolbar-btn" onclick="printWindow('experienceWindow')">🖨️ Print</div>
+            </div>
+            <div class="window-content">
+                <h2>💼 Professional Journey</h2>
+                <div class="section-card">
+                    <h3>Senior Full-Stack Developer</h3>
+                    <p style="color: #667eea; font-weight: 600; margin-bottom: 10px;">Tech Company Inc. • 2021 - Present
+                    </p>
+                    <p>• Led development of a React Native mobile app serving 100K+ users</p>
+                    <p>• Architected and deployed microservices infrastructure on AWS</p>
+                    <p>• Improved application performance by 60% through optimization</p>
+                    <p>• Mentored junior developers and conducted code reviews</p>
+                    <div style="margin-top: 15px;">
+                        <span class="tech-badge">React</span>
+                        <span class="tech-badge">Node.js</span>
+                        <span class="tech-badge">React Native</span>
+                        <span class="tech-badge">AWS</span>
+                    </div>
+                </div>
+                <div class="section-card">
+                    <h3>Full-Stack Developer</h3>
+                    <p style="color: #667eea; font-weight: 600; margin-bottom: 10px;">Digital Agency • 2019 - 2021</p>
+                    <p>• Developed custom web applications for diverse clients</p>
+                    <p>• Built responsive websites with modern frontend frameworks</p>
+                    <p>• Integrated third-party APIs and payment gateways</p>
+                    <p>• Collaborated with design teams to implement pixel-perfect UIs</p>
+                    <div style="margin-top: 15px;">
+                        <span class="tech-badge">Vue.js</span>
+                        <span class="tech-badge">Laravel</span>
+                        <span class="tech-badge">MySQL</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="window" id="projectsWindow">
+            <div class="window-titlebar">
+                <div class="window-title"><span>📱</span> Projects</div>
+                <div class="window-controls">
+                    <div class="window-control-btn btn-close" onclick="closeWindow('projectsWindow')"></div>
+                    <div class="window-control-btn btn-minimize" onclick="minimizeWindow('projectsWindow')"></div>
+                    <div class="window-control-btn btn-maximize" onclick="maximizeWindow('projectsWindow')"></div>
+                </div>
+            </div>
+            <div class="window-toolbar">
+                <div class="toolbar-btn" onclick="filterProjects('all')">🎯 All</div>
+                <div class="toolbar-btn" onclick="filterProjects('web')">🌐 Web</div>
+                <div class="toolbar-btn" onclick="filterProjects('mobile')">📱 Mobile</div>
+            </div>
+            <div class="window-content">
+                <h2>🎨 Featured Projects</h2>
+                <div class="section-card">
+                    <h3>E-Commerce Mobile App</h3>
+                    <p>A full-featured shopping app with real-time inventory, payment integration, and push
+                        notifications.
+                        Built with React Native and Node.js backend with MongoDB.</p>
+                    <p><strong>Impact:</strong> Processed over $500K in transactions in first 6 months</p>
+                    <div style="margin-top: 15px;">
+                        <span class="tech-badge">React Native</span>
+                        <span class="tech-badge">Node.js</span>
+                        <span class="tech-badge">MongoDB</span>
+                        <span class="tech-badge">Stripe</span>
+                    </div>
+                </div>
+                <div class="section-card">
+                    <h3>Project Management Dashboard</h3>
+                    <p>Enterprise-level web application for team collaboration and project tracking. Features real-time
+                        updates, kanban boards, and analytics.</p>
+                    <p><strong>Impact:</strong> Adopted by 50+ companies, managing 10K+ projects</p>
+                    <div style="margin-top: 15px;">
+                        <span class="tech-badge">React</span>
+                        <span class="tech-badge">TypeScript</span>
+                        <span class="tech-badge">GraphQL</span>
+                        <span class="tech-badge">PostgreSQL</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="window" id="skillsWindow">
+            <div class="window-titlebar">
+                <div class="window-title"><span>⚡</span> Skills & Technologies</div>
+                <div class="window-controls">
+                    <div class="window-control-btn btn-close" onclick="closeWindow('skillsWindow')"></div>
+                    <div class="window-control-btn btn-minimize" onclick="minimizeWindow('skillsWindow')"></div>
+                    <div class="window-control-btn btn-maximize" onclick="maximizeWindow('skillsWindow')"></div>
+                </div>
+            </div>
+            <div class="window-toolbar">
+                <div class="toolbar-btn" onclick="showSkillLevel('all')">📊 Show All</div>
+                <div class="toolbar-btn" onclick="showSkillLevel('expert')">⭐ Expert</div>
+            </div>
+            <div class="window-content">
+                <h2>🛠️ Technical Expertise</h2>
+                <div class="section-card">
+                    <h3>Frontend Development</h3>
+                    <span class="tech-badge">React</span>
+                    <span class="tech-badge">Vue.js</span>
+                    <span class="tech-badge">Next.js</span>
+                    <span class="tech-badge">TypeScript</span>
+                    <span class="tech-badge">Tailwind CSS</span>
+                </div>
+                <div class="section-card">
+                    <h3>Mobile Development</h3>
+                    <span class="tech-badge">React Native</span>
+                    <span class="tech-badge">Flutter</span>
+                    <span class="tech-badge">iOS (Swift)</span>
+                    <span class="tech-badge">Android (Kotlin)</span>
+                </div>
+                <div class="section-card">
+                    <h3>Backend Development</h3>
+                    <span class="tech-badge">Node.js</span>
+                    <span class="tech-badge">Python</span>
+                    <span class="tech-badge">GraphQL</span>
+                    <span class="tech-badge">REST APIs</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="window" id="contactWindow">
+            <div class="window-titlebar">
+                <div class="window-title"><span>📧</span> Contact Me</div>
+                <div class="window-controls">
+                    <div class="window-control-btn btn-close" onclick="closeWindow('contactWindow')"></div>
+                    <div class="window-control-btn btn-minimize" onclick="minimizeWindow('contactWindow')"></div>
+                    <div class="window-control-btn btn-maximize" onclick="maximizeWindow('contactWindow')"></div>
+                </div>
+            </div>
+            <div class="window-toolbar">
+                <div class="toolbar-btn" onclick="copyContactInfo()">📋 Copy Contact</div>
+                <div class="toolbar-btn" onclick="downloadVCard()">💳 Save VCard</div>
+            </div>
+            <div class="window-content">
+                <h2>💬 Let's Connect</h2>
+                <p style="font-size: 16px; margin-bottom: 30px;">I'm always excited to discuss new projects, creative
+                    ideas,
+                    or opportunities to bring your vision to life. Let's build something amazing together!</p>
+
+                <div class="section-card" style="margin-top: 20px;">
+                    <h3>📍 Location</h3>
+                    <p>Available for remote work worldwide</p>
+                    <p>Timezone: GMT+1</p>
+                </div>
+
+                <a href="mailto:your.email@example.com" class="contact-link">
+                    <div class="contact-icon">📧</div>
+                    <div>
+                        <strong>Email</strong><br>
+                        <span style="color: #667eea;">your.email@example.com</span>
+                    </div>
+                </a>
+
+                <a href="https://linkedin.com/in/yourprofile" target="_blank" class="contact-link">
+                    <div class="contact-icon">💼</div>
+                    <div>
+                        <strong>LinkedIn</strong><br>
+                        <span style="color: #667eea;">linkedin.com/in/yourprofile</span>
+                    </div>
+                </a>
+
+                <a href="https://github.com/yourusername" target="_blank" class="contact-link">
+                    <div class="contact-icon">💻</div>
+                    <div>
+                        <strong>GitHub</strong><br>
+                        <span style="color: #667eea;">github.com/yourusername</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="taskbar">
+            <div class="start-button">🪟</div>
+            <div class="taskbar-apps" id="taskbarApps"></div>
+            <div class="system-tray">
+                <span class="system-icon">🔊</span>
+                <span class="system-icon">📶</span>
+                <span class="system-icon">🔋</span>
+                <span id="desktopDateTime">12:00 PM | Jan 1, 2025</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MOBILE OS -->
+    <div class="mobile-os">
+        <div class="status-bar">
+            <div class="status-time" id="mobileTime">12:00</div>
+            <div class="dynamic-island"></div>
+            <div class="status-icons">
+                <span>📶</span>
+                <span>📡</span>
+                <span>🔋</span>
+            </div>
+        </div>
+
+        <div class="home-screen">
+            <div class="time-widget">
+                <div class="widget-time" id="widgetTime">12:00</div>
+                <div class="widget-date" id="widgetDate">Monday, January 1</div>
+            </div>
+
+            <div class="app-grid">
+                <div class="mobile-app" data-app="about">
+                    <div class="app-icon">💼</div>
+                    <div class="app-label">About</div>
+                </div>
+                <div class="mobile-app" data-app="experience">
+                    <div class="app-icon">🚀</div>
+                    <div class="app-label">Experience</div>
+                </div>
+                <div class="mobile-app" data-app="projects">
+                    <div class="app-icon">📱</div>
+                    <div class="app-label">Projects</div>
+                </div>
+                <div class="mobile-app" data-app="skills">
+                    <div class="app-icon">⚡</div>
+                    <div class="app-label">Skills</div>
+                </div>
+                <div class="mobile-app" data-app="contact">
+                    <div class="app-icon">📧</div>
+                    <div class="app-label">Contact</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-bar">
+            <!-- More realistic icons -->
+            <div class="nav-button back">‹</div> <!-- or use SVG arrow -->
+            <div class="nav-button home">•</div> <!-- iOS uses a solid pill, but "•" mimics it -->
+            <div class="nav-button recent">⋯</div> <!-- Android-style overflow -->
+        </div>
+
+        <!-- Mobile Windows -->
+        <div class="mobile-window" id="mobileAbout">
+            <div class="mobile-header">
+                <div class="back-btn" onclick="closeMobileWindow('mobileAbout')">←</div>
+                <div class="mobile-header-title">About Me</div>
+            </div>
+            <div class="mobile-content">
+                <h2>👋 Web & Mobile Developer</h2>
+                <div class="section-card">
+                    <p>I'm a passionate full-stack developer specializing in creating stunning web and mobile
+                        applications. With expertise in modern frameworks and technologies, I transform ideas into
+                        reality.</p>
+                </div>
+                <div class="section-card">
+                    <h3>🎯 What I Do</h3>
+                    <p>• Build responsive web applications</p>
+                    <p>• Develop mobile apps (iOS & Android)</p>
+                    <p>• Create RESTful APIs</p>
+                    <p>• Design beautiful UIs</p>
+                </div>
+                <div class="section-card">
+                    <h3>📊 Quick Stats</h3>
+                    <p><strong>5+</strong> Years Experience</p>
+                    <p><strong>50+</strong> Projects Completed</p>
+                    <p><strong>30+</strong> Happy Clients</p>
+                </div>
+                <div class="section-card">
+                    <h3>🌍 Location & Availability</h3>
+                    <p>Based in [Your City]</p>
+                    <p>Available for remote work worldwide</p>
+                    <p>Open to freelance & full-time opportunities</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mobile-window" id="mobileExperience">
+            <div class="mobile-header">
+                <div class="back-btn" onclick="closeMobileWindow('mobileExperience')">←</div>
+                <div class="mobile-header-title">Experience</div>
+            </div>
+            <div class="mobile-content">
+                <h2>💼 Career</h2>
+                <div class="section-card">
+                    <h3>Senior Full-Stack Developer</h3>
+                    <p style="color: #667eea; font-weight: 600;">Tech Company • 2021 - Present</p>
+                    <p>Led development of React Native mobile app serving 100K+ users</p>
+                    <div style="margin-top: 10px;">
+                        <span class="tech-badge">React</span>
+                        <span class="tech-badge">Node.js</span>
+                        <span class="tech-badge">AWS</span>
+                    </div>
+                </div>
+                <div class="section-card">
+                    <h3>Full-Stack Developer</h3>
+                    <p style="color: #667eea; font-weight: 600;">Digital Agency • 2019 - 2021</p>
+                    <p>Developed custom web applications for diverse clients</p>
+                    <div style="margin-top: 10px;">
+                        <span class="tech-badge">Vue.js</span>
+                        <span class="tech-badge">Laravel</span>
+                    </div>
+                </div>
+                <div class="section-card">
+                    <h3>🎓 Education</h3>
+                    <p style="color: #667eea; font-weight: 600;">Computer Science Degree</p>
+                    <p>University Name • 2013 - 2017</p>
+                </div>
+                <div class="section-card">
+                    <h3>🏆 Certifications</h3>
+                    <div style="margin-top: 10px;">
+                        <span class="tech-badge">AWS Certified</span>
+                        <span class="tech-badge">React Expert</span>
+                        <span class="tech-badge">Scrum Master</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mobile-window" id="mobileProjects">
+            <div class="mobile-header">
+                <div class="back-btn" onclick="closeMobileWindow('mobileProjects')">←</div>
+                <div class="mobile-header-title">Projects</div>
+            </div>
+            <div class="mobile-content">
+                <h2>🎨 Featured Work</h2>
+                <div class="section-card">
+                    <h3>E-Commerce App</h3>
+                    <p>Full-featured shopping app with payment integration. $500K in transactions.</p>
+                    <div style="margin-top: 10px;">
+                        <span class="tech-badge">React Native</span>
+                        <span class="tech-badge">Node.js</span>
+                        <span class="tech-badge">MongoDB</span>
+                    </div>
+                </div>
+                <div class="section-card">
+                    <h3>Project Dashboard</h3>
+                    <p>Enterprise web app for team collaboration. Used by 50+ companies.</p>
+                    <div style="margin-top: 10px;">
+                        <span class="tech-badge">React</span>
+                        <span class="tech-badge">GraphQL</span>
+                        <span class="tech-badge">PostgreSQL</span>
+                    </div>
+                </div>
+                <div class="section-card">
+                    <h3>Fitness Tracker</h3>
+                    <p>Cross-platform app with 50K+ downloads and 4.7 star rating.</p>
+                    <div style="margin-top: 10px;">
+                        <span class="tech-badge">Flutter</span>
+                        <span class="tech-badge">Firebase</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mobile-window" id="mobileSkills">
+            <div class="mobile-header">
+                <div class="back-btn" onclick="closeMobileWindow('mobileSkills')">←</div>
+                <div class="mobile-header-title">Skills</div>
+            </div>
+            <div class="mobile-content">
+                <h2>🛠️ Tech Stack</h2>
+                <div class="section-card">
+                    <h3>Frontend</h3>
+                    <span class="tech-badge">React</span>
+                    <span class="tech-badge">Vue.js</span>
+                    <span class="tech-badge">Next.js</span>
+                    <span class="tech-badge">TypeScript</span>
+                    <span class="tech-badge">Tailwind</span>
+                </div>
+                <div class="section-card">
+                    <h3>Mobile</h3>
+                    <span class="tech-badge">React Native</span>
+                    <span class="tech-badge">Flutter</span>
+                    <span class="tech-badge">iOS</span>
+                    <span class="tech-badge">Android</span>
+                </div>
+                <div class="section-card">
+                    <h3>Backend</h3>
+                    <span class="tech-badge">Node.js</span>
+                    <span class="tech-badge">Python</span>
+                    <span class="tech-badge">GraphQL</span>
+                    <span class="tech-badge">REST APIs</span>
+                </div>
+                <div class="section-card">
+                    <h3>Database & Cloud</h3>
+                    <span class="tech-badge">MongoDB</span>
+                    <span class="tech-badge">PostgreSQL</span>
+                    <span class="tech-badge">AWS</span>
+                    <span class="tech-badge">Firebase</span>
+                    <span class="tech-badge">Docker</span>
+                </div>
+                <div class="section-card">
+                    <h3>Design Tools</h3>
+                    <span class="tech-badge">Figma</span>
+                    <span class="tech-badge">Adobe XD</span>
+                    <span class="tech-badge">Photoshop</span>
+                </div>
+                <div class="section-card">
+                    <h3>Soft Skills</h3>
+                    <span class="tech-badge">Leadership</span>
+                    <span class="tech-badge">Communication</span>
+                    <span class="tech-badge">Problem Solving</span>
+                    <span class="tech-badge">Team Work</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="mobile-window" id="mobileContact">
+            <div class="mobile-header">
+                <div class="back-btn" onclick="closeMobileWindow('mobileContact')">←</div>
+                <div class="mobile-header-title">Contact</div>
+            </div>
+            <div class="mobile-content">
+                <h2>💬 Get In Touch</h2>
+                <p style="margin-bottom: 20px;">Let's build something amazing together!</p>
+
+                <div class="section-card" style="margin-top: 20px;">
+                    <h3>📍 Location</h3>
+                    <p>Available for remote work worldwide</p>
+                    <p>Timezone: GMT+1</p>
+                </div>
+
+                <a href="mailto:your.email@example.com" class="contact-link">
+                    <div class="contact-icon">📧</div>
+                    <div>
+                        <strong>Email</strong><br>
+                        <span style="color: #667eea; font-size: 14px;">your.email@example.com</span>
+                    </div>
+                </a>
+
+                <a href="https://linkedin.com/in/yourprofile" target="_blank" class="contact-link">
+                    <div class="contact-icon">💼</div>
+                    <div>
+                        <strong>LinkedIn</strong><br>
+                        <span style="color: #667eea; font-size: 14px;">linkedin.com/in/yourprofile</span>
+                    </div>
+                </a>
+
+                <a href="https://github.com/yourusername" target="_blank" class="contact-link">
+                    <div class="contact-icon">💻</div>
+                    <div>
+                        <strong>GitHub</strong><br>
+                        <span style="color: #667eea; font-size: 14px;">github.com/yourusername</span>
+                    </div>
+                </a>
+
+                <a href="tel:+1234567890" class="contact-link">
+                    <div class="contact-icon">📱</div>
+                    <div>
+                        <strong>Phone</strong><br>
+                        <span style="color: #667eea; font-size: 14px;">+1 (234) 567-890</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="recent-apps-modal" id="recentAppsModal">
+            <div class="recent-apps-header">Recent Apps</div>
+            <div class="recent-apps-list" id="recentAppsList"></div>
+            <button class="close-recent-btn" onclick="closeAllRecentApps()">Close All</button>
+        </div>
+    </div>
+
+    <script>
+        // Desktop functionality
+        let activeWindows = new Set();
+        let zIndexCounter = 100;
+        let maximizedWindows = new Set();
+        let currentTheme = 'default';
+        let recentMobileApps = [];
+
+        // Desktop icon double-click to open
+        document.querySelectorAll('.desktop-icon').forEach(icon => {
+            icon.addEventListener('dblclick', function () {
+                const app = this.dataset.app;
+                openWindow(app);
+            });
+        });
+
+        // START MENU TOGGLE
+        document.querySelector('.start-button').addEventListener('click', function (e) {
+            e.stopPropagation();
+            toggleStartMenu();
+        });
+
+        function toggleStartMenu() {
+            const startMenu = document.getElementById('startMenu');
+            startMenu.classList.toggle('active');
+        }
+
+        // Close start menu when clicking outside
+        document.addEventListener('click', function (e) {
+            const startMenu = document.getElementById('startMenu');
+            if (!e.target.closest('.start-menu') && !e.target.closest('.start-button')) {
+                startMenu.classList.remove('active');
+            }
+        });
+
+        function viewGithub() {
+            window.open('https://github.com/yourusername', '_blank');
+            toggleStartMenu();
+        }
+
+        function scheduleCall() {
+            alert('Schedule a Call\n\nIntegrate with Calendly or similar service here.');
+            toggleStartMenu();
+        }
+
+        function sendEmail() {
+            window.location.href = 'mailto:your.email@example.com';
+            toggleStartMenu();
+        }
+        // ===== DRAGGING WITH BOUNDARIES =====
+        let isDragging = false;
+        let currentWindow = null;
+        let startX, startY, initialLeft, initialTop;
+
+        document.querySelectorAll('.window').forEach(windowEl => {
+            const titlebar = windowEl.querySelector('.window-titlebar');
+            titlebar.addEventListener('mousedown', function (e) {
+                // Ignore if clicked on window controls
+                if (e.target.closest('.window-controls')) return;
+
+                // 🔒 Prevent dragging if maximized
+                const windowId = windowEl.id;
+                if (maximizedWindows.has(windowId)) return;
+
+                isDragging = true;
+                currentWindow = windowEl;
+                const rect = windowEl.getBoundingClientRect();
+                startX = e.clientX;
+                startY = e.clientY;
+                initialLeft = rect.left;
+                initialTop = rect.top;
+                windowEl.style.zIndex = ++zIndexCounter;
+
+                // Switch to pixel-based layout for smooth dragging
+                windowEl.style.position = 'fixed';
+                windowEl.style.left = initialLeft + 'px';
+                windowEl.style.top = initialTop + 'px';
+                windowEl.style.width = rect.width + 'px';
+                windowEl.style.height = rect.height + 'px';
+                windowEl.style.right = 'auto';
+                windowEl.style.bottom = 'auto';
+
+                e.preventDefault();
+            });
+        });
+
+        document.addEventListener('mousemove', function (e) {
+            if (!isDragging || !currentWindow) return;
+
+            const deltaX = e.clientX - startX;
+            const deltaY = e.clientY - startY;
+
+            let newLeft = initialLeft + deltaX;
+            let newTop = initialTop + deltaY;
+
+            // === CONSTRAIN TOP AND BOTTOM ===
+            const titlebarHeight = currentWindow.querySelector('.window-titlebar').offsetHeight;
+            const taskbarHeight = 48; // Taskbar height
+            
+            // Constrain TOP - don't let window go above viewport
+            if (newTop < 0) {
+                newTop = 0;
+            }
+
+            // Constrain BOTTOM - keep titlebar visible above taskbar
+            const maxTop = window.innerHeight - taskbarHeight - titlebarHeight - 5;
+            if (newTop > maxTop) {
+                newTop = maxTop;
+            }
+
+            // Apply position (no clamping on left/right, but constrain top/bottom)
+            currentWindow.style.left = newLeft + 'px';
+            currentWindow.style.top = newTop + 'px';
+        });
+        document.addEventListener('mouseup', function () {
+            isDragging = false;
+            currentWindow = null;
+        });
+        function maximizeWindow(windowId) {
+            const windowEl = document.getElementById(windowId);
+            if (maximizedWindows.has(windowId)) {
+                // Restore
+                windowEl.style.cssText = `
+            top: 5%;
+            left: 5%;
+            right: 5%;
+            bottom: 53px;
+            width: auto;
+            height: auto;
+            position: fixed;
+        `;
+                windowEl.classList.remove('maximized');
+                maximizedWindows.delete(windowId);
+            } else {
+                // Maximize
+                windowEl.style.cssText = `
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 48px;
+            width: auto;
+            height: auto;
+            position: fixed;
+        `;
+                windowEl.classList.add('maximized');
+                maximizedWindows.add(windowId);
+            }
+            windowEl.style.zIndex = ++zIndexCounter;
+        }
+
+        function changeTheme() {
+            const desktopOS = document.querySelector('.desktop-os');
+            currentTheme = currentTheme === 'default' ? 'dark' : 'default';
+            if (currentTheme === 'dark') {
+                desktopOS.style.background = "url('/dark-mode.jpg') no-repeat center center";
+            } else {
+                desktopOS.style.background = "url('/light-mode.jpg') no-repeat center center";
+            }
+            desktopOS.style.backgroundSize = "cover";
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // TASKBAR HOVER PREVIEW - FIXED
+        let previewTimeout;
+        document.addEventListener('mouseover', function (e) {
+            if (e.target.classList.contains('taskbar-app')) {
+                clearTimeout(previewTimeout);
+                previewTimeout = setTimeout(() => {
+                    const windowId = e.target.getAttribute('data-window-id');
+                    if (windowId) {
+                        showWindowPreview(windowId);
+                    }
+                }, 500);
+            }
+        });
+
+        document.addEventListener('mouseout', function (e) {
+            if (e.target.classList.contains('taskbar-app')) {
+                clearTimeout(previewTimeout);
+                document.getElementById('windowPreview').classList.remove('active');
+            }
+        });
+
+        function showWindowPreview(windowId) {
+            const preview = document.getElementById('windowPreview');
+            const icon = document.getElementById('previewIcon');
+            const title = document.getElementById('previewTitle');
+            const subtitle = document.getElementById('previewSubtitle');
+
+            const appData = {
+                'aboutWindow': { icon: '💼', title: 'About Me', subtitle: 'Personal information' },
+                'experienceWindow': { icon: '🚀', title: 'Experience', subtitle: 'Professional journey' },
+                'projectsWindow': { icon: '📱', title: 'Projects', subtitle: 'Featured work' },
+                'skillsWindow': { icon: '⚡', title: 'Skills', subtitle: 'Technical expertise' },
+                'contactWindow': { icon: '📧', title: 'Contact', subtitle: 'Get in touch' }
+            };
+
+            const data = appData[windowId];
+            if (data) {
+                icon.textContent = data.icon;
+                title.textContent = data.title;
+                subtitle.textContent = data.subtitle;
+                preview.classList.add('active');
+            }
+        }
+
+        function openWindow(app) {
+            const windowId = app + 'Window';
+            const windowEl = document.getElementById(windowId);
+
+            if (windowEl && !windowEl.classList.contains('active')) {
+                windowEl.classList.remove('minimized');
+                windowEl.classList.add('active');
+                windowEl.style.zIndex = ++zIndexCounter;
+                activeWindows.add(windowId);
+                updateTaskbar();
+            } else if (windowEl) {
+                windowEl.style.zIndex = ++zIndexCounter;
+            }
+        }
+
+        function closeWindow(windowId) {
+            const windowEl = document.getElementById(windowId);
+            windowEl.classList.remove('active', 'minimized');
+            activeWindows.delete(windowId);
+            maximizedWindows.delete(windowId);
+            updateTaskbar();
+        }
+
+        function minimizeWindow(windowId) {
+            const windowEl = document.getElementById(windowId);
+            windowEl.style.animation = 'windowMinimize 0.4s cubic-bezier(0.4, 0, 1, 1) forwards';
+
+            setTimeout(() => {
+                windowEl.classList.remove('active');
+                windowEl.classList.add('minimized');
+                windowEl.style.animation = '';
+            }, 400);
+        }
+
+
+        function closeAllRecentApps() {
+            // Close all active mobile windows
+            document.querySelectorAll('.mobile-window.active').forEach(win => {
+                win.classList.add('closing');
+                setTimeout(() => {
+                    win.classList.remove('active', 'closing');
+                }, 350);
+            });
+            // Clear recent apps list
+            recentMobileApps = [];
+            // Close the modal
+            closeRecentApps();
+        }
+        // Mobile navigation
+        document.querySelectorAll('.mobile-app').forEach(app => {
+            app.addEventListener('click', function () {
+                const appName = this.dataset.app;
+                const windowId = 'mobile' + appName.charAt(0).toUpperCase() + appName.slice(1);
+                document.getElementById(windowId).classList.add('active');
+
+                // Track recent apps
+                const appData = {
+                    id: windowId,
+                    name: appName.charAt(0).toUpperCase() + appName.slice(1),
+                    icon: this.querySelector('.app-icon').textContent,
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                };
+
+                // Remove if already exists
+                recentMobileApps = recentMobileApps.filter(a => a.id !== windowId);
+                // Add to front
+                recentMobileApps.unshift(appData);
+                // Keep only last 5
+                if (recentMobileApps.length > 5) recentMobileApps.pop();
+            });
+        });
+
+        function updateTaskbar() {
+            const taskbarApps = document.getElementById('taskbarApps');
+            taskbarApps.innerHTML = '';
+
+            activeWindows.forEach(windowId => {
+                const appName = windowId.replace('Window', '');
+                const btn = document.createElement('div');
+                btn.className = 'taskbar-app active';
+                btn.setAttribute('data-window-id', windowId);
+
+                const emoji = {
+                    'about': '💼',
+                    'experience': '🚀',
+                    'projects': '📱',
+                    'skills': '⚡',
+                    'contact': '📧'
+                };
+
+                btn.innerHTML = `${emoji[appName] || ''} ${appName.charAt(0).toUpperCase() + appName.slice(1)}`;
+                btn.onclick = () => {
+                    const win = document.getElementById(windowId);
+                    if (win.classList.contains('minimized')) {
+                        win.classList.remove('minimized');
+                        win.classList.add('active');
+                        win.style.zIndex = ++zIndexCounter;
+                    } else if (win.classList.contains('active')) {
+                        minimizeWindow(windowId);
+                    } else {
+                        win.classList.add('active');
+                        win.style.zIndex = ++zIndexCounter;
+                    }
+                };
+                taskbarApps.appendChild(btn);
+            });
+        }
+
+        // Toolbar functions
+        function printWindow() {
+            window.print();
+        }
+
+        function shareWindow() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'My Portfolio',
+                    url: window.location.href
+                });
+            } else {
+                navigator.clipboard.writeText(window.location.href);
+                alert('Link copied to clipboard!');
+            }
+        }
+        function downloadCV() {
+            const cvUrl = 'CV-PRO.pdf';
+            const link = document.createElement('a');
+            link.href = cvUrl;
+            link.download = 'Anas_En-Naqadi_CV.pdf';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function filterProjects(type) {
+            alert('Filtering: ' + type);
+        }
+
+        function showSkillLevel(level) {
+            alert('Showing: ' + level);
+        }
+
+        function copyContactInfo() {
+            navigator.clipboard.writeText('Email: your.email@example.com');
+            alert('Contact info copied!');
+        }
+
+        function downloadVCard() {
+            alert('VCard download');
+        }
+
+
+        function closeRecentApps() {
+            document.getElementById('recentAppsModal').classList.remove('active');
+        }
+
+        // Mobile navigation buttons functionality
+        document.querySelectorAll('.nav-button').forEach(btn => {
+            btn.addEventListener('click', function (e) {
+                e.stopPropagation();
+
+                if (this.classList.contains('back')) {
+                    const modal = document.getElementById('recentAppsModal');
+                    if (modal.classList.contains('active')) {
+                        closeRecentApps();
+                    } else {
+                        const activeWindow = document.querySelector('.mobile-window.active');
+                        if (activeWindow) {
+                            closeMobileWindow(activeWindow.id);
+                        }
+                    }
+                } else if (this.classList.contains('home')) {
+                    document.querySelectorAll('.mobile-window.active').forEach(win => {
+                        win.classList.remove('active', 'closing');
+                    });
+                    closeRecentApps();
+                } else if (this.classList.contains('recent')) {
+                    const modal = document.getElementById('recentAppsModal');
+                    if (modal.classList.contains('active')) {
+                        closeRecentApps();
+                    } else {
+                        showRecentApps();
+                    }
+                }
+            });
+        });
+        function showRecentApps() {
+            const modal = document.getElementById('recentAppsModal');
+            const list = document.getElementById('recentAppsList');
+
+            list.innerHTML = '';
+
+            if (recentMobileApps.length === 0) {
+                list.innerHTML = '<div class="recent-apps-empty">No recent apps</div>';
+            } else {
+                recentMobileApps.forEach(app => {
+                    const card = document.createElement('div');
+                    card.className = 'recent-app-card';
+                    card.innerHTML = `
+                        <div class="recent-app-icon">${app.icon}</div>
+                        <div class="recent-app-info">
+                            <div class="recent-app-title">${app.name}</div>
+                            <div class="recent-app-subtitle">Last opened: ${app.time}</div>
+                        </div>
+                        <div class="recent-app-close" onclick="removeRecentApp('${app.id}', event)">×</div>
+                    `;
+                    card.addEventListener('click', function () {
+                        document.getElementById(app.id).classList.add('active');
+                        closeRecentApps();
+                    });
+                    list.appendChild(card);
+                });
+            }
+
+            modal.classList.add('active');
+        }
+
+        function closeRecentApps() {
+            document.getElementById('recentAppsModal').classList.remove('active');
+        }
+
+        function removeRecentApp(appId, event) {
+            event.stopPropagation();
+            recentMobileApps = recentMobileApps.filter(a => a.id !== appId);
+            showRecentApps();
+        }
+        function closeMobileWindow(windowId) {
+            const window = document.getElementById(windowId);
+            window.classList.add('closing');
+            setTimeout(() => {
+                window.classList.remove('active', 'closing');
+            }, 350);
+        }
+
+        // Time updates
+        function updateTime() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            const displayHours = hours % 12 || 12;
+
+            // Desktop time with date
+            const desktopDateTime = document.getElementById('desktopDateTime');
+            if (desktopDateTime) {
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                const date = `${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
+                desktopDateTime.textContent = `${displayHours}:${minutes} ${ampm} | ${date}`;
+            }
+
+            // Mobile time
+            const mobileTimeEl = document.getElementById('mobileTime');
+            if (mobileTimeEl) {
+                mobileTimeEl.textContent = `${displayHours}:${minutes}`;
+            }
+
+            // Widget time  
+            const widgetTimeEl = document.getElementById('widgetTime');
+            if (widgetTimeEl) {
+                widgetTimeEl.textContent = `${displayHours}:${minutes}`;
+            }
+
+            // Widget date
+            const widgetDateEl = document.getElementById('widgetDate');
+            if (widgetDateEl) {
+                const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                widgetDateEl.textContent = `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}`;
+            }
+        }
+
+        updateTime();
+        setInterval(updateTime, 1000);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,28 @@
+{
+  "name": "ANAS EN-NAQADI - Full-Stack Developer Portfolio",
+  "short_name": "ANAS Portfolio",
+  "description": "Portfolio of ANAS EN-NAQADI, Full-Stack Developer specializing in Vue.js, React.js, Laravel, Next.js, and Express.js",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a1a2e",
+  "theme_color": "#7877c6",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/images/me.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/me.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["portfolio", "developer", "technology"],
+  "lang": "en",
+  "dir": "ltr"
+}
+

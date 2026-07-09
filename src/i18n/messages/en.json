@@ -1,0 +1,90 @@
+{
+  "common": {
+    "about": "About Me",
+    "experience": "Experience",
+    "projects": "Projects",
+    "skills": "Skills",
+    "contact": "Contact",
+    "downloadCV": "Download CV",
+    "viewGithub": "View GitHub",
+    "scheduleCall": "Schedule Call",
+    "emailMe": "Email Me",
+    "theme": "Theme",
+    "fullscreen": "Fullscreen",
+    "close": "Close",
+    "minimize": "Minimize",
+    "maximize": "Maximize"
+  },
+  "about": {
+    "title": "About Me",
+    "subtitle": "Full-Stack Developer | Vue.js • React.js • Laravel Specialist",
+    "profile": {
+      "title": "Professional Profile",
+      "description": "Full-Stack Developer specialized in Vue.js, React.js, Laravel, Next.js, Express.js with expertise in MySQL and PostgreSQL databases. Proficient in building RESTful APIs, performance optimization, and Agile Scrum project management. Strong skills in UX/UI design, Git version control, Redis caching, and seamless front-end/back-end integration."
+    },
+    "expertise": {
+      "fullstack": {
+        "title": "Full-Stack Expertise",
+        "description": "Modern web & mobile applications with cutting-edge technologies"
+      },
+      "performance": {
+        "title": "Performance Focus",
+        "description": "API optimization, caching strategies & scalable solutions"
+      },
+      "design": {
+        "title": "UX/UI Design",
+        "description": "Beautiful, intuitive interfaces with modern design principles"
+      }
+    }
+  },
+  "experience": {
+    "title": "Professional Journey",
+    "education": {
+      "title": "Education",
+      "degree": "Degree",
+      "period": "Period",
+      "institution": "Institution"
+    }
+  },
+  "projects": {
+    "title": "Featured Projects",
+    "all": "All",
+    "web": "Web",
+    "mobile": "Mobile",
+    "impact": "Impact"
+  },
+  "skills": {
+    "title": "Technical Expertise",
+    "languages": "Languages",
+    "frameworks": "Frameworks",
+    "libraries": "Libraries",
+    "databases": "Databases",
+    "methodologies": "Methodologies",
+    "tools": "Tools",
+    "spoken": "Languages Spoken"
+  },
+  "contact": {
+    "title": "Let's Connect",
+    "description": "I'm always excited to discuss new projects, creative ideas, or opportunities to bring your vision to life. Let's build something amazing together!",
+    "location": {
+      "title": "Location",
+      "available": "Available for remote work worldwide",
+      "timezone": "Timezone"
+    }
+  },
+  "startMenu": {
+    "portfolioSections": "Portfolio Sections",
+    "quickActions": "Quick Actions",
+    "whoIam": "Who I am",
+    "myJourney": "My journey",
+    "myWork": "My work",
+    "techStack": "Tech stack",
+    "getInTouch": "Get in touch",
+    "getResume": "Get resume",
+    "viewRepos": "View repos",
+    "bookMeeting": "Book meeting",
+    "directContact": "Direct contact"
+  }
+}
+
+

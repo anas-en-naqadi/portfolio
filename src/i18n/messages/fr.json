@@ -1,0 +1,90 @@
+{
+  "common": {
+    "about": "À Propos",
+    "experience": "Expérience",
+    "projects": "Projets",
+    "skills": "Compétences",
+    "contact": "Contact",
+    "downloadCV": "Télécharger CV",
+    "viewGithub": "Voir GitHub",
+    "scheduleCall": "Planifier un appel",
+    "emailMe": "M'envoyer un email",
+    "theme": "Thème",
+    "fullscreen": "Plein écran",
+    "close": "Fermer",
+    "minimize": "Réduire",
+    "maximize": "Agrandir"
+  },
+  "about": {
+    "title": "À Propos de Moi",
+    "subtitle": "Développeur Full-Stack | Spécialiste Vue.js • React.js • Laravel",
+    "profile": {
+      "title": "Profil Professionnel",
+      "description": "Développeur Full-Stack spécialisé en Vue.js, React.js, Laravel, Next.js, Express.js avec une expertise dans les bases de données MySQL et PostgreSQL. Compétent dans le développement d'API RESTful, l'optimisation des performances et la gestion de projets Agile Scrum. Solides compétences en design UX/UI, contrôle de version Git, mise en cache Redis et intégration front-end/back-end transparente."
+    },
+    "expertise": {
+      "fullstack": {
+        "title": "Expertise Full-Stack",
+        "description": "Applications web et mobiles modernes avec des technologies de pointe"
+      },
+      "performance": {
+        "title": "Focus Performance",
+        "description": "Optimisation d'API, stratégies de mise en cache et solutions évolutives"
+      },
+      "design": {
+        "title": "Design UX/UI",
+        "description": "Interfaces belles et intuitives avec des principes de design modernes"
+      }
+    }
+  },
+  "experience": {
+    "title": "Parcours Professionnel",
+    "education": {
+      "title": "Formation",
+      "degree": "Diplôme",
+      "period": "Période",
+      "institution": "Établissement"
+    }
+  },
+  "projects": {
+    "title": "Projets en Vedette",
+    "all": "Tous",
+    "web": "Web",
+    "mobile": "Mobile",
+    "impact": "Impact"
+  },
+  "skills": {
+    "title": "Expertise Technique",
+    "languages": "Langages",
+    "frameworks": "Frameworks",
+    "libraries": "Bibliothèques",
+    "databases": "Bases de Données",
+    "methodologies": "Méthodologies",
+    "tools": "Outils",
+    "spoken": "Langues Parlées"
+  },
+  "contact": {
+    "title": "Restons en Contact",
+    "description": "Je suis toujours ravi de discuter de nouveaux projets, d'idées créatives ou d'opportunités pour donner vie à votre vision. Construisons quelque chose d'extraordinaire ensemble !",
+    "location": {
+      "title": "Localisation",
+      "available": "Disponible pour le travail à distance dans le monde entier",
+      "timezone": "Fuseau horaire"
+    }
+  },
+  "startMenu": {
+    "portfolioSections": "Sections du Portfolio",
+    "quickActions": "Actions Rapides",
+    "whoIam": "Qui je suis",
+    "myJourney": "Mon parcours",
+    "myWork": "Mon travail",
+    "techStack": "Stack technique",
+    "getInTouch": "Me contacter",
+    "getResume": "Obtenir CV",
+    "viewRepos": "Voir repos",
+    "bookMeeting": "Réserver une réunion",
+    "directContact": "Contact direct"
+  }
+}
+
+

@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+# Disallow admin or private paths if any
+# Disallow: /admin
+# Disallow: /api
+
+# Sitemap location (Next.js auto-generates this)
+Sitemap: https://yourdomain.com/sitemap.xml
+
+# Crawl-delay (optional, adjust if needed)
+# Crawl-delay: 1
+
+
