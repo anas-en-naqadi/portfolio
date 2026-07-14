@@ -2,8 +2,10 @@
 
 import { motion } from 'framer-motion'
 
+import { ReactNode } from 'react'
+
 interface ToolbarButton {
-  icon: string
+  icon: ReactNode
   label: string
   onClick: () => void
   active?: boolean

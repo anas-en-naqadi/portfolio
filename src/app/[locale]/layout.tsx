@@ -32,11 +32,6 @@ const metadataTranslations: Record<string, {
     description: `Portfolio de ${personalInfo.name}, Développeur Full-Stack spécialisé en Vue.js, React.js, Laravel, Next.js et Express.js. Expert en développement d'applications web modernes, API RESTful et solutions évolutives. Basé à ${personalInfo.location}.`,
     keywords: 'Développeur Full-Stack, Développeur Vue.js, Développeur React.js, Développeur Laravel, Développeur Next.js, Développeur Web, Développeur JavaScript, Développeur TypeScript, Portfolio, ANAS EN-NAQADI, Développeur Maroc, Développeur Frontend, Développeur Backend, Node.js, Express.js, PostgreSQL, MySQL, MongoDB, API RESTful, Développement Web, Ingénieur Logiciel',
   },
-  ar: {
-    title: `${personalInfo.name} - مطور Full-Stack | متخصص في Vue.js • React.js • Laravel`,
-    description: `معرض أعمال ${personalInfo.name}، مطور Full-Stack متخصص في Vue.js و React.js و Laravel و Next.js و Express.js. خبير في بناء تطبيقات الويب الحديثة وواجهات برمجة التطبيقات RESTful والحلول القابلة للتوسع. مقيم في ${personalInfo.location}.`,
-    keywords: 'مطور Full-Stack, مطور Vue.js, مطور React.js, مطور Laravel, مطور Next.js, مطور ويب, مطور JavaScript, مطور TypeScript, معرض أعمال, أنس النقادي, مطور مغربي, مطور Frontend, مطور Backend, Node.js, Express.js, PostgreSQL, MySQL, MongoDB, RESTful API, تطوير الويب, مهندس برمجيات',
-  },
 }
 
 export function generateStaticParams() {
@@ -54,7 +49,6 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     languages: {
       'en': `${baseUrl}/en`,
       'fr': `${baseUrl}/fr`,
-      'ar': `${baseUrl}/ar`,
     },
   }
 

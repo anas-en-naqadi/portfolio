@@ -1,92 +1,228 @@
 'use client'
 
-import { useState } from 'react'
-import { motion } from 'framer-motion'
-import { useTime } from '@/hooks/useTime'
-import WindowPreview from '../shared/WindowPreview'
+import { useRef } from 'react'
+import { motion, useMotionValue, useTransform, AnimatePresence } from 'framer-motion'
+import { getAppleIcon } from '../shared/AppleIcons'
 
-interface TaskbarApp {
+interface DockApp {
   id: string
-  name: string
   icon: string
-  isActive: boolean
+  label: string
+  isOpen?: boolean
+  isMinimized?: boolean
   onClick: () => void
-  previewData?: {
-    icon: string
-    title: string
-    subtitle: string
-  }
 }
 
 interface TaskbarProps {
-  apps: TaskbarApp[]
+  apps: DockApp[]
   onStartClick: () => void
+  theme?: 'dark' | 'light'
+  onDownloadCV?: () => void
+  onGitHub?: () => void
 }
 
-export default function Taskbar({ apps, onStartClick }: TaskbarProps) {
-  const { dateTimeString } = useTime()
-  const [previewApp, setPreviewApp] = useState<TaskbarApp | null>(null)
-  const [previewTimeout, setPreviewTimeout] = useState<NodeJS.Timeout | null>(null)
+const ICON_SIZE = 52
+const MAGNIFICATION = 76
+const MAGNIFY_NEIGHBOR = 64
+const DOCK_GAP = 8
+const DOCK_PADDING = 10
 
-  const handleMouseEnter = (app: TaskbarApp) => {
-    if (previewTimeout) clearTimeout(previewTimeout)
-    const timeout = setTimeout(() => {
-      setPreviewApp(app)
-    }, 500)
-    setPreviewTimeout(timeout)
-  }
+/** Returns magnified scale for an icon at `iconCenter` given mouse X at `mouseX`. */
+function useDockIconScale(mouseX: ReturnType<typeof useMotionValue>, iconCenterX: number) {
+  return useTransform(mouseX, (mx) => {
+    const dist = Math.abs(mx - iconCenterX)
+    if (dist < 40) return MAGNIFICATION
+    if (dist < 80) return MAGNIFY_NEIGHBOR
+    return ICON_SIZE
+  })
+}
 
-  const handleMouseLeave = () => {
-    if (previewTimeout) clearTimeout(previewTimeout)
-    setPreviewApp(null)
-  }
+interface DockIconProps {
+  app: DockApp
+  mouseX: ReturnType<typeof useMotionValue>
+  index: number
+  totalIcons: number
+  isDark: boolean
+}
+
+function DockIcon({ app, mouseX, index, isDark }: DockIconProps) {
+  const iconRef = useRef<HTMLButtonElement>(null)
+  const iconCenterX = DOCK_PADDING + index * (ICON_SIZE + DOCK_GAP) + ICON_SIZE / 2
+
+  const size = useDockIconScale(mouseX, iconCenterX)
 
   return (
-    <>
-      <div className="taskbar">
-        {/* Start Button */}
-        <button
-          onClick={onStartClick}
-          className="start-button"
-          aria-label="Start Menu"
-        >
-          🪟
-        </button>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
+      <motion.button
+        ref={iconRef}
+        onClick={app.onClick}
+        aria-label={app.label}
+        title={app.label}
+        whileTap={{ scale: 0.85, y: 4 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+        style={{
+          width: size,
+          height: size,
+          borderRadius: '22%',
+          border: 'none',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexShrink: 0,
+        }}
+      >
+        {getAppleIcon(app.id, '100%')}
+      </motion.button>
 
-        {/* Taskbar Apps */}
-        <div className="taskbar-apps">
-          {apps.map((app) => (
-            <div
-              key={app.id}
-              onClick={app.onClick}
-              onMouseEnter={() => handleMouseEnter(app)}
-              onMouseLeave={handleMouseLeave}
-              className={`taskbar-app ${app.isActive ? 'active' : ''}`}
-            >
-              {app.icon} {app.name}
-            </div>
-          ))}
-        </div>
-
-        {/* System Tray */}
-        <div className="system-tray">
-          <span className="system-icon">🔊</span>
-          <span className="system-icon">📶</span>
-          <span className="system-icon">🔋</span>
-          <span id="desktopDateTime">{dateTimeString}</span>
-        </div>
-      </div>
-
-      {/* Window Preview */}
-      {previewApp?.previewData && (
-        <WindowPreview
-          isVisible={!!previewApp}
-          icon={previewApp.previewData.icon}
-          title={previewApp.previewData.title}
-          subtitle={previewApp.previewData.subtitle}
-        />
-      )}
-    </>
+      {/* Open indicator dot */}
+      <AnimatePresence>
+        {(app.isOpen || app.isMinimized) && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0 }}
+            style={{
+              width: 4,
+              height: 4,
+              borderRadius: '50%',
+              background: isDark ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.5)',
+              marginTop: 3,
+              flexShrink: 0,
+            }}
+          />
+        )}
+      </AnimatePresence>
+    </div>
   )
 }
 
+const SECTION_APPS: Omit<DockApp, 'onClick' | 'isOpen' | 'isMinimized'>[] = [
+  { id: 'about', icon: '💼', label: 'About' },
+  { id: 'experience', icon: '🚀', label: 'Experience' },
+  { id: 'projects', icon: '📱', label: 'Projects' },
+  { id: 'skills', icon: '⚡', label: 'Skills' },
+  { id: 'contact', icon: '📧', label: 'Contact' },
+]
+
+export default function Taskbar({ apps, onStartClick, theme = 'dark', onDownloadCV, onGitHub }: TaskbarProps) {
+  const mouseX = useMotionValue(-1000)
+  const isDark = theme === 'dark'
+
+  const sectionApps: DockApp[] = SECTION_APPS.map((def) => {
+    const found = apps.find((a) => a.id === def.id)
+    return {
+      ...def,
+      isOpen: found?.isOpen ?? false,
+      isMinimized: found?.isMinimized ?? false,
+      onClick: found?.onClick ?? (() => {}),
+    }
+  })
+
+  const utilApps: DockApp[] = [
+    {
+      id: 'cv',
+      icon: '📥',
+      label: 'Download CV',
+      onClick: onDownloadCV ?? (() => {}),
+    },
+    {
+      id: 'github',
+      icon: '🐙',
+      label: 'GitHub',
+      onClick: onGitHub ?? (() => {}),
+    },
+    {
+      id: 'launchpad',
+      icon: '🚀',
+      label: 'Launchpad',
+      onClick: onStartClick,
+    },
+  ]
+
+  const allDockApps = [...sectionApps, ...utilApps]
+
+  const dockBg = isDark
+    ? 'rgba(28, 28, 30, 0.72)'
+    : 'rgba(255, 255, 255, 0.55)'
+
+  return (
+    <div
+      className="macos-dock-container"
+      style={{
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'flex-end',
+        paddingBottom: 8,
+        zIndex: 9999,
+        pointerEvents: 'none',
+      }}
+    >
+      <motion.div
+        className="macos-dock"
+        initial={{ y: 100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ type: 'spring', stiffness: 260, damping: 22, delay: 0.15 }}
+        onMouseMove={(e) => mouseX.set(e.clientX)}
+        onMouseLeave={() => mouseX.set(-1000)}
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'flex-end',
+          gap: `${DOCK_GAP}px`,
+          padding: `${DOCK_PADDING}px`,
+          background: dockBg,
+          backdropFilter: 'saturate(180%) blur(24px)',
+          WebkitBackdropFilter: 'saturate(180%) blur(24px)',
+          borderRadius: 20,
+          border: isDark
+            ? '1px solid rgba(255,255,255,0.15)'
+            : '1px solid rgba(0,0,0,0.12)',
+          boxShadow: isDark
+            ? '0 8px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08)'
+            : '0 8px 40px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.8)',
+          pointerEvents: 'auto',
+        }}
+      >
+        {sectionApps.map((app, i) => (
+          <DockIcon
+            key={app.id}
+            app={app}
+            mouseX={mouseX}
+            index={i}
+            totalIcons={allDockApps.length}
+            isDark={isDark}
+          />
+        ))}
+
+        {/* Separator */}
+        <div
+          style={{
+            width: 1,
+            height: ICON_SIZE * 0.6,
+            background: isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.15)',
+            borderRadius: 1,
+            alignSelf: 'center',
+            flexShrink: 0,
+          }}
+          aria-hidden="true"
+        />
+
+        {utilApps.map((app, i) => (
+          <DockIcon
+            key={app.id}
+            app={app}
+            mouseX={mouseX}
+            index={sectionApps.length + 1 + i}
+            totalIcons={allDockApps.length}
+            isDark={isDark}
+          />
+        ))}
+      </motion.div>
+    </div>
+  )
+}

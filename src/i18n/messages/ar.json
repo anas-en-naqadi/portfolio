@@ -17,10 +17,10 @@
   },
   "about": {
     "title": "نبذة عني",
-    "subtitle": "مطور Full-Stack | متخصص Vue.js • React.js • Laravel",
+    "subtitle": "مطور ويب شامل (Full-Stack) ومهندس ذكاء اصطناعي (AI Engineer) | متخصص React • Next.js • Vue.js • FastAPI • Laravel",
     "profile": {
       "title": "الملف المهني",
-      "description": "مطور Full-Stack متخصص في Vue.js و React.js و Laravel و Next.js و Express.js مع خبرة في قواعد البيانات MySQL و PostgreSQL. متقن لبناء واجهات برمجة تطبيقات RESTful وتحسين الأداء وإدارة مشاريع Agile Scrum. مهارات قوية في تصميم UX/UI ومراقبة الإصدارات Git والتخزين المؤقت Redis والتكامل السلس بين الواجهة الأمامية والخلفية."
+      "description": "مطور ويب شامل (Full-Stack) ومهندس ذكاء اصطناعي (AI Engineer)، أقوم بتصميم تطبيقات ويب عالية الأداء وحلول ذكية تعتمد على الذكاء الاصطناعي، والتعلم الآلي، والتعلم العميق، ومعالجة اللغات الطبيعية (NLP). متخصّص في React و Next.js و Vue.js و Laravel و Node.js و FastAPI، مع خبرة عملية في نشر المشاريع، ودمج النماذج اللغوية الكبيرة (LLMs)، وتطوير أنظمة الذكاء الاصطناعي. حاليًا في سلك الماستر في الذكاء الاصطناعي، أبني وأتعلم وأنجز."
     },
     "expertise": {
       "fullstack": {
@@ -28,8 +28,8 @@
         "description": "تطبيقات ويب وموبايل حديثة بتقنيات متطورة"
       },
       "performance": {
-        "title": "التركيز على الأداء",
-        "description": "تحسين واجهات برمجة التطبيقات واستراتيجيات التخزين المؤقت وحلول قابلة للتوسع"
+        "title": "حلول الذكاء الاصطناعي",
+        "description": "عملاء مستقلون (Agents)، خطوط أنابيب RAG، نماذج مخصصة وتكاملات"
       },
       "design": {
         "title": "تصميم UX/UI",

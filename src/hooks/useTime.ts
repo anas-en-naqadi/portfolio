@@ -14,19 +14,15 @@ export function useTime() {
   }, [])
 
   const formatTime = (date: Date) => {
-    const hours = date.getHours()
+    const hours = date.getHours().toString().padStart(2, '0')
     const minutes = date.getMinutes().toString().padStart(2, '0')
-    const ampm = hours >= 12 ? 'PM' : 'AM'
-    const displayHours = hours % 12 || 12
-    return `${displayHours}:${minutes} ${ampm}`
+    return `${hours}:${minutes}`
   }
 
   const formatTimeShort = (date: Date) => {
-    const hours = date.getHours()
+    const hours = date.getHours().toString().padStart(2, '0')
     const minutes = date.getMinutes().toString().padStart(2, '0')
-    const ampm = hours >= 12 ? 'PM' : 'AM'
-    const displayHours = hours % 12 || 12
-    return `${displayHours}:${minutes}`
+    return `${hours}:${minutes}`
   }
 
   const formatDate = (date: Date) => {

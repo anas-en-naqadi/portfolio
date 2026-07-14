@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic'
 
 const DesktopOS = dynamic(() => import('../desktop/DesktopOS'), { ssr: false })
 const MobileOS = dynamic(() => import('../mobile/MobileOS'), { ssr: false })
+const TabletOS = dynamic(() => import('../tablet/TabletOS'), { ssr: false })
 
 export default function ResponsiveOS() {
   const [deviceType, setDeviceType] = useState<'desktop' | 'tablet' | 'mobile'>('desktop')
@@ -12,9 +13,9 @@ export default function ResponsiveOS() {
   useEffect(() => {
     const updateDeviceType = () => {
       const width = window.innerWidth
-      if (width < 768) {
+      if (width <= 440) {
         setDeviceType('mobile')
-      } else if (width < 1024) {
+      } else if (width <= 1024) {
         setDeviceType('tablet')
       } else {
         setDeviceType('desktop')
@@ -26,9 +27,12 @@ export default function ResponsiveOS() {
     return () => window.removeEventListener('resize', updateDeviceType)
   }, [])
 
-  // Mobile and tablet both use MobileOS interface
-  if (deviceType === 'mobile' || deviceType === 'tablet') {
+  if (deviceType === 'mobile') {
     return <MobileOS />
+  }
+
+  if (deviceType === 'tablet') {
+    return <TabletOS />
   }
 
   // Desktop uses DesktopOS

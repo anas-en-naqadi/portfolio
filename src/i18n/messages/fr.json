@@ -17,10 +17,10 @@
   },
   "about": {
     "title": "À Propos de Moi",
-    "subtitle": "Développeur Full-Stack | Spécialiste Vue.js • React.js • Laravel",
+    "subtitle": "Développeur Full-Stack & AI Engineer | Spécialiste React • Next.js • Vue.js • FastAPI • Laravel",
     "profile": {
       "title": "Profil Professionnel",
-      "description": "Développeur Full-Stack spécialisé en Vue.js, React.js, Laravel, Next.js, Express.js avec une expertise dans les bases de données MySQL et PostgreSQL. Compétent dans le développement d'API RESTful, l'optimisation des performances et la gestion de projets Agile Scrum. Solides compétences en design UX/UI, contrôle de version Git, mise en cache Redis et intégration front-end/back-end transparente."
+      "description": "Développeur Full-Stack & AI Engineer, je conçois des applications web performantes et des solutions intelligentes basées sur l'IA, le Machine Learning, le Deep Learning et le NLP. Spécialisé en React, Next.js, Vue.js, Laravel, Node.js et FastAPI, avec une expérience concrète en déploiement production, intégration de LLMs et développement de systèmes IA. Actuellement en Master IA, je construis, j'apprends et je livre."
     },
     "expertise": {
       "fullstack": {
@@ -28,8 +28,8 @@
         "description": "Applications web et mobiles modernes avec des technologies de pointe"
       },
       "performance": {
-        "title": "Focus Performance",
-        "description": "Optimisation d'API, stratégies de mise en cache et solutions évolutives"
+        "title": "Solutions d'IA",
+        "description": "Agents autonomes, pipelines RAG, modèles personnalisés & intégrations"
       },
       "design": {
         "title": "Design UX/UI",
