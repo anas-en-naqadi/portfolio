@@ -19,9 +19,8 @@ interface IOSDockProps {
   apps?: DockApp[]
 }
 
-export default function IOSDock({ onOpenApp, theme = 'dark', apps }: IOSDockProps) {
+export default function IOSDock({ onOpenApp, theme: _theme = 'dark', apps }: IOSDockProps) {
   const t = useTranslations()
-  const isDark = theme === 'dark'
   const defaultDockApps: DockApp[] = [
     { id: 'about', label: t('common.about') },
     { id: 'projects', label: t('common.projects') },
@@ -43,17 +42,12 @@ export default function IOSDock({ onOpenApp, theme = 'dark', apps }: IOSDockProp
       <div
         className="flex items-center gap-4 px-6 py-3 rounded-[28px]"
         style={{
-          background: isDark
-            ? 'rgba(255, 255, 255, 0.15)'
-            : 'rgba(255, 255, 255, 0.45)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          border: isDark
-            ? '1px solid rgba(255, 255, 255, 0.15)'
-            : '1px solid rgba(255, 255, 255, 0.4)',
-          boxShadow: isDark
-            ? '0 10px 30px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
-            : '0 10px 30px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
+          background: 'rgba(255, 255, 255, 0.15)',
+          backdropFilter: 'blur(22px) saturate(160%)',
+          WebkitBackdropFilter: 'blur(22px) saturate(160%)',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          boxShadow:
+            '0 10px 30px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
         }}
       >
         {displayApps.map((app, index) => (

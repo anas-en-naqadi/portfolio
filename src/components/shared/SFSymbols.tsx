@@ -183,6 +183,15 @@ export function ArrowUpRightSymbol({ className = 'w-4 h-4', size }: SFSymbolProp
   )
 }
 
+export function HouseSymbol({ className = 'w-4 h-4', size }: SFSymbolProps) {
+  return (
+    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M3.5 10.5L12 3.5l8.5 7" />
+      <path d="M5.5 9v10a1.5 1.5 0 001.5 1.5h3.5v-5.5a1.5 1.5 0 013 0v5.5H17a1.5 1.5 0 001.5-1.5V9" />
+    </svg>
+  )
+}
+
 /** Apple Weather / Maps location arrow glyph (SF location.fill). */
 export function LocationArrowSymbol({ className = 'w-3 h-3', size }: SFSymbolProps) {
   return (
@@ -220,6 +229,25 @@ export function ChevronRightSymbol({ className = 'w-3.5 h-3.5', size }: SFSymbol
   return (
     <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d="M9 5.5l6.5 6.5L9 18.5" />
+    </svg>
+  )
+}
+
+export function ChevronLeftSymbol({ className = 'w-3.5 h-3.5', size }: SFSymbolProps) {
+  return (
+    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M15 5.5L8.5 12l6.5 6.5" />
+    </svg>
+  )
+}
+
+/** Apple SF symbol: sidebar.left */
+export function SidebarLeftSymbol({ className = 'w-4 h-4', size }: SFSymbolProps) {
+  return (
+    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="3" y="4.5" width="18" height="15" rx="3" />
+      <path d="M9 4.5v15" />
+      <path d="M5.5 8.5h1.5M5.5 11.5h1.5M5.5 14.5h1.5" />
     </svg>
   )
 }
@@ -456,6 +484,77 @@ export function LinkedInGlyphSymbol({ className = 'w-4 h-4', size }: SFSymbolPro
   return (
     <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
       <path d="M19 3a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h14m-.5 15.5v-5.3a3.26 3.26 0 00-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 011.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 001.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 00-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z" />
+    </svg>
+  )
+}
+
+export function MaximizeDiagonalGlyph({ className = 'w-2 h-2', size }: SFSymbolProps) {
+  return (
+    <svg width={size} height={size} className={className} viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">
+      <path d="M2.2 2.2h4.2L2.2 6.4V2.2zm7.6 7.6H5.6l4.2-4.2v4.2z" />
+    </svg>
+  )
+}
+
+export function PhotoSymbol({ className = 'w-5 h-5', size }: SFSymbolProps) {
+  return (
+    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.85" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="3" y="4.5" width="18" height="15" rx="2.8" />
+      <circle cx="8.5" cy="9.5" r="1.4" />
+      <path d="M4.2 17.5l4.6-4.6a1.4 1.4 0 012 0l2.6 2.6 2-2a1.4 1.4 0 012 0l2.4 2.4" />
+    </svg>
+  )
+}
+
+export function KeyboardSymbol({ className = 'w-5 h-5', size }: SFSymbolProps) {
+  return (
+    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.85" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="2.5" y="5.5" width="19" height="13" rx="2.5" />
+      <path d="M6 9.5h1M9.5 9.5h1M13 9.5h1M16.5 9.5h1.5M6 12.5h1.5M10 12.5h1M13.5 12.5h1M17 12.5h1M7.5 15.5h9" />
+    </svg>
+  )
+}
+
+export function InfoCircleSymbol({ className = 'w-5 h-5', size }: SFSymbolProps) {
+  return (
+    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.85" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 11.2v5" />
+      <circle cx="12" cy="8" r="0.9" fill="currentColor" stroke="none" />
+    </svg>
+  )
+}
+
+export function FolderSymbol({ className = 'w-5 h-5', size }: SFSymbolProps) {
+  return (
+    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.85" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M3 6.5a2 2 0 012-2h4.2l1.8 2H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2v-11z" />
+    </svg>
+  )
+}
+
+export function TrashSymbol({ className = 'w-5 h-5', size }: SFSymbolProps) {
+  return (
+    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.85" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M4.5 6.5h15M9.5 6.5V4.8a1.3 1.3 0 011.3-1.3h2.4a1.3 1.3 0 011.3 1.3v1.7M6.8 6.5l.8 12.2a1.8 1.8 0 001.8 1.7h5.2a1.8 1.8 0 001.8-1.7l.8-12.2" />
+      <path d="M10 10.5v5.8M14 10.5v5.8" />
+    </svg>
+  )
+}
+
+export function TerminalSymbol({ className = 'w-5 h-5', size }: SFSymbolProps) {
+  return (
+    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.85" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="3" y="4.5" width="18" height="15" rx="2.5" />
+      <path d="M7.2 9.5l3 2.5-3 2.5M12.5 14.5h4.2" />
+    </svg>
+  )
+}
+
+export function CommandSymbol({ className = 'w-4 h-4', size }: SFSymbolProps) {
+  return (
+    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.85" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M18 3a3 3 0 00-3 3v12a3 3 0 003 3 3 3 0 003-3 3 3 0 00-3-3H6a3 3 0 00-3 3 3 3 0 003 3 3 3 0 003-3V6a3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3h12a3 3 0 003-3 3 3 0 00-3-3z" />
     </svg>
   )
 }

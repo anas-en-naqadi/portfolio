@@ -1,24 +1,36 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import Image from 'next/image'
-import DesktopIcon from './DesktopIcon'
-import Window from './Window'
-import Taskbar from './Taskbar'
-import StartMenu from './StartMenu'
-import MacOSMenuBar from './MacOSMenuBar'
-import AboutWindow from './windows/AboutWindow'
-import ExperienceWindow from './windows/ExperienceWindow'
-import ProjectsWindow from './windows/ProjectsWindow'
-import SkillsWindow from './windows/SkillsWindow'
-import ContactWindow from './windows/ContactWindow'
-import { personalInfo, socialLinks } from '@/lib/data'
-import { getAppleIcon } from '@/components/shared/AppleIcons'
-import { useTranslations } from 'next-intl'
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react'
+import { useTranslations, useLocale } from 'next-intl'
+import { AnimatePresence, motion } from 'framer-motion'
 import { useTheme } from '@/hooks/useTheme'
-import clsx from 'clsx'
-
-type WindowType = 'about' | 'experience' | 'projects' | 'skills' | 'contact'
+import { useRouter, usePathname } from '@/i18n/routing'
+import { getLocalizedPortfolioData, socialLinks } from '@/lib/data'
+import { getAppleIcon } from '@/components/shared/AppleIcons'
+import {
+  PersonSymbol,
+  SearchSymbol,
+  PhotoSymbol,
+  MoonSymbol,
+  SunSymbol,
+  GearSymbol,
+  DownloadSymbol,
+  TrashSymbol,
+  CopySymbol,
+} from '@/components/shared/SFSymbols'
+import { Window } from './Window'
+import { Taskbar, type DockApp } from './Taskbar'
+import { DesktopIcon } from './DesktopIcon'
+import { StartMenu } from './StartMenu'
+import { MacOSMenuBar, type WallpaperPresetId, type OpenWindowEntry } from './MacOSMenuBar'
+import { MacToast, type MacToastData } from './MacToast'
+import { SpotlightSearch, type DesktopWindowId } from './SpotlightSearch'
+import { AboutWindow } from './windows/AboutWindow'
+import { ExperienceWindow } from './windows/ExperienceWindow'
+import { ProjectsWindow } from './windows/ProjectsWindow'
+import { SkillsWindow } from './windows/SkillsWindow'
+import { ContactWindow } from './windows/ContactWindow'
+import { SettingsWindow } from './windows/SettingsWindow'
 
 interface WindowState {
   isOpen: boolean
@@ -26,285 +38,644 @@ interface WindowState {
   zIndex: number
 }
 
-const MENU_BAR_HEIGHT = 28
-const DOCK_HEIGHT = 80
+const WALLPAPER_BACKDROPS: Record<WallpaperPresetId, React.CSSProperties> = {
+  default: {
+    backgroundImage: 'url(/images/desktop-bg.png)',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+  },
+  aurora: {
+    background:
+      'radial-gradient(circle at 20% 25%, rgba(16, 185, 129, 0.45) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(37, 99, 235, 0.5) 0%, transparent 55%), linear-gradient(135deg, #04131c 0%, #091e2c 100%)',
+  },
+  midnight: {
+    background:
+      'radial-gradient(circle at 75% 20%, rgba(79, 70, 229, 0.4) 0%, transparent 48%), radial-gradient(circle at 25% 80%, rgba(30, 27, 75, 0.65) 0%, transparent 55%), linear-gradient(145deg, #05070e 0%, #0d1224 100%)',
+  },
+  horizon: {
+    background:
+      'radial-gradient(circle at 22% 28%, rgba(234, 88, 12, 0.42) 0%, transparent 48%), radial-gradient(circle at 78% 72%, rgba(79, 70, 229, 0.48) 0%, transparent 52%), linear-gradient(135deg, #160c1f 0%, #0c1026 100%)',
+  },
+}
 
-export default function DesktopOS() {
-  const t = useTranslations()
+const WALLPAPER_ORDER: WallpaperPresetId[] = ['default', 'aurora', 'midnight', 'horizon']
+
+const WINDOW_IDS: DesktopWindowId[] = [
+  'about',
+  'experience',
+  'projects',
+  'skills',
+  'contact',
+  'settings',
+]
+
+export function DesktopOS() {
+  const tCommon = useTranslations('common')
+  const tMenu = useTranslations('desktop.menuBar')
+  const tCtx = useTranslations('desktop.contextMenu')
+  const tToast = useTranslations('desktop.toast')
+  const tDock = useTranslations('desktop.dock')
+  const tWp = useTranslations('desktop.wallpapers')
+
+  const locale = useLocale()
+  const router = useRouter()
+  const pathname = usePathname()
   const { theme, toggleTheme } = useTheme()
   const isDark = theme === 'dark'
 
-  const [openWindows, setOpenWindows] = useState<Record<WindowType, WindowState>>({
+  const portfolio = useMemo(() => getLocalizedPortfolioData(locale), [locale])
+
+  const [openWindows, setOpenWindows] = useState<Record<DesktopWindowId, WindowState>>({
     about: { isOpen: false, isMinimized: false, zIndex: 100 },
     experience: { isOpen: false, isMinimized: false, zIndex: 100 },
     projects: { isOpen: false, isMinimized: false, zIndex: 100 },
     skills: { isOpen: false, isMinimized: false, zIndex: 100 },
     contact: { isOpen: false, isMinimized: false, zIndex: 100 },
+    settings: { isOpen: false, isMinimized: false, zIndex: 100 },
   })
-  const [isLaunchpadOpen, setIsLaunchpadOpen] = useState(false)
-  const [nextZIndex, setNextZIndex] = useState(101)
-  const [maximizedWindows, setMaximizedWindows] = useState<Set<WindowType>>(new Set())
+  const [maximizedWindows, setMaximizedWindows] = useState<Record<DesktopWindowId, boolean>>({
+    about: false,
+    experience: false,
+    projects: false,
+    skills: false,
+    contact: false,
+    settings: false,
+  })
+  const [nextZIndex, setNextZIndex] = useState(105)
+  const [selectedDesktopIcon, setSelectedDesktopIcon] = useState<DesktopWindowId | null>(null)
+  const [isStartMenuOpen, setIsStartMenuOpen] = useState(false)
+  const [isSpotlightOpen, setIsSpotlightOpen] = useState(false)
+  const [wallpaper, setWallpaper] = useState<WallpaperPresetId>('default')
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null)
+  const [toast, setToast] = useState<MacToastData | null>(null)
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const showToast = useCallback(
+    (title: string, subtitle?: string, icon?: React.ReactNode) => {
+      if (toastTimerRef.current) clearTimeout(toastTimerRef.current)
+      setToast({ id: Date.now(), title, subtitle, icon })
+      toastTimerRef.current = setTimeout(() => {
+        setToast(null)
+      }, 3200)
+    },
+    []
+  )
 
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as HTMLElement
-      if (!target.closest('.start-menu') && !target.closest('.start-button')) {
-        setIsLaunchpadOpen(false)
+    return () => {
+      if (toastTimerRef.current) clearTimeout(toastTimerRef.current)
+    }
+  }, [])
+
+  // Restore saved wallpaper preference cleanly
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem('macos-wallpaper') as WallpaperPresetId | null
+      if (saved && WALLPAPER_ORDER.includes(saved)) {
+        setWallpaper(saved)
+      }
+    } catch {
+      // Ignore storage access failures in restricted browsing modes
+    }
+  }, [])
+
+  const handleSelectWallpaper = useCallback(
+    (wp: WallpaperPresetId) => {
+      setWallpaper(wp)
+      try {
+        window.localStorage.setItem('macos-wallpaper', wp)
+      } catch {
+        // Ignore storage write failures
+      }
+      showToast(tToast('wallpaperTitle'), tWp(wp), <PhotoSymbol className="w-4 h-4" />)
+    },
+    [showToast, tToast, tWp]
+  )
+
+  const cycleWallpaper = useCallback(() => {
+    const idx = WALLPAPER_ORDER.indexOf(wallpaper)
+    const next = WALLPAPER_ORDER[(idx + 1) % WALLPAPER_ORDER.length]
+    handleSelectWallpaper(next)
+  }, [wallpaper, handleSelectWallpaper])
+
+  const switchLanguage = useCallback(() => {
+    const nextLocale = locale === 'fr' ? 'en' : 'fr'
+    router.replace(pathname, { locale: nextLocale })
+  }, [locale, pathname, router])
+
+  // Compute frontmost active visible window
+  const activeWindowId = useMemo<DesktopWindowId | null>(() => {
+    let highestZ = -1
+    let topId: DesktopWindowId | null = null
+    for (const id of WINDOW_IDS) {
+      const state = openWindows[id]
+      if (state.isOpen && !state.isMinimized && state.zIndex > highestZ) {
+        highestZ = state.zIndex
+        topId = id
       }
     }
-    if (isLaunchpadOpen) {
-      document.addEventListener('click', handleClickOutside)
-      return () => document.removeEventListener('click', handleClickOutside)
-    }
-  }, [isLaunchpadOpen])
+    return topId
+  }, [openWindows])
 
-  const desktopIcons: { id: WindowType; image?: string; label: string }[] = [
-    { id: 'about', image: personalInfo.profileImage, label: t('common.about') },
-    { id: 'experience', label: t('common.experience') },
-    { id: 'projects', label: t('common.projects') },
-    { id: 'skills', label: t('common.skills') },
-    { id: 'contact', label: t('common.contact') },
-  ]
+  const bringToFront = useCallback(
+    (id: DesktopWindowId) => {
+      setOpenWindows((prev) => ({
+        ...prev,
+        [id]: { isOpen: true, isMinimized: false, zIndex: nextZIndex },
+      }))
+      setNextZIndex((z) => z + 1)
+    },
+    [nextZIndex]
+  )
 
-  const openWindow = (windowId: WindowType) => {
+  const openWindow = useCallback(
+    (id: DesktopWindowId) => {
+      setContextMenu(null)
+      setIsStartMenuOpen(false)
+      setIsSpotlightOpen(false)
+      bringToFront(id)
+    },
+    [bringToFront]
+  )
+
+  const closeWindow = useCallback((id: DesktopWindowId) => {
     setOpenWindows((prev) => ({
       ...prev,
-      [windowId]: {
-        isOpen: true,
-        isMinimized: false,
-        zIndex: nextZIndex,
-      },
+      [id]: { ...prev[id], isOpen: false, isMinimized: false },
     }))
-    setNextZIndex((prev) => prev + 1)
-    setIsLaunchpadOpen(false)
-  }
+    setMaximizedWindows((prev) => ({ ...prev, [id]: false }))
+  }, [])
 
-  const closeWindow = (windowId: WindowType) => {
+  const minimizeWindow = useCallback((id: DesktopWindowId) => {
     setOpenWindows((prev) => ({
       ...prev,
-      [windowId]: { ...prev[windowId], isOpen: false, isMinimized: false },
+      [id]: { ...prev[id], isMinimized: true },
     }))
-    setMaximizedWindows((prev) => {
-      const newSet = new Set(prev)
-      newSet.delete(windowId)
-      return newSet
-    })
-  }
+  }, [])
 
-  const minimizeWindow = (windowId: WindowType) => {
-    setOpenWindows((prev) => ({
-      ...prev,
-      [windowId]: { ...prev[windowId], isOpen: false, isMinimized: true },
-    }))
-  }
+  const toggleMaximize = useCallback((id: DesktopWindowId) => {
+    setMaximizedWindows((prev) => ({ ...prev, [id]: !prev[id] }))
+  }, [])
 
-  const bringToFront = (windowId: WindowType) => {
-    setOpenWindows((prev) => ({
-      ...prev,
-      [windowId]: { ...prev[windowId], zIndex: nextZIndex },
-    }))
-    setNextZIndex((prev) => prev + 1)
-  }
-
-  const handleMaximize = (windowId: WindowType) => {
-    setMaximizedWindows((prev) => {
-      const newSet = new Set(prev)
-      if (newSet.has(windowId)) {
-        newSet.delete(windowId)
-      } else {
-        newSet.add(windowId)
+  const closeAllWindows = useCallback(() => {
+    setOpenWindows((prev) => {
+      const updated = { ...prev }
+      for (const id of WINDOW_IDS) {
+        updated[id] = { ...updated[id], isOpen: false, isMinimized: false }
       }
-      return newSet
+      return updated
     })
-    bringToFront(windowId)
-  }
+    setMaximizedWindows({
+      about: false,
+      experience: false,
+      projects: false,
+      skills: false,
+      contact: false,
+      settings: false,
+    })
+  }, [])
 
-  const downloadCV = () => {
-    const link = document.createElement('a')
-    link.href = personalInfo.cvPath
-    link.download = 'Anas_En-Naqadi_CV.pdf'
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-  }
-
-  const dockApps = (Object.keys(openWindows) as WindowType[]).map((id) => {
-    const state = openWindows[id]
-    return {
-      id,
-      label: id.charAt(0).toUpperCase() + id.slice(1),
-      isOpen: state.isOpen,
-      isMinimized: state.isMinimized,
-      onClick: () => {
-        if (state.isOpen) {
+  const handleDockAppClick = useCallback(
+    (id: DesktopWindowId) => {
+      const win = openWindows[id]
+      if (win.isOpen && !win.isMinimized) {
+        if (activeWindowId === id) {
           minimizeWindow(id)
-        } else if (state.isMinimized) {
-          setOpenWindows((prev) => ({
-            ...prev,
-            [id]: { ...prev[id], isOpen: true, isMinimized: false, zIndex: nextZIndex },
-          }))
-          setNextZIndex((prev) => prev + 1)
         } else {
-          openWindow(id)
+          bringToFront(id)
         }
-      },
+      } else {
+        openWindow(id)
+      }
+    },
+    [openWindows, activeWindowId, minimizeWindow, bringToFront, openWindow]
+  )
+
+  const handleDownloadCV = useCallback(() => {
+    showToast(tToast('downloadTitle'), tToast('downloadBody'), <DownloadSymbol className="w-4 h-4" />)
+    window.open(portfolio.personalInfo.cvPath, '_blank', 'noopener,noreferrer')
+  }, [portfolio.personalInfo.cvPath, showToast, tToast])
+
+  const copyContactValue = useCallback(
+    async (value: string, subtitle: string) => {
+      try {
+        await navigator.clipboard.writeText(value)
+        showToast(tToast('copiedTitle'), subtitle, <CopySymbol className="w-4 h-4" />)
+      } catch {
+        showToast(tToast('copiedTitle'), value, <CopySymbol className="w-4 h-4" />)
+      }
+    },
+    [showToast, tToast]
+  )
+
+  // Open About window automatically on initial desktop mount
+  useEffect(() => {
+    openWindow('about')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Keyboard shortcuts (Spotlight ⌘K / ⌘Space, Close ⌘W, Escape)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && (e.key.toLowerCase() === 'k' || e.code === 'Space')) {
+        e.preventDefault()
+        setContextMenu(null)
+        setIsStartMenuOpen(false)
+        setIsSpotlightOpen((prev) => !prev)
+        return
+      }
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'w' && activeWindowId) {
+        e.preventDefault()
+        closeWindow(activeWindowId)
+        return
+      }
+      if (e.key === 'Escape') {
+        setContextMenu(null)
+        setIsSpotlightOpen(false)
+        setIsStartMenuOpen(false)
+      }
     }
-  })
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [activeWindowId, closeWindow])
 
-  const windowTitles: Record<WindowType, string> = {
-    about: t('common.about'),
-    experience: t('common.experience'),
-    projects: t('common.projects'),
-    skills: t('common.skills'),
-    contact: t('common.contact'),
+  const windowTitles: Record<DesktopWindowId, string> = useMemo(
+    () => ({
+      about: tCommon('about'),
+      experience: tCommon('experience'),
+      projects: tCommon('projects'),
+      skills: tCommon('skills'),
+      contact: tCommon('contact'),
+      settings: tCommon('settings'),
+    }),
+    [tCommon]
+  )
+
+  const openWindowsList: OpenWindowEntry[] = useMemo(
+    () =>
+      WINDOW_IDS.filter((id) => openWindows[id].isOpen).map((id) => ({
+        id,
+        label: windowTitles[id],
+        isMinimized: openWindows[id].isMinimized,
+        isActive: activeWindowId === id,
+      })),
+    [openWindows, windowTitles, activeWindowId]
+  )
+
+  const dockApps: DockApp[] = useMemo(
+    () =>
+      WINDOW_IDS.map((id) => ({
+        id,
+        label: windowTitles[id],
+        isOpen: openWindows[id].isOpen,
+        isActive: activeWindowId === id,
+        onClick: () => handleDockAppClick(id),
+      })),
+    [windowTitles, openWindows, activeWindowId, handleDockAppClick]
+  )
+
+  const desktopIcons: { id: DesktopWindowId; label: string }[] = useMemo(
+    () =>
+      WINDOW_IDS.map((id) => ({
+        id,
+        label: windowTitles[id],
+      })),
+    [windowTitles]
+  )
+
+  const handleDesktopContextMenu = (e: React.MouseEvent<HTMLDivElement>) => {
+    // Only open desktop context menu when right-clicking wallpaper surface
+    if ((e.target as HTMLElement).closest('.window, .macos-dock, .macos-menu-bar')) return
+    e.preventDefault()
+    setSelectedDesktopIcon(null)
+    const menuW = 224
+    const menuH = 236
+    setContextMenu({
+      x: Math.min(e.clientX, window.innerWidth - menuW - 12),
+      y: Math.min(Math.max(e.clientY, 34), window.innerHeight - menuH - 96),
+    })
   }
-
-  const windowIcons: Record<WindowType, React.ReactNode> = {
-    about: getAppleIcon('about', 16),
-    experience: getAppleIcon('experience', 16),
-    projects: getAppleIcon('projects', 16),
-    skills: getAppleIcon('skills', 16),
-    contact: getAppleIcon('contact', 16),
-  }
-
-  const windowComponents: Record<WindowType, React.ReactNode> = {
-    about: <AboutWindow />,
-    experience: <ExperienceWindow />,
-    projects: <ProjectsWindow />,
-    skills: <SkillsWindow />,
-    contact: <ContactWindow />,
-  }
-
-  const getInitialPosition = (windowId: WindowType): { x: number; y: number } => {
-    const index = (Object.keys(openWindows) as WindowType[]).indexOf(windowId)
-    return {
-      x: 120 + index * 30,
-      y: MENU_BAR_HEIGHT + 20 + index * 30,
-    }
-  }
-
-  const wallpaper = '/images/desktop-bg.png'
-  const fallbackGradient = isDark
-    ? 'radial-gradient(circle at 80% 20%, rgba(120, 50, 150, 0.35) 0%, transparent 55%), radial-gradient(circle at 20% 80%, rgba(50, 80, 180, 0.35) 0%, transparent 60%)'
-    : 'radial-gradient(circle at 80% 20%, rgba(255, 180, 200, 0.45) 0%, transparent 50%), radial-gradient(circle at 20% 80%, rgba(100, 180, 255, 0.4) 0%, transparent 60%)'
-
-  // Find currently active window (highest zIndex)
-  const activeWindowId = (Object.keys(openWindows) as WindowType[])
-    .filter((id) => openWindows[id].isOpen && !openWindows[id].isMinimized)
-    .sort((a, b) => openWindows[b].zIndex - openWindows[a].zIndex)[0]
-
-  const activeAppTitle = activeWindowId ? windowTitles[activeWindowId] : 'Finder'
 
   return (
     <div
-      className={clsx('desktop-os', theme)}
-      style={{
-        width: '100vw',
-        height: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
-        position: 'relative',
-        backgroundColor: '#121024',
-        backgroundImage: `url('${wallpaper}'), ${fallbackGradient}`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
+      className={`desktop-os fixed inset-0 overflow-hidden select-none ${
+        isDark ? 'dark' : 'light'
+      }`}
+      onMouseDown={() => {
+        setSelectedDesktopIcon(null)
+        setContextMenu(null)
       }}
+      onContextMenu={handleDesktopContextMenu}
     >
-      {/* Soft contrast scrim over wallpaper (consistent across light & dark modes) */}
+      {/* Clean Wallpaper Backdrop (No Blur on Default Desktop Wallpaper) */}
       <div
+        className="absolute inset-0 transition-all duration-500"
+        style={WALLPAPER_BACKDROPS[wallpaper]}
         aria-hidden="true"
-        className="absolute inset-0 z-0 pointer-events-none"
-        style={{
-          background:
-            'linear-gradient(to bottom, rgba(10, 12, 24, 0.14) 0%, rgba(10, 12, 24, 0.04) 45%, rgba(10, 12, 24, 0.25) 100%)',
-        }}
       />
 
-      {/* macOS Menu Bar — pinned top, z-50 */}
-      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50000 }}>
-        <MacOSMenuBar theme={theme} toggleTheme={toggleTheme} activeAppTitle={activeAppTitle} />
-      </div>
-
-      {/* Desktop area — below menu bar, above dock */}
+      {/* Consistent Dark Contrast Scrim in Both Light & Dark Modes (No Blur) */}
       <div
+        className="absolute inset-0 pointer-events-none"
         style={{
-          position: 'fixed',
-          top: MENU_BAR_HEIGHT,
-          left: 0,
-          right: 0,
-          bottom: DOCK_HEIGHT,
-          overflow: 'hidden',
+          background:
+            'linear-gradient(180deg, rgba(0, 0, 0, 0.14) 0%, rgba(0, 0, 0, 0.04) 48%, rgba(0, 0, 0, 0.25) 100%)',
         }}
+        aria-hidden="true"
+      />
+
+      {/* Top macOS Menu Bar */}
+      <MacOSMenuBar
+        activeApp={activeWindowId ? windowTitles[activeWindowId] : tMenu('finder')}
+        activeWindowId={activeWindowId}
+        openWindowsList={openWindowsList}
+        theme={theme}
+        wallpaper={wallpaper}
+        onToggleTheme={toggleTheme}
+        onSwitchLanguage={switchLanguage}
+        onSelectWallpaper={handleSelectWallpaper}
+        onDownloadCV={handleDownloadCV}
+        onOpenApp={openWindow}
+        onFocusWindow={openWindow}
+        onOpenLaunchpad={() => setIsStartMenuOpen((prev) => !prev)}
+        onOpenSpotlight={() => setIsSpotlightOpen(true)}
+        onMinimizeActive={() => activeWindowId && minimizeWindow(activeWindowId)}
+        onMaximizeActive={() => activeWindowId && toggleMaximize(activeWindowId)}
+        onCloseActive={() => activeWindowId && closeWindow(activeWindowId)}
+        onCloseAll={closeAllWindows}
+        onCopyEmail={() =>
+          copyContactValue(portfolio.personalInfo.email, tToast('copiedEmail'))
+        }
+        onCopyPhone={() =>
+          copyContactValue(portfolio.personalInfo.phone, tToast('copiedPhone'))
+        }
+      />
+
+      {/* Top-Right Desktop Icons (Authentic macOS Alignment) */}
+      <div
+        className="absolute top-[42px] right-4 z-10 flex flex-col gap-2 items-end"
+        aria-label="Desktop Icons"
       >
-        {/* Desktop Icons — left column */}
-        <div
-          className="desktop-icons"
-          style={{
-            position: 'absolute',
-            top: 16,
-            left: 16,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '20px',
-          }}
-        >
-          {desktopIcons.map((icon) => (
-            <DesktopIcon
-              key={icon.id}
-              id={icon.id}
-              image={icon.image}
-              label={icon.label}
-              onClick={() => openWindow(icon.id)}
-              isSelected={openWindows[icon.id]?.isOpen}
-            />
-          ))}
-        </div>
+        {desktopIcons.map((item) => (
+          <DesktopIcon
+            key={item.id}
+            icon={getAppleIcon(item.id, 52)}
+            label={item.label}
+            selected={selectedDesktopIcon === item.id}
+            onClick={() => setSelectedDesktopIcon(item.id)}
+            onDoubleClick={() => openWindow(item.id)}
+          />
+        ))}
       </div>
 
-      {/* Windows */}
-      {(Object.keys(openWindows) as WindowType[]).map((windowId) => {
-        const windowState = openWindows[windowId]
-        return (
-          <Window
-            key={windowId}
-            id={`${windowId}Window`}
-            title={windowTitles[windowId]}
-            icon={windowIcons[windowId]}
-            isOpen={windowState.isOpen && !windowState.isMinimized}
-            onClose={() => closeWindow(windowId)}
-            onMinimize={() => minimizeWindow(windowId)}
-            onMaximize={() => handleMaximize(windowId)}
-            zIndex={windowState.zIndex}
-            isMaximized={maximizedWindows.has(windowId)}
-            initialPosition={getInitialPosition(windowId)}
-            theme={theme}
+      {/* macOS App Windows */}
+      <Window
+        id="window-about"
+        title={windowTitles.about}
+        icon={<PersonSymbol className="w-4 h-4 text-[#007AFF]" />}
+        isOpen={openWindows.about.isOpen && !openWindows.about.isMinimized}
+        isActive={activeWindowId === 'about'}
+        onFocus={() => bringToFront('about')}
+        onClose={() => closeWindow('about')}
+        onMinimize={() => minimizeWindow('about')}
+        onMaximize={() => toggleMaximize('about')}
+        isMaximized={maximizedWindows.about}
+        initialPosition={{ x: 90, y: 58 }}
+        zIndex={openWindows.about.zIndex}
+        theme={theme}
+      >
+        <AboutWindow theme={theme} onNotify={(t, s) => showToast(t, s)} />
+      </Window>
+
+      <Window
+        id="window-experience"
+        title={windowTitles.experience}
+        icon={getAppleIcon('experience', 16)}
+        isOpen={openWindows.experience.isOpen && !openWindows.experience.isMinimized}
+        isActive={activeWindowId === 'experience'}
+        onFocus={() => bringToFront('experience')}
+        onClose={() => closeWindow('experience')}
+        onMinimize={() => minimizeWindow('experience')}
+        onMaximize={() => toggleMaximize('experience')}
+        isMaximized={maximizedWindows.experience}
+        initialPosition={{ x: 130, y: 78 }}
+        zIndex={openWindows.experience.zIndex}
+        theme={theme}
+      >
+        <ExperienceWindow theme={theme} onNotify={(t, s) => showToast(t, s)} />
+      </Window>
+
+      <Window
+        id="window-projects"
+        title={windowTitles.projects}
+        icon={getAppleIcon('projects', 16)}
+        isOpen={openWindows.projects.isOpen && !openWindows.projects.isMinimized}
+        isActive={activeWindowId === 'projects'}
+        onFocus={() => bringToFront('projects')}
+        onClose={() => closeWindow('projects')}
+        onMinimize={() => minimizeWindow('projects')}
+        onMaximize={() => toggleMaximize('projects')}
+        isMaximized={maximizedWindows.projects}
+        initialPosition={{ x: 170, y: 66 }}
+        zIndex={openWindows.projects.zIndex}
+        theme={theme}
+      >
+        <ProjectsWindow theme={theme} />
+      </Window>
+
+      <Window
+        id="window-skills"
+        title={windowTitles.skills}
+        icon={getAppleIcon('skills', 16)}
+        isOpen={openWindows.skills.isOpen && !openWindows.skills.isMinimized}
+        isActive={activeWindowId === 'skills'}
+        onFocus={() => bringToFront('skills')}
+        onClose={() => closeWindow('skills')}
+        onMinimize={() => minimizeWindow('skills')}
+        onMaximize={() => toggleMaximize('skills')}
+        isMaximized={maximizedWindows.skills}
+        initialPosition={{ x: 150, y: 92 }}
+        zIndex={openWindows.skills.zIndex}
+        theme={theme}
+      >
+        <SkillsWindow theme={theme} />
+      </Window>
+
+      <Window
+        id="window-contact"
+        title={windowTitles.contact}
+        icon={getAppleIcon('contact', 16)}
+        isOpen={openWindows.contact.isOpen && !openWindows.contact.isMinimized}
+        isActive={activeWindowId === 'contact'}
+        onFocus={() => bringToFront('contact')}
+        onClose={() => closeWindow('contact')}
+        onMinimize={() => minimizeWindow('contact')}
+        onMaximize={() => toggleMaximize('contact')}
+        isMaximized={maximizedWindows.contact}
+        initialPosition={{ x: 195, y: 84 }}
+        zIndex={openWindows.contact.zIndex}
+        theme={theme}
+      >
+        <ContactWindow theme={theme} onNotify={(t, s) => showToast(t, s)} />
+      </Window>
+
+      <Window
+        id="window-settings"
+        title={windowTitles.settings}
+        icon={getAppleIcon('settings', 16)}
+        isOpen={openWindows.settings.isOpen && !openWindows.settings.isMinimized}
+        isActive={activeWindowId === 'settings'}
+        onFocus={() => bringToFront('settings')}
+        onClose={() => closeWindow('settings')}
+        onMinimize={() => minimizeWindow('settings')}
+        onMaximize={() => toggleMaximize('settings')}
+        isMaximized={maximizedWindows.settings}
+        initialPosition={{ x: 210, y: 74 }}
+        zIndex={openWindows.settings.zIndex}
+        theme={theme}
+      >
+        <SettingsWindow
+          theme={theme}
+          wallpaper={wallpaper}
+          onToggleTheme={toggleTheme}
+          onSelectWallpaper={handleSelectWallpaper}
+          onSwitchLanguage={switchLanguage}
+        />
+      </Window>
+
+      {/* Right-Click Desktop Context Menu */}
+      <AnimatePresence>
+        {contextMenu && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.94 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.12 }}
+            onMouseDown={(e) => e.stopPropagation()}
+            className="fixed z-[9600] w-[224px] rounded-xl p-1.5 shadow-2xl"
+            style={{
+              top: contextMenu.y,
+              left: contextMenu.x,
+              background: isDark ? 'rgba(34, 34, 38, 0.88)' : 'rgba(255, 255, 255, 0.9)',
+              backdropFilter: 'blur(30px) saturate(180%)',
+              WebkitBackdropFilter: 'blur(30px) saturate(180%)',
+              border: isDark
+                ? '1px solid rgba(255, 255, 255, 0.16)'
+                : '1px solid rgba(0, 0, 0, 0.1)',
+              color: isDark ? '#f5f5f7' : '#1d1d1f',
+            }}
           >
-            {windowComponents[windowId]}
-          </Window>
-        )
-      })}
+            <button
+              type="button"
+              onClick={() => openWindow('about')}
+              className="w-full px-3 py-1.5 rounded-lg text-left text-[12.5px] font-medium flex items-center gap-2.5 hover:bg-[#007AFF] hover:text-white transition-colors"
+            >
+              <PersonSymbol className="w-3.5 h-3.5 opacity-80" />
+              <span>{tCtx('openAbout')}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setContextMenu(null)
+                setIsSpotlightOpen(true)
+              }}
+              className="w-full px-3 py-1.5 rounded-lg text-left text-[12.5px] font-medium flex items-center gap-2.5 hover:bg-[#007AFF] hover:text-white transition-colors"
+            >
+              <SearchSymbol className="w-3.5 h-3.5 opacity-80" />
+              <span>{tCtx('openSpotlight')}</span>
+            </button>
+            <div className={`my-1 h-px ${isDark ? 'bg-white/10' : 'bg-black/10'}`} />
+            <button
+              type="button"
+              onClick={() => {
+                setContextMenu(null)
+                cycleWallpaper()
+              }}
+              className="w-full px-3 py-1.5 rounded-lg text-left text-[12.5px] font-medium flex items-center gap-2.5 hover:bg-[#007AFF] hover:text-white transition-colors"
+            >
+              <PhotoSymbol className="w-3.5 h-3.5 opacity-80" />
+              <span>{tCtx('changeWallpaper')}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setContextMenu(null)
+                toggleTheme()
+              }}
+              className="w-full px-3 py-1.5 rounded-lg text-left text-[12.5px] font-medium flex items-center gap-2.5 hover:bg-[#007AFF] hover:text-white transition-colors"
+            >
+              {isDark ? (
+                <SunSymbol className="w-3.5 h-3.5 opacity-80" />
+              ) : (
+                <MoonSymbol className="w-3.5 h-3.5 opacity-80" />
+              )}
+              <span>{tCtx('toggleTheme')}</span>
+            </button>
+            <div className={`my-1 h-px ${isDark ? 'bg-white/10' : 'bg-black/10'}`} />
+            <button
+              type="button"
+              onClick={() => openWindow('settings')}
+              className="w-full px-3 py-1.5 rounded-lg text-left text-[12.5px] font-medium flex items-center gap-2.5 hover:bg-[#007AFF] hover:text-white transition-colors"
+            >
+              <GearSymbol className="w-3.5 h-3.5 opacity-80" />
+              <span>{tCtx('openSettings')}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setContextMenu(null)
+                handleDownloadCV()
+              }}
+              className="w-full px-3 py-1.5 rounded-lg text-left text-[12.5px] font-medium flex items-center gap-2.5 hover:bg-[#007AFF] hover:text-white transition-colors"
+            >
+              <DownloadSymbol className="w-3.5 h-3.5 opacity-80" />
+              <span>{tCtx('downloadCV')}</span>
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Spotlight Search Modal */}
+      <SpotlightSearch
+        isOpen={isSpotlightOpen}
+        onClose={() => setIsSpotlightOpen(false)}
+        theme={theme}
+        onOpenWindow={openWindow}
+        onDownloadCV={handleDownloadCV}
+        onToggleTheme={toggleTheme}
+        onSwitchLanguage={switchLanguage}
+      />
+
+      {/* Launchpad Overlay */}
+      <StartMenu
+        isOpen={isStartMenuOpen}
+        onClose={() => setIsStartMenuOpen(false)}
+        onAppClick={(appId) => openWindow(appId as DesktopWindowId)}
+        theme={theme}
+        onDownloadCV={handleDownloadCV}
+      />
+
+      {/* macOS Notification Toast */}
+      <MacToast toast={toast} theme={theme} onDismiss={() => setToast(null)} />
 
       {/* macOS Dock */}
       <Taskbar
         apps={dockApps}
-        onStartClick={() => setIsLaunchpadOpen(!isLaunchpadOpen)}
+        onStartClick={() => setIsStartMenuOpen((prev) => !prev)}
         theme={theme}
-        onDownloadCV={downloadCV}
-        onGitHub={() => window.open(process.env.NEXT_PUBLIC_GITHUB_URL || socialLinks.github, '_blank', 'noopener,noreferrer')}
-        onLinkedIn={() => window.open(process.env.NEXT_PUBLIC_LINKEDIN_URL || socialLinks.linkedin, '_blank', 'noopener,noreferrer')}
-      />
-
-      {/* Launchpad */}
-      <StartMenu
-        isOpen={isLaunchpadOpen}
-        onClose={() => setIsLaunchpadOpen(false)}
-        onOpenWindow={openWindow}
-        onDownloadCV={downloadCV}
-        theme={theme}
-        toggleTheme={toggleTheme}
+        onDownloadCV={handleDownloadCV}
+        onGitHub={() => window.open(socialLinks.github, '_blank', 'noopener,noreferrer')}
+        onLinkedIn={() => window.open(socialLinks.linkedin, '_blank', 'noopener,noreferrer')}
+        onTrashClick={() =>
+          showToast(
+            tDock('trashEmptyTitle'),
+            tDock('trashEmptyBody'),
+            <TrashSymbol className="w-4 h-4" />
+          )
+        }
       />
     </div>
   )
 }
+
+export default DesktopOS

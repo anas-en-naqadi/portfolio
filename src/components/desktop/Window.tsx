@@ -1,8 +1,9 @@
 'use client'
 
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { CloseGlyph, MinusGlyph, PlusGlyph } from '@/components/shared/SFSymbols'
+import { useTranslations } from 'next-intl'
+import { CloseGlyph, MinusGlyph, MaximizeDiagonalGlyph } from '@/components/shared/SFSymbols'
 
 interface WindowProps {
   id: string
@@ -12,17 +13,25 @@ interface WindowProps {
   onClose: () => void
   onMinimize: () => void
   onMaximize?: () => void
+  onFocus?: () => void
+  isActive?: boolean
   children: React.ReactNode
   initialPosition?: { x: number; y: number }
+  initialSize?: { width: number; height: number }
   zIndex?: number
   isMaximized?: boolean
   theme?: 'dark' | 'light'
 }
 
-const DOCK_HEIGHT = 80
-const MENU_BAR_HEIGHT = 28
+type ResizeDirection = 'e' | 's' | 'w' | 'se' | 'sw' | null
 
-export default function Window({
+const MENU_BAR_HEIGHT = 28
+const DOCK_RESERVE = 92
+const MIN_WIDTH = 520
+const MIN_HEIGHT = 380
+const TITLEBAR_SAFE_VISIBLE = 180
+
+export function Window({
   id,
   title,
   icon,
@@ -30,81 +39,191 @@ export default function Window({
   onClose,
   onMinimize,
   onMaximize,
+  onFocus,
+  isActive = true,
   children,
-  initialPosition = { x: 120, y: 60 },
+  initialPosition = { x: 100, y: 60 },
+  initialSize,
   zIndex = 100,
-  isMaximized: externalMaximized = false,
+  isMaximized = false,
   theme = 'dark',
 }: WindowProps) {
+  const t = useTranslations('common')
   const [position, setPosition] = useState(initialPosition)
+  const [size, setSize] = useState<{ width: number; height: number }>(() => {
+    if (initialSize) return initialSize
+    if (typeof window !== 'undefined') {
+      return {
+        width: Math.min(840, Math.max(MIN_WIDTH, window.innerWidth - 160)),
+        height: Math.min(600, Math.max(MIN_HEIGHT, window.innerHeight - 170)),
+      }
+    }
+    return { width: 800, height: 560 }
+  })
   const [isDragging, setIsDragging] = useState(false)
-  const [isMaximized, setIsMaximized] = useState(externalMaximized)
-  const [startPos, setStartPos] = useState({ x: 0, y: 0 })
-  const [initialWindowPos, setInitialWindowPos] = useState({ x: 0, y: 0 })
+  const [resizeDir, setResizeDir] = useState<ResizeDirection>(null)
   const [controlsHovered, setControlsHovered] = useState(false)
-  const windowRef = useRef<HTMLDivElement>(null)
-  const isDark = theme === 'dark'
 
+  const windowRef = useRef<HTMLDivElement>(null)
+  const dragStartRef = useRef({ mouseX: 0, mouseY: 0, winX: 0, winY: 0 })
+  const resizeStartRef = useRef({
+    mouseX: 0,
+    mouseY: 0,
+    winX: 0,
+    winY: 0,
+    width: 800,
+    height: 560,
+  })
+
+  // Clamp initial window bounds when viewport resizes
   useEffect(() => {
-    setIsMaximized(externalMaximized)
-  }, [externalMaximized])
+    const clampToViewport = () => {
+      if (isMaximized) return
+      const maxWidth = Math.max(MIN_WIDTH, window.innerWidth - 40)
+      const maxHeight = Math.max(MIN_HEIGHT, window.innerHeight - MENU_BAR_HEIGHT - DOCK_RESERVE)
+      setSize((prev) => ({
+        width: Math.min(prev.width, maxWidth),
+        height: Math.min(prev.height, maxHeight),
+      }))
+      setPosition((prev) => ({
+        x: Math.max(-(size.width - TITLEBAR_SAFE_VISIBLE), Math.min(prev.x, window.innerWidth - TITLEBAR_SAFE_VISIBLE)),
+        y: Math.max(MENU_BAR_HEIGHT + 4, Math.min(prev.y, window.innerHeight - 90)),
+      }))
+    }
+    clampToViewport()
+    window.addEventListener('resize', clampToViewport)
+    return () => window.removeEventListener('resize', clampToViewport)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMaximized])
 
   useEffect(() => {
     if (!isDragging) return
 
     const handleMouseMove = (e: MouseEvent) => {
-      if (isMaximized) return
-      const deltaX = e.clientX - startPos.x
-      const deltaY = e.clientY - startPos.y
-      let newX = initialWindowPos.x + deltaX
-      let newY = initialWindowPos.y + deltaY
+      const dx = e.clientX - dragStartRef.current.mouseX
+      const dy = e.clientY - dragStartRef.current.mouseY
+      const nextX = dragStartRef.current.winX + dx
+      const nextY = dragStartRef.current.winY + dy
 
-      const windowEl = windowRef.current
-      if (windowEl) {
-        const titlebarHeight = windowEl.querySelector('.window-titlebar')?.clientHeight ?? 40
-        const maxTop = window.innerHeight - DOCK_HEIGHT - titlebarHeight - 5
-        newY = Math.max(MENU_BAR_HEIGHT, Math.min(newY, maxTop))
-      }
-      setPosition({ x: newX, y: newY })
+      const minX = -(size.width - TITLEBAR_SAFE_VISIBLE)
+      const maxX = Math.max(0, window.innerWidth - TITLEBAR_SAFE_VISIBLE)
+      const minY = MENU_BAR_HEIGHT
+      const maxY = Math.max(MENU_BAR_HEIGHT, window.innerHeight - 84)
+
+      setPosition({
+        x: Math.max(minX, Math.min(nextX, maxX)),
+        y: Math.max(minY, Math.min(nextY, maxY)),
+      })
     }
 
     const handleMouseUp = () => setIsDragging(false)
 
-    document.addEventListener('mousemove', handleMouseMove)
-    document.addEventListener('mouseup', handleMouseUp)
+    window.addEventListener('mousemove', handleMouseMove)
+    window.addEventListener('mouseup', handleMouseUp)
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove)
-      document.removeEventListener('mouseup', handleMouseUp)
+      window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('mouseup', handleMouseUp)
     }
-  }, [isDragging, startPos, isMaximized, initialWindowPos])
+  }, [isDragging, size.width])
 
-  const handleTitleBarMouseDown = (e: React.MouseEvent) => {
-    if ((e.target as HTMLElement).closest('.window-controls')) return
+  useEffect(() => {
+    if (!resizeDir) return
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const dx = e.clientX - resizeStartRef.current.mouseX
+      const dy = e.clientY - resizeStartRef.current.mouseY
+      const start = resizeStartRef.current
+
+      let nextWidth = start.width
+      let nextHeight = start.height
+      let nextX = start.winX
+
+      if (resizeDir.includes('e')) {
+        const maxW = window.innerWidth - start.winX - 16
+        nextWidth = Math.max(MIN_WIDTH, Math.min(start.width + dx, maxW))
+      }
+      if (resizeDir.includes('w')) {
+        const proposedWidth = start.width - dx
+        const clampedWidth = Math.max(MIN_WIDTH, Math.min(proposedWidth, start.winX + start.width - 16))
+        nextX = start.winX + (start.width - clampedWidth)
+        nextWidth = clampedWidth
+      }
+      if (resizeDir.includes('s')) {
+        const maxH = window.innerHeight - start.winY - DOCK_RESERVE + 12
+        nextHeight = Math.max(MIN_HEIGHT, Math.min(start.height + dy, Math.max(MIN_HEIGHT, maxH)))
+      }
+
+      setSize({ width: nextWidth, height: nextHeight })
+      setPosition((prev) => ({ ...prev, x: nextX }))
+    }
+
+    const handleMouseUp = () => setResizeDir(null)
+
+    window.addEventListener('mousemove', handleMouseMove)
+    window.addEventListener('mouseup', handleMouseUp)
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('mouseup', handleMouseUp)
+    }
+  }, [resizeDir])
+
+  const handleTitlebarMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      onFocus?.()
+      if (isMaximized) return
+      if ((e.target as HTMLElement).closest('.window-controls')) return
+      e.preventDefault()
+      setIsDragging(true)
+      dragStartRef.current = {
+        mouseX: e.clientX,
+        mouseY: e.clientY,
+        winX: position.x,
+        winY: position.y,
+      }
+    },
+    [isMaximized, onFocus, position.x, position.y]
+  )
+
+  const startResize = (dir: ResizeDirection) => (e: React.MouseEvent) => {
     if (isMaximized) return
-    setIsDragging(true)
-    setStartPos({ x: e.clientX, y: e.clientY })
-    setInitialWindowPos({ x: position.x, y: position.y })
-  }
-
-  const handleMinimize = () => {
-    const windowEl = windowRef.current
-    if (windowEl) {
-      windowEl.style.animation = 'windowMinimize 0.35s cubic-bezier(0.4, 0, 1, 1) forwards'
-      setTimeout(() => {
-        onMinimize()
-        if (windowEl) windowEl.style.animation = ''
-      }, 350)
-    } else {
-      onMinimize()
+    e.preventDefault()
+    e.stopPropagation()
+    onFocus?.()
+    setResizeDir(dir)
+    resizeStartRef.current = {
+      mouseX: e.clientX,
+      mouseY: e.clientY,
+      winX: position.x,
+      winY: position.y,
+      width: size.width,
+      height: size.height,
     }
   }
 
-  const titlebarBg = isDark
-    ? 'linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 100%)'
-    : 'linear-gradient(180deg, #e8e8e8 0%, #d0d0d0 100%)'
+  const isDark = theme === 'dark'
+  const showColoredDots = isActive || controlsHovered
+  const inactiveDotColor = isDark ? '#4a4a50' : '#d1d1d6'
+  const inactiveDotBorder = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)'
 
-  const windowBg = isDark ? '#1c1c1e' : '#ffffff'
-  const windowBorder = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.12)'
+  const windowBoxStyle: React.CSSProperties = isMaximized
+    ? {
+        position: 'fixed',
+        top: MENU_BAR_HEIGHT + 4,
+        left: 10,
+        width: 'calc(100vw - 20px)',
+        height: `calc(100vh - ${MENU_BAR_HEIGHT + DOCK_RESERVE + 8}px)`,
+        zIndex,
+        borderRadius: 12,
+      }
+    : {
+        position: 'fixed',
+        top: position.y,
+        left: position.x,
+        width: size.width,
+        height: size.height,
+        zIndex,
+        borderRadius: 14,
+      }
 
   return (
     <AnimatePresence>
@@ -112,177 +231,192 @@ export default function Window({
         <motion.div
           ref={windowRef}
           id={id}
-          initial={{ opacity: 0, scale: 0.88, y: 30 }}
+          role="dialog"
+          aria-label={title}
+          onMouseDownCapture={() => onFocus?.()}
+          initial={{ opacity: 0, scale: 0.94, y: 18 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.88, y: 20 }}
-          transition={{ type: 'spring', stiffness: 340, damping: 28 }}
-          className={`window active macos-window ${isMaximized ? 'maximized' : ''}`}
+          exit={{ opacity: 0, scale: 0.94, y: 16 }}
+          transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+          className={`window macos-window active ${
+            isMaximized ? 'maximized' : ''
+          } ${isDark ? 'dark' : 'light'}`}
           style={{
-            zIndex,
-            background: windowBg,
-            border: `1px solid ${windowBorder}`,
-            boxShadow: isDark
-              ? '0 32px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.06)'
-              : '0 32px 80px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.08)',
-            ...(isMaximized
-              ? {
-                  top: `${MENU_BAR_HEIGHT}px`,
-                  left: 0,
-                  right: 0,
-                  bottom: `${DOCK_HEIGHT}px`,
-                  width: 'auto',
-                  height: 'auto',
-                  position: 'fixed' as const,
-                  borderRadius: 0,
-                }
-              : {
-                  top: `${position.y}px`,
-                  left: `${position.x}px`,
-                  position: 'fixed' as const,
-                  borderRadius: '12px',
-                  minWidth: '560px',
-                  width: '700px',
-                  maxWidth: '90vw',
-                  height: '520px',
-                  maxHeight: `calc(100vh - ${MENU_BAR_HEIGHT + DOCK_HEIGHT + 20}px)`,
-                }),
+            ...windowBoxStyle,
+            background: isDark
+              ? isActive
+                ? 'rgba(28, 28, 32, 0.86)'
+                : 'rgba(28, 28, 32, 0.78)'
+              : isActive
+                ? 'rgba(250, 250, 252, 0.88)'
+                : 'rgba(245, 245, 247, 0.82)',
+            backdropFilter: 'blur(36px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(36px) saturate(180%)',
+            border: isDark
+              ? `1px solid ${isActive ? 'rgba(255, 255, 255, 0.16)' : 'rgba(255, 255, 255, 0.09)'}`
+              : `1px solid ${isActive ? 'rgba(0, 0, 0, 0.14)' : 'rgba(0, 0, 0, 0.08)'}`,
+            boxShadow: isActive
+              ? isDark
+                ? '0 28px 80px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.14)'
+                : '0 24px 68px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.85)'
+              : isDark
+                ? '0 14px 40px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.07)'
+                : '0 12px 34px rgba(0, 0, 0, 0.14)',
+            userSelect: isDragging || resizeDir ? 'none' : undefined,
           }}
         >
-          {/* macOS Traffic Light Title Bar */}
+          {/* macOS Titlebar */}
           <div
             className="window-titlebar macos-titlebar"
-            onMouseDown={handleTitleBarMouseDown}
+            onMouseDown={handleTitlebarMouseDown}
+            onDoubleClick={() => onMaximize?.()}
             style={{
-              background: titlebarBg,
+              background: isDark
+                ? isActive
+                  ? 'linear-gradient(180deg, rgba(52, 52, 58, 0.85) 0%, rgba(40, 40, 46, 0.82) 100%)'
+                  : 'rgba(34, 34, 38, 0.72)'
+                : isActive
+                  ? 'linear-gradient(180deg, rgba(255, 255, 255, 0.85) 0%, rgba(242, 242, 247, 0.82) 100%)'
+                  : 'rgba(242, 242, 247, 0.68)',
               borderBottom: isDark
-                ? '1px solid rgba(255,255,255,0.08)'
-                : '1px solid rgba(0,0,0,0.12)',
+                ? '1px solid rgba(255, 255, 255, 0.08)'
+                : '1px solid rgba(0, 0, 0, 0.08)',
+              padding: '0 14px',
+              height: '40px',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
+              justifyContent: 'space-between',
+              cursor: isMaximized ? 'default' : isDragging ? 'grabbing' : 'grab',
               position: 'relative',
-              padding: '0 12px',
-              height: '40px',
-              cursor: isMaximized ? 'default' : 'move',
-              userSelect: 'none',
-              flexShrink: 0,
-              borderRadius: isMaximized ? 0 : '12px 12px 0 0',
             }}
           >
-            {/* Traffic Light Controls — top-left */}
+            {/* Traffic Light Controls */}
             <div
-              className="window-controls"
-              style={{
-                position: 'absolute',
-                left: '12px',
-                display: 'flex',
-                gap: '8px',
-                alignItems: 'center',
-              }}
+              className="window-controls macos-controls flex items-center gap-2 z-10"
               onMouseEnter={() => setControlsHovered(true)}
               onMouseLeave={() => setControlsHovered(false)}
+              onMouseDown={(e) => e.stopPropagation()}
             >
-              {/* Close — Red */}
               <button
-                onClick={onClose}
-                aria-label="Close window"
-                title="Close"
+                type="button"
+                aria-label={t('close')}
+                title={t('close')}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onClose()
+                }}
+                className="macos-control-btn w-3 h-3 rounded-full flex items-center justify-center transition-colors"
                 style={{
-                  background: '#ff3b30',
-                  width: 13,
-                  height: 13,
-                  borderRadius: '50%',
-                  border: 'none',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'rgba(0,0,0,0.6)',
-                  flexShrink: 0,
-                  boxShadow: '0 0 0 0.5px rgba(0,0,0,0.15)',
+                  background: showColoredDots ? '#FF5F57' : inactiveDotColor,
+                  border: showColoredDots
+                    ? '0.5px solid rgba(224, 68, 62, 0.9)'
+                    : `0.5px solid ${inactiveDotBorder}`,
                 }}
               >
-                {controlsHovered ? <CloseGlyph className="w-2 h-2" /> : null}
+                {controlsHovered && <CloseGlyph className="w-[7px] h-[7px] text-[#4d0000]" />}
               </button>
-              {/* Minimize — Yellow */}
               <button
-                onClick={handleMinimize}
-                aria-label="Minimize window"
-                title="Minimize"
+                type="button"
+                aria-label={t('minimize')}
+                title={t('minimize')}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onMinimize()
+                }}
+                className="macos-control-btn w-3 h-3 rounded-full flex items-center justify-center transition-colors"
                 style={{
-                  background: '#ffcc00',
-                  width: 13,
-                  height: 13,
-                  borderRadius: '50%',
-                  border: 'none',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'rgba(0,0,0,0.6)',
-                  flexShrink: 0,
-                  boxShadow: '0 0 0 0.5px rgba(0,0,0,0.15)',
+                  background: showColoredDots ? '#FEBC2E' : inactiveDotColor,
+                  border: showColoredDots
+                    ? '0.5px solid rgba(216, 158, 36, 0.9)'
+                    : `0.5px solid ${inactiveDotBorder}`,
                 }}
               >
-                {controlsHovered ? <MinusGlyph className="w-2 h-2" /> : null}
+                {controlsHovered && <MinusGlyph className="w-[7px] h-[7px] text-[#5c3c00]" />}
               </button>
-              {/* Maximize — Green */}
               {onMaximize && (
                 <button
-                  onClick={onMaximize}
-                  aria-label="Maximize window"
-                  title="Maximize"
+                  type="button"
+                  aria-label={t('maximize')}
+                  title={t('maximize')}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onMaximize()
+                  }}
+                  className="macos-control-btn w-3 h-3 rounded-full flex items-center justify-center transition-colors"
                   style={{
-                    background: '#34c759',
-                    width: 13,
-                    height: 13,
-                    borderRadius: '50%',
-                    border: 'none',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'rgba(0,0,0,0.6)',
-                    flexShrink: 0,
-                    boxShadow: '0 0 0 0.5px rgba(0,0,0,0.15)',
+                    background: showColoredDots ? '#28C840' : inactiveDotColor,
+                    border: showColoredDots
+                      ? '0.5px solid rgba(26, 171, 41, 0.9)'
+                      : `0.5px solid ${inactiveDotBorder}`,
                   }}
                 >
-                  {controlsHovered ? <PlusGlyph className="w-2 h-2" /> : null}
+                  {controlsHovered && (
+                    <MaximizeDiagonalGlyph className="w-[7px] h-[7px] text-[#004d0c]" />
+                  )}
                 </button>
               )}
             </div>
 
-            {/* Centered title */}
+            {/* Centered Window Title */}
             <div
+              className="window-title macos-window-title pointer-events-none select-none flex items-center gap-2 transition-opacity"
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
+                position: 'absolute',
+                left: '50%',
+                transform: 'translateX(-50%)',
                 fontSize: '13px',
                 fontWeight: 600,
-                color: isDark ? 'rgba(255,255,255,0.85)' : 'rgba(0,0,0,0.75)',
-                pointerEvents: 'none',
+                color: isDark ? '#f5f5f7' : '#1d1d1f',
+                opacity: isActive ? 1 : 0.55,
               }}
             >
-              {icon && <span className="flex items-center shrink-0">{icon}</span>}
-              <span>{title}</span>
+              {icon && <span className="flex items-center justify-center shrink-0">{icon}</span>}
+              <span className="truncate max-w-[320px]">{title}</span>
             </div>
+
+            {/* Right Balance Spacer */}
+            <div className="w-[52px]" />
           </div>
 
-          {/* Window Content */}
+          {/* Window Content Container */}
           <div
-            className="window-content macos-window-content"
-            style={{
-              flex: 1,
-              overflowY: 'auto',
-              background: windowBg,
-              color: isDark ? '#f2f2f7' : '#1c1c1e',
-              fontSize: '13px',
-              borderRadius: isMaximized ? 0 : '0 0 12px 12px',
-            }}
+            className={`window-content macos-window-content macos-window-container flex-1 overflow-y-auto flex flex-col ${
+              isDark ? 'text-white' : 'text-gray-900'
+            }`}
           >
             {children}
           </div>
+
+          {/* Edge & Corner Resize Handles */}
+          {!isMaximized && (
+            <>
+              <div
+                onMouseDown={startResize('e')}
+                aria-hidden="true"
+                className="absolute top-3 bottom-3 right-0 w-1.5 cursor-ew-resize z-20"
+              />
+              <div
+                onMouseDown={startResize('w')}
+                aria-hidden="true"
+                className="absolute top-3 bottom-3 left-0 w-1.5 cursor-ew-resize z-20"
+              />
+              <div
+                onMouseDown={startResize('s')}
+                aria-hidden="true"
+                className="absolute bottom-0 left-3 right-3 h-1.5 cursor-ns-resize z-20"
+              />
+              <div
+                onMouseDown={startResize('se')}
+                aria-hidden="true"
+                className="absolute bottom-0 right-0 w-3.5 h-3.5 cursor-nwse-resize z-30"
+              />
+              <div
+                onMouseDown={startResize('sw')}
+                aria-hidden="true"
+                className="absolute bottom-0 left-0 w-3.5 h-3.5 cursor-nesw-resize z-30"
+              />
+            </>
+          )}
         </motion.div>
       )}
     </AnimatePresence>

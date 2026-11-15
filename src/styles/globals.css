@@ -93,6 +93,11 @@ body {
   flex-direction: row-reverse;
 }
 
+[dir='rtl'] .flex.flex-col,
+[dir='rtl'] .ipad-split-layout {
+  flex-direction: column;
+}
+
 /* Arabic font support - using system fonts that support Arabic */
 [dir='rtl'] body {
   font-family: 'Segoe UI', 'Tahoma', 'Arial', 'Helvetica Neue', sans-serif;
@@ -122,28 +127,6 @@ body {
 .light .desktop-os {
   background: url('/images/desktop-bg.png') no-repeat center center;
   background-size: cover;
-}
-
-/* Animated background particles */
-.desktop-os::before {
-  content: '';
-  position: absolute;
-  width: 200%;
-  height: 200%;
-  background:
-    radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(72, 52, 212, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 40% 20%, rgba(99, 102, 241, 0.05) 0%, transparent 50%);
-  animation: floatBackground 20s ease-in-out infinite;
-}
-
-@keyframes floatBackground {
-  0%, 100% {
-    transform: translate(0, 0);
-  }
-  50% {
-    transform: translate(-50px, -50px);
-  }
 }
 
 /* Taskbar */
@@ -319,7 +302,6 @@ body {
   flex-direction: column;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .window.active {
@@ -392,35 +374,68 @@ body {
 }
 
 .window-toolbar {
-  background: #fff;
-  padding: 10px 15px;
-  border-bottom: 1px solid #e0e0e0;
+  padding: 8px 16px;
   display: flex;
-  gap: 10px;
+  gap: 8px;
   align-items: center;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(36, 36, 40, 0.55);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.light .window-toolbar {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+  background: rgba(245, 245, 247, 0.72);
 }
 
 .toolbar-btn {
-  padding: 6px 12px;
-  background: linear-gradient(180deg, #f8f9fa, #e9ecef);
-  border: 1px solid #d0d0d0;
-  border-radius: 4px;
-  font-size: 11px;
+  padding: 5px 11px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
   cursor: pointer;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 5px;
-  transition: all 0.2s;
+  gap: 6px;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.12s ease;
+}
+
+.light .toolbar-btn {
+  background: rgba(0, 0, 0, 0.045);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: rgba(29, 29, 31, 0.82);
 }
 
 .toolbar-btn:hover {
-  background: linear-gradient(180deg, #e9ecef, #dee2e6);
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+.light .toolbar-btn:hover {
+  background: rgba(0, 0, 0, 0.085);
+  color: #1d1d1f;
+}
+
+.toolbar-btn.active {
+  background: rgba(10, 132, 255, 0.22);
+  border-color: rgba(10, 132, 255, 0.5);
+  color: #60a5fa;
+}
+
+.light .toolbar-btn.active {
+  background: rgba(0, 122, 255, 0.14);
+  border-color: rgba(0, 122, 255, 0.35);
+  color: #007aff;
 }
 
 .toolbar-btn:active {
-  transform: translateY(0);
+  transform: scale(0.97);
 }
 
 .window-titlebar {
@@ -451,9 +466,8 @@ body {
 
 .window-content {
   flex: 1;
-  padding: 30px;
   overflow-y: auto;
-  background: #fff;
+  background: transparent;
 }
 
 .window-content::-webkit-scrollbar {
@@ -1146,26 +1160,26 @@ body {
   background: rgba(255, 255, 255, 0.25);
 }
 
-/* Content Styling */
-h2 {
+/* Legacy Content Styling (scoped away from macOS / Tailwind surfaces) */
+.window-content:not(.macos-window-content) h2 {
   color: #667eea;
   margin-bottom: 20px;
   font-size: 24px;
 }
 
-h3 {
+.window-content:not(.macos-window-content) h3 {
   color: #2d3436;
   margin-bottom: 10px;
   font-size: 18px;
 }
 
-p {
+.window-content:not(.macos-window-content) p {
   line-height: 1.7;
   color: #555;
   margin-bottom: 15px;
 }
 
-.section-card {
+.window-content:not(.macos-window-content) .section-card {
   background: #f8f9fa;
   padding: 20px;
   border-radius: 12px;
@@ -1174,7 +1188,7 @@ p {
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.section-card:hover {
+.window-content:not(.macos-window-content) .section-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
@@ -1523,7 +1537,7 @@ p {
 }
 
 .macos-window-content {
-  padding: 24px 28px;
+  padding: 0;
 }
 
 .macos-control-btn {
@@ -1560,21 +1574,26 @@ p {
 }
 
 /* ---- SCROLLBAR in macOS windows ---- */
-.macos-window-content::-webkit-scrollbar {
+.macos-window-content::-webkit-scrollbar,
+.macos-scroll::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 
-.macos-window-content::-webkit-scrollbar-track {
+.macos-window-content::-webkit-scrollbar-track,
+.macos-scroll::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.macos-window-content::-webkit-scrollbar-thumb {
-  background: rgba(128, 128, 128, 0.4);
-  border-radius: 3px;
+.macos-window-content::-webkit-scrollbar-thumb,
+.macos-scroll::-webkit-scrollbar-thumb {
+  background: rgba(142, 142, 147, 0.35);
+  border-radius: 9999px;
 }
 
-.macos-window-content::-webkit-scrollbar-thumb:hover {
-  background: rgba(128, 128, 128, 0.6);
+.macos-window-content::-webkit-scrollbar-thumb:hover,
+.macos-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(142, 142, 147, 0.6);
 }
 
 /* Focus visible for accessibility */
@@ -1596,4 +1615,238 @@ p {
               radial-gradient(circle at 50% 50%, rgba(0, 122, 255, 0.12) 0%, transparent 55%),
               #f2f2f7;
 }
+
+/* ---- Native iPadOS Scrollbars (Light & Dark) ---- */
+.ipad-os,
+.ipad-os * {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.34) transparent;
+}
+
+.light .ipad-os,
+.light .ipad-os * {
+  scrollbar-color: rgba(0, 0, 0, 0.32) transparent;
+}
+
+.ipad-os::-webkit-scrollbar,
+.ipad-os *::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+.ipad-os::-webkit-scrollbar-track,
+.ipad-os *::-webkit-scrollbar-track,
+.ipad-os::-webkit-scrollbar-corner,
+.ipad-os *::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.ipad-os::-webkit-scrollbar-thumb,
+.ipad-os *::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.34);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.ipad-os::-webkit-scrollbar-thumb:hover,
+.ipad-os *::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.56);
+  border-width: 1.5px;
+  background-clip: padding-box;
+}
+
+.light .ipad-os::-webkit-scrollbar-thumb,
+.light .ipad-os *::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+  background-clip: padding-box;
+}
+
+.light .ipad-os::-webkit-scrollbar-thumb:hover,
+.light .ipad-os *::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.52);
+  border-width: 1.5px;
+  background-clip: padding-box;
+}
+
+.ipad-os .ipad-sidebar-nav {
+  scrollbar-width: none;
+}
+
+.ipad-os .ipad-sidebar-nav::-webkit-scrollbar {
+  display: none;
+}
+
+/* ---- iPadOS Responsive Sheet Container Queries ---- */
+.ipad-sheet-container {
+  container-type: inline-size;
+  container-name: ipad-sheet;
+}
+
+.ipad-split-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.ipad-split-sidebar {
+  width: 100%;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--ipad-divider, rgba(0, 0, 0, 0.08));
+}
+
+.ipad-sidebar-nav {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.ipad-sidebar-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.ipad-desktop-only {
+  display: none;
+}
+
+.ipad-mobile-only {
+  display: flex;
+}
+
+@container ipad-sheet (min-width: 700px) {
+  .ipad-split-layout {
+    flex-direction: row;
+  }
+
+  [dir='rtl'] .ipad-split-layout {
+    flex-direction: row-reverse;
+  }
+
+  .ipad-split-sidebar {
+    width: 245px;
+    height: 100%;
+    overflow-y: auto;
+    border-bottom: none;
+    border-right: 1px solid var(--ipad-divider, rgba(0, 0, 0, 0.08));
+  }
+
+  [dir='rtl'] .ipad-split-sidebar {
+    border-right: none;
+    border-left: 1px solid var(--ipad-divider, rgba(0, 0, 0, 0.08));
+  }
+
+  .ipad-sidebar-nav {
+    flex-direction: column;
+    overflow-x: visible;
+  }
+
+  .ipad-desktop-only {
+    display: flex;
+  }
+
+  .ipad-mobile-only {
+    display: none;
+  }
+}
+
+@container ipad-sheet (min-width: 880px) {
+  .ipad-split-sidebar {
+    width: 275px;
+  }
+}
+
+/* ---- macOS Responsive Window Container Queries ---- */
+.macos-window-container {
+  container-type: inline-size;
+  container-name: macos-window;
+}
+
+.macos-split-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.macos-split-sidebar {
+  width: 100%;
+  flex-shrink: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.light .macos-split-sidebar {
+  border-bottom-color: rgba(0, 0, 0, 0.08);
+}
+
+.macos-sidebar-nav {
+  display: flex;
+  flex-direction: row;
+  gap: 0.375rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.macos-sidebar-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.macos-desktop-only {
+  display: none;
+}
+
+.macos-compact-only {
+  display: flex;
+}
+
+@container macos-window (min-width: 660px) {
+  .macos-split-layout {
+    flex-direction: row;
+  }
+
+  [dir='rtl'] .macos-split-layout {
+    flex-direction: row-reverse;
+  }
+
+  .macos-split-sidebar {
+    width: 215px;
+    height: 100%;
+    overflow-y: auto;
+    border-bottom: none;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .light .macos-split-sidebar {
+    border-right-color: rgba(0, 0, 0, 0.08);
+  }
+
+  [dir='rtl'] .macos-split-sidebar {
+    border-right: none;
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .macos-sidebar-nav {
+    flex-direction: column;
+    overflow-x: visible;
+  }
+
+  .macos-desktop-only {
+    display: flex;
+  }
+
+  .macos-compact-only {
+    display: none;
+  }
+}
+
+@container macos-window (min-width: 860px) {
+  .macos-split-sidebar {
+    width: 245px;
+  }
+}
+
 

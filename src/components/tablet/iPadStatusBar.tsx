@@ -2,59 +2,65 @@
 
 import { useTime } from '@/hooks/useTime'
 import { motion } from 'framer-motion'
+import { useLocale, useTranslations } from 'next-intl'
 import { BatterySymbol, WifiSymbol } from '@/components/shared/SFSymbols'
 
 interface iPadStatusBarProps {
   theme: 'dark' | 'light'
   isAppOpen?: boolean
+  onToggleControlCenter?: () => void
+  controlCenterOpen?: boolean
 }
 
-export default function iPadStatusBar({ theme, isAppOpen = false }: iPadStatusBarProps) {
-  const { timeShort } = useTime()
+export default function iPadStatusBar({
+  theme,
+  isAppOpen = false,
+  onToggleControlCenter,
+  controlCenterOpen = false,
+}: iPadStatusBarProps) {
+  const locale = useLocale()
+  const t = useTranslations('tablet.statusBar')
+  const { timeShort, shortDateString } = useTime(locale)
 
   const isLightText = !isAppOpen || theme === 'dark'
   const textColor = isLightText ? 'text-white' : 'text-gray-900'
   const bgStyle = isLightText
     ? 'bg-black/20 backdrop-blur-xl border-b border-white/10'
-    : 'bg-white/20 backdrop-blur-xl border-b border-black/10'
-
-  // Format iPad-style Date string, e.g. "Thu Jul 9"
-  const now = new Date()
-  const dayName = now.toLocaleDateString(undefined, { weekday: 'short' })
-  const monthName = now.toLocaleDateString(undefined, { month: 'short' })
-  const dayNum = now.getDate()
-  const ipadDate = `${dayName} ${monthName} ${dayNum}`
+    : 'bg-white/25 backdrop-blur-xl border-b border-black/10'
 
   return (
     <motion.div
-      className={`h-10 flex items-center justify-between px-6 relative z-30 ${bgStyle}`}
+      className={`h-10 flex items-center justify-between px-4 sm:px-6 relative z-30 ${bgStyle}`}
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: 'easeOut' }}
       role="banner"
-      aria-label="iPad status bar"
+      aria-label={t('label')}
     >
-      {/* Left: iPad Pro Time + Date (Side-by-Side) */}
-      <div className={`flex items-center gap-2 ${textColor} select-none`}>
-        <span className="text-xs font-semibold tracking-tight">{timeShort}</span>
-        <span className="text-[11px] font-medium opacity-70">{ipadDate}</span>
+      {/* Left: iPad Pro Time + Localized Date */}
+      <div className={`flex items-center gap-2 ${textColor} select-none min-w-0`}>
+        <span className="text-xs font-semibold tracking-tight tabular-nums">{timeShort}</span>
+        <span className="text-[11px] font-medium opacity-75 truncate">{shortDateString}</span>
       </div>
 
-      {/* Right: iPad Pro System Indicators (Wi-Fi, Battery Percentage, Battery Icon) */}
-      <div className={`flex items-center gap-2.5 ${textColor} select-none`}>
-        {/* Wi-Fi Icon */}
-        <div className="flex items-center opacity-90" aria-label="Wi-Fi connected">
+      {/* Right: System Indicators & Control Center Trigger */}
+      <button
+        type="button"
+        onClick={onToggleControlCenter}
+        aria-expanded={controlCenterOpen}
+        aria-label={t('openControlCenter')}
+        className={`flex items-center gap-2 sm:gap-2.5 px-2.5 py-1 -mr-1.5 rounded-full transition hover:bg-black/10 dark:hover:bg-white/10 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${textColor} select-none`}
+      >
+        <span className="flex items-center opacity-90" aria-label={t('wifiConnected')}>
           <WifiSymbol className="w-4 h-3.5 shrink-0" />
-        </div>
+        </span>
 
-        {/* Battery Percentage */}
-        <span className="text-[11px] font-semibold opacity-90">85%</span>
+        <span className="text-[11px] font-semibold opacity-90 tabular-nums">85%</span>
 
-        {/* Battery Icon */}
-        <div className="flex items-center opacity-90" aria-label="Battery 85 percent">
+        <span className="flex items-center opacity-90" aria-label={t('batteryLevel')}>
           <BatterySymbol className="w-5 h-2.5 shrink-0" />
-        </div>
-      </div>
+        </span>
+      </button>
     </motion.div>
   )
 }

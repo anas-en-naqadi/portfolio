@@ -1,146 +1,206 @@
 'use client'
 
-import { useState } from 'react'
-import { motion } from 'framer-motion'
-import { useTranslations } from 'next-intl'
-import { experiences, education } from '@/lib/data'
+import { useMemo, useState } from 'react'
+import { useLocale, useTranslations } from 'next-intl'
+import { getLocalizedPortfolioData } from '@/lib/data'
 import AnimatedSection from '../shared/AnimatedSection'
-import { CalendarSymbol, MapPinSymbol } from '../shared/SFSymbols'
+import IPadSplitView from './IPadSplitView'
+import { MapPinSymbol } from '../shared/SFSymbols'
 
 interface IPadExperienceProps {
   theme: 'dark' | 'light'
 }
 
+const LOCALE_MAP: Record<string, string> = {
+  en: 'en-US',
+  fr: 'fr-FR',
+  ar: 'ar-MA',
+}
+
 export default function IPadExperience({ theme }: IPadExperienceProps) {
-  const t = useTranslations()
+  const locale = useLocale()
+  const t = useTranslations('tablet.experience')
+  const { experiences, education } = getLocalizedPortfolioData(locale)
   const [showWork, setShowWork] = useState(true)
   const [showEdu, setShowEdu] = useState(true)
   const isDark = theme === 'dark'
 
-  const sidebarBg = isDark ? 'bg-zinc-900/40' : 'bg-black/5'
-  const detailBg = isDark ? 'bg-zinc-900/20' : 'bg-white/40'
-  const cardBg = isDark ? 'bg-zinc-900 border-white/[0.04]' : 'bg-white border-black/[0.04]'
+  const cardBg = isDark ? 'bg-zinc-900 border-white/[0.06]' : 'bg-white border-black/[0.06]'
+  const detailBg = isDark ? 'bg-[#1C1C1E]' : 'bg-[#F8F8FA]'
 
-  // Calculate calendar dynamically
-  const today = new Date()
+  const intlLocale = LOCALE_MAP[locale] || locale || 'en-US'
+  const today = useMemo(() => new Date(), [])
   const currentDay = today.getDate()
   const currentYear = today.getFullYear()
-  const monthName = today.toLocaleDateString('en-US', { month: 'long' })
-  const calendarTitle = `${monthName} ${currentYear}`
+  const currentMonth = today.getMonth()
 
-  const firstDayIndex = new Date(currentYear, today.getMonth(), 1).getDay()
-  const totalDays = new Date(currentYear, today.getMonth() + 1, 0).getDate()
+  const calendarTitle = useMemo(
+    () =>
+      new Intl.DateTimeFormat(intlLocale, {
+        month: 'long',
+        year: 'numeric',
+      }).format(today),
+    [intlLocale, today]
+  )
 
-  const calendarDays: Array<number | string> = []
-  for (let i = 0; i < firstDayIndex; i++) {
-    calendarDays.push('')
-  }
-  for (let i = 1; i <= totalDays; i++) {
-    calendarDays.push(i)
-  }
+  const weekdayHeaders = useMemo(
+    () =>
+      Array.from({ length: 7 }, (_, idx) => {
+        const ref = new Date(2024, 0, 7 + idx) // Sunday = Jan 7, 2024
+        return new Intl.DateTimeFormat(intlLocale, { weekday: 'narrow' }).format(ref)
+      }),
+    [intlLocale]
+  )
 
-  return (
-    <div className="flex h-full w-full overflow-hidden select-none">
-      {/* LEFT Side: iPadOS Calendar Sidebar */}
-      <div className={`w-[260px] md:w-[280px] h-full flex-shrink-0 border-r ${isDark ? 'border-white/10' : 'border-black/10'} ${sidebarBg} p-4 flex flex-col gap-6 overflow-y-auto`}>
-        {/* Calendar Month Widget */}
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center px-1">
-            <span className={`text-xs font-extrabold uppercase tracking-wide ${isDark ? 'text-white' : 'text-zinc-800'}`}>
-              {calendarTitle}
-            </span>
-          </div>
-          
-          {/* Days Grid */}
-          <div className="grid grid-cols-7 gap-y-1.5 text-center text-[10px] font-semibold text-zinc-500 dark:text-zinc-400">
-            {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, idx) => (
-              <span key={idx} className="font-bold text-zinc-400 dark:text-zinc-500">{d}</span>
-            ))}
-            {calendarDays.map((day, idx) => (
-              <span 
-                key={idx} 
-                className={`h-6 w-6 flex items-center justify-center rounded-full mx-auto ${
-                  day === currentDay 
-                    ? 'bg-blue-500 text-white font-extrabold shadow-sm' 
-                    : day ? 'text-zinc-800 dark:text-zinc-200' : ''
-                }`}
-              >
-                {day}
-              </span>
-            ))}
-          </div>
-        </div>
+  const calendarDays = useMemo(() => {
+    const firstDayIndex = new Date(currentYear, currentMonth, 1).getDay()
+    const totalDays = new Date(currentYear, currentMonth + 1, 0).getDate()
+    const days: Array<number | string> = []
+    for (let i = 0; i < firstDayIndex; i++) days.push('')
+    for (let d = 1; d <= totalDays; d++) days.push(d)
+    return days
+  }, [currentYear, currentMonth])
 
-        <hr className={isDark ? 'border-white/10' : 'border-black/10'} />
-
-        {/* Calendar Filters list */}
-        <div className="flex flex-col gap-3">
-          <span className={`text-[10px] font-extrabold uppercase tracking-widest ${isDark ? 'text-white/40' : 'text-zinc-500'} px-1`}>
-            Calendars
-          </span>
-          <div className="flex flex-col gap-2">
-            {/* Work Calendar Toggle */}
-            <button
-              onClick={() => setShowWork(!showWork)}
-              className="flex items-center justify-between w-full px-2 py-1.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 text-left text-sm font-semibold transition-all"
-            >
-              <div className="flex items-center gap-3">
-                <div 
-                  className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center transition-all ${
-                    showWork 
-                      ? 'bg-[#FF2D55] border-[#FF2D55]' 
-                      : 'border-zinc-400 dark:border-zinc-600 bg-transparent'
-                  }`}
-                >
-                  {showWork && <div className="w-1 h-1 bg-white rounded-full" />}
-                </div>
-                <span className={isDark ? 'text-zinc-200' : 'text-zinc-700'}>Work Experience</span>
-              </div>
-            </button>
-
-            {/* Education Calendar Toggle */}
-            <button
-              onClick={() => setShowEdu(!showEdu)}
-              className="flex items-center justify-between w-full px-2 py-1.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 text-left text-sm font-semibold transition-all"
-            >
-              <div className="flex items-center gap-3">
-                <div 
-                  className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center transition-all ${
-                    showEdu 
-                      ? 'bg-[#007AFF] border-[#007AFF]' 
-                      : 'border-zinc-400 dark:border-zinc-600 bg-transparent'
-                  }`}
-                >
-                  {showEdu && <div className="w-1 h-1 bg-white rounded-full" />}
-                </div>
-                <span className={isDark ? 'text-zinc-200' : 'text-zinc-700'}>Education</span>
-              </div>
-            </button>
-          </div>
-        </div>
+  const sidebarMiniCalendar = (
+    <div className="ipad-desktop-only flex-col gap-3 pb-3 border-b border-black/10 dark:border-white/10">
+      <div className="flex items-center px-1">
+        <span className={`text-xs font-extrabold capitalize tracking-wide ${isDark ? 'text-white' : 'text-zinc-800'}`}>
+          {calendarTitle}
+        </span>
       </div>
 
-      {/* RIGHT Side: Schedule Event List */}
-      <div className={`flex-1 h-full overflow-y-auto p-6 md:p-8 ${detailBg}`}>
-        <div className="max-w-2xl mx-auto flex flex-col gap-6">
+      <div className="grid grid-cols-7 gap-y-1.5 text-center text-[10px] font-semibold text-zinc-500 dark:text-zinc-400">
+        {weekdayHeaders.map((d, idx) => (
+          <span key={idx} className="font-bold text-zinc-400 dark:text-zinc-500">
+            {d}
+          </span>
+        ))}
+        {calendarDays.map((day, idx) => (
+          <span
+            key={idx}
+            className={`h-6 w-6 flex items-center justify-center rounded-full mx-auto tabular-nums ${
+              day === currentDay
+                ? 'bg-[#FF3B30] text-white font-extrabold shadow-sm'
+                : day
+                ? 'text-zinc-800 dark:text-zinc-200'
+                : ''
+            }`}
+          >
+            {day}
+          </span>
+        ))}
+      </div>
+    </div>
+  )
 
+  const sidebarContent = (
+    <div className="flex flex-col gap-2">
+      <span className={`ipad-desktop-only text-[10px] font-extrabold uppercase tracking-widest ${isDark ? 'text-white/40' : 'text-zinc-500'} px-1`}>
+        {t('calendarTitle')}
+      </span>
+      <div className="ipad-sidebar-nav">
+        <button
+          type="button"
+          onClick={() => setShowWork((prev) => !prev)}
+          aria-pressed={showWork}
+          className={`flex items-center justify-between gap-2.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap shrink-0 ${
+            showWork
+              ? isDark
+                ? 'bg-white/10 text-white'
+                : 'bg-white text-zinc-900 shadow-sm'
+              : 'hover:bg-black/5 dark:hover:bg-white/5 opacity-60'
+          }`}
+        >
+          <span className="flex items-center gap-2.5">
+            <span
+              className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center transition-all shrink-0 ${
+                showWork
+                  ? 'bg-[#FF2D55] border-[#FF2D55]'
+                  : 'border-zinc-400 dark:border-zinc-600 bg-transparent'
+              }`}
+            >
+              {showWork && <span className="w-1 h-1 bg-white rounded-full" />}
+            </span>
+            <span className={isDark ? 'text-zinc-200' : 'text-zinc-800'}>
+              {t('workExperience')}
+            </span>
+          </span>
+          <span className="text-[10px] font-bold text-zinc-400 tabular-nums">
+            {experiences.length}
+          </span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setShowEdu((prev) => !prev)}
+          aria-pressed={showEdu}
+          className={`flex items-center justify-between gap-2.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap shrink-0 ${
+            showEdu
+              ? isDark
+                ? 'bg-white/10 text-white'
+                : 'bg-white text-zinc-900 shadow-sm'
+              : 'hover:bg-black/5 dark:hover:bg-white/5 opacity-60'
+          }`}
+        >
+          <span className="flex items-center gap-2.5">
+            <span
+              className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center transition-all shrink-0 ${
+                showEdu
+                  ? 'bg-[#007AFF] border-[#007AFF]'
+                  : 'border-zinc-400 dark:border-zinc-600 bg-transparent'
+              }`}
+            >
+              {showEdu && <span className="w-1 h-1 bg-white rounded-full" />}
+            </span>
+            <span className={isDark ? 'text-zinc-200' : 'text-zinc-800'}>
+              {t('education')}
+            </span>
+          </span>
+          <span className="text-[10px] font-bold text-zinc-400 tabular-nums">
+            {education.length}
+          </span>
+        </button>
+      </div>
+    </div>
+  )
+
+  return (
+    <IPadSplitView
+      theme={theme}
+      sidebarTitle={t('sidebarTitle')}
+      sidebarHeaderExtra={sidebarMiniCalendar}
+      sidebarContent={sidebarContent}
+      detailTitle={calendarTitle}
+      detailBgClass={detailBg}
+      detailPaddingClass="p-4 sm:p-6 md:p-8"
+    >
+      <div className="max-w-2xl mx-auto flex flex-col gap-6">
+        {!showWork && !showEdu ? (
+          <div className="py-16 text-center text-sm font-medium text-zinc-400 dark:text-zinc-500">
+            {t('noCalendars')}
+          </div>
+        ) : (
           <div className="flex flex-col gap-5">
-            {/* Render Education Events */}
             {showEdu && (
-              <div className="flex flex-col gap-4">
-                <span className="text-[10px] font-bold text-zinc-400 dark:text-zinc-400 uppercase tracking-wide px-1">
-                  Academic Timeline
-                </span>
+              <div className="flex flex-col gap-3.5">
+                <div className="flex items-center justify-between px-1">
+                  <span className="text-[10px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">
+                    {t('education')}
+                  </span>
+                  <span className="text-[10px] font-semibold text-zinc-400 dark:text-zinc-500">
+                    {t('degreesCount', { count: education.length })}
+                  </span>
+                </div>
                 {education.map((edu, idx) => (
-                  <AnimatedSection key={`edu-${idx}`} delay={0.05 + idx * 0.05}>
+                  <AnimatedSection key={`edu-${idx}`} delay={0.04 + idx * 0.04}>
                     <div className={`border rounded-2xl shadow-sm flex overflow-hidden ${cardBg} relative`}>
                       <div className="w-1.5 bg-[#007AFF] flex-shrink-0" />
                       <div className="p-4 flex-1 flex flex-col gap-2 min-w-0">
-                        <div className="flex justify-between items-start gap-4">
-                          <span className="text-[9px] font-extrabold text-[#007AFF] uppercase tracking-widest leading-none">
+                        <div className="flex flex-wrap justify-between items-start gap-2">
+                          <span className="text-[10px] font-extrabold text-[#007AFF] uppercase tracking-wider leading-none">
                             {edu.period}
                           </span>
-                          <span className="text-[9px] font-bold text-zinc-400 dark:text-zinc-500 flex items-center gap-1 leading-none">
+                          <span className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 flex items-center gap-1 leading-none">
                             <MapPinSymbol className="w-2.5 h-2.5 shrink-0" />
                             {edu.city}
                           </span>
@@ -160,22 +220,26 @@ export default function IPadExperience({ theme }: IPadExperienceProps) {
               </div>
             )}
 
-            {/* Render Work Events */}
             {showWork && (
-              <div className="flex flex-col gap-4 mt-2">
-                <span className="text-[10px] font-bold text-zinc-400 dark:text-zinc-400 uppercase tracking-wide px-1">
-                  Professional Experience
-                </span>
+              <div className="flex flex-col gap-3.5 mt-1">
+                <div className="flex items-center justify-between px-1">
+                  <span className="text-[10px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">
+                    {t('workExperience')}
+                  </span>
+                  <span className="text-[10px] font-semibold text-zinc-400 dark:text-zinc-500">
+                    {t('rolesCount', { count: experiences.length })}
+                  </span>
+                </div>
                 {experiences.map((exp, idx) => (
-                  <AnimatedSection key={`exp-${idx}`} delay={0.1 + idx * 0.05}>
+                  <AnimatedSection key={`exp-${idx}`} delay={0.08 + idx * 0.04}>
                     <div className={`border rounded-2xl shadow-sm flex overflow-hidden ${cardBg} relative`}>
                       <div className="w-1.5 bg-[#FF2D55] flex-shrink-0" />
                       <div className="p-4 flex-1 flex flex-col gap-2 min-w-0">
-                        <div className="flex justify-between items-start gap-4">
-                          <span className="text-[9px] font-extrabold text-[#FF2D55] uppercase tracking-widest leading-none">
+                        <div className="flex flex-wrap justify-between items-start gap-2">
+                          <span className="text-[10px] font-extrabold text-[#FF2D55] uppercase tracking-wider leading-none">
                             {exp.period}
                           </span>
-                          <span className="text-[9px] font-bold text-zinc-400 dark:text-zinc-500 flex items-center gap-1 leading-none">
+                          <span className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 flex items-center gap-1 leading-none">
                             <MapPinSymbol className="w-2.5 h-2.5 shrink-0" />
                             {exp.location}
                           </span>
@@ -198,11 +262,11 @@ export default function IPadExperience({ theme }: IPadExperienceProps) {
                           ))}
                         </ul>
 
-                        <div className="flex flex-wrap gap-1 mt-3">
+                        <div className="flex flex-wrap gap-1.5 mt-3">
                           {exp.technologies.map((tech) => (
                             <span
                               key={tech}
-                              className="text-[9px] font-bold bg-[#FF2D55]/10 text-[#FF2D55] px-2 py-0.5 rounded-md"
+                              className="text-[10px] font-bold bg-[#FF2D55]/10 text-[#FF2D55] px-2 py-0.5 rounded-md"
                             >
                               {tech}
                             </span>
@@ -214,17 +278,9 @@ export default function IPadExperience({ theme }: IPadExperienceProps) {
                 ))}
               </div>
             )}
-
-            {!showWork && !showEdu && (
-              <div className="flex flex-col items-center justify-center p-12 text-center text-zinc-400 dark:text-zinc-500">
-                <CalendarSymbol className="w-9 h-9 text-zinc-400 dark:text-zinc-500 mb-2 shrink-0" />
-                <p className="text-xs font-semibold">No calendars selected</p>
-                <p className="text-[10px] mt-0.5">Select a calendar from the sidebar to view events.</p>
-              </div>
-            )}
           </div>
-        </div>
+        )}
       </div>
-    </div>
+    </IPadSplitView>
   )
 }

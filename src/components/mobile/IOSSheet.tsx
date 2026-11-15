@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { motion, AnimatePresence, PanInfo } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { XMarkSymbol } from "../shared/SFSymbols";
@@ -24,10 +24,26 @@ export default function IOSSheet({
 }: IOSSheetProps) {
   const t = useTranslations();
   const isDark = theme === "dark";
+  const [swipeProgress, setSwipeProgress] = useState(0);
 
-  const handleDragEnd = (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-    // Dismiss if dragged down far enough or fast enough
-    if (info.offset.y > 150 || info.velocity.y > 400) {
+  const handleHomeBarPan = (
+    _event: MouseEvent | TouchEvent | PointerEvent,
+    info: PanInfo
+  ) => {
+    if (info.offset.y < 0) {
+      setSwipeProgress(Math.min(1, Math.abs(info.offset.y) / 90));
+    } else {
+      setSwipeProgress(0);
+    }
+  };
+
+  const handleHomeBarPanEnd = (
+    _event: MouseEvent | TouchEvent | PointerEvent,
+    info: PanInfo
+  ) => {
+    setSwipeProgress(0);
+    // Quick upward swipe or flick closes the app like an iPhone home bar
+    if (info.offset.y < -28 || info.velocity.y < -180) {
       onClose();
     }
   };
@@ -35,7 +51,10 @@ export default function IOSSheet({
   const sheetBg = isDark ? "#1c1c1e" : "#f2f2f7";
   const textColor = isDark ? "text-white" : "text-gray-900";
   const borderColor = isDark ? "border-white/10" : "border-black/10";
-  const grabBarColor = isDark ? "bg-white/20" : "bg-black/20";
+  const homeBarColor = isDark ? "bg-white/75" : "bg-black/70";
+  const bottomFadeBg = isDark
+    ? "linear-gradient(to top, rgba(28, 28, 30, 0.94) 35%, rgba(28, 28, 30, 0) 100%)"
+    : "linear-gradient(to top, rgba(242, 242, 247, 0.94) 35%, rgba(242, 242, 247, 0) 100%)";
 
   return (
     <AnimatePresence>
@@ -53,11 +72,6 @@ export default function IOSSheet({
 
           {/* iOS Sheet */}
           <motion.div
-            drag="y"
-            dragDirectionLock
-            dragConstraints={{ top: 0 }}
-            dragElastic={{ top: 0, bottom: 0.8 }}
-            onDragEnd={handleDragEnd}
             className={`fixed bottom-0 left-0 right-0 z-50 flex flex-col overflow-hidden border-t ${borderColor}`}
             style={{
               height: "92vh",
@@ -67,22 +81,20 @@ export default function IOSSheet({
               fontFamily:
                 '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
             }}
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "100%" }}
+            initial={{ y: "100%", scale: 1 }}
+            animate={{
+              y: -swipeProgress * 18,
+              scale: 1 - swipeProgress * 0.04,
+            }}
+            exit={{ y: "100%", scale: 0.96 }}
             transition={{ type: "spring", stiffness: 380, damping: 38 }}
             role="dialog"
             aria-modal="true"
             aria-label={title}
           >
-            {/* Grab Bar Container */}
-            <div className="h-6 w-full flex items-center justify-center flex-shrink-0 cursor-grab active:cursor-grabbing">
-              <div className={`w-9 h-1 rounded-full ${grabBarColor}`} />
-            </div>
-
             {/* Header */}
             <div
-              className={`flex items-center justify-between px-6 pb-4 border-b ${borderColor} flex-shrink-0`}
+              className={`flex items-center justify-between px-6 py-4 border-b ${borderColor} flex-shrink-0`}
             >
               <div className="flex items-center gap-2 h-8">
                 {typeof icon === "string" && icon ? (
@@ -113,13 +125,36 @@ export default function IOSSheet({
 
             {/* Content Area */}
             <div
-              className="flex-1 overflow-y-auto pb-10"
+              className="flex-1 overflow-y-auto pb-12"
               style={{
                 scrollbarWidth: "thin",
               }}
             >
               {children}
             </div>
+
+            {/* Bottom iPhone Swipe-Up Home Bar */}
+            <motion.div
+              className="absolute bottom-0 left-0 right-0 h-10 flex items-end justify-center pb-2.5 z-30 cursor-grab active:cursor-grabbing touch-none select-none"
+              style={{ background: bottomFadeBg }}
+              onPan={handleHomeBarPan}
+              onPanEnd={handleHomeBarPanEnd}
+              onClick={onClose}
+              role="button"
+              tabIndex={0}
+              aria-label={t("mobile.home.goHome")}
+              title={t("mobile.home.goHome")}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") onClose();
+              }}
+            >
+              <div
+                className={`w-[134px] h-[5px] rounded-full transition-transform duration-150 ${homeBarColor}`}
+                style={{
+                  transform: `scaleX(${1 + swipeProgress * 0.08})`,
+                }}
+              />
+            </motion.div>
           </motion.div>
         </>
       )}

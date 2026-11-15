@@ -2,10 +2,12 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useTranslations } from 'next-intl'
-import { personalInfo, socialLinks } from '@/lib/data'
-import AnimatedSection from '../shared/AnimatedSection'
+import { useLocale, useTranslations } from 'next-intl'
+import { getLocalizedPortfolioData, socialLinks } from '@/lib/data'
+import IPadSplitView from './IPadSplitView'
 import {
+  CheckmarkSymbol,
+  CopySymbol,
   EnvelopeSymbol,
   GitHubGlyphSymbol,
   LinkedInGlyphSymbol,
@@ -19,178 +21,174 @@ interface IPadContactProps {
 type MailId = 'github' | 'linkedin' | 'email' | 'phone'
 
 export default function IPadContact({ theme }: IPadContactProps) {
-  const t = useTranslations()
-  const [activeMailId, setActiveMailId] = useState<MailId>('github')
+  const locale = useLocale()
+  const t = useTranslations('tablet.contact')
+  const { personalInfo } = getLocalizedPortfolioData(locale)
+  const [activeMailId, setActiveMailId] = useState<MailId>('email')
+  const [copied, setCopied] = useState(false)
   const isDark = theme === 'dark'
 
-  const sidebarBg = isDark ? 'bg-zinc-900/40' : 'bg-black/5'
   const detailBg = isDark ? 'bg-[#1C1C1E]' : 'bg-white'
-  const activeMailBg = isDark ? 'bg-white/10 text-white' : 'bg-black/10 text-black'
+  const activeMailBg = isDark ? 'bg-white/15 text-white shadow-sm' : 'bg-white text-black shadow-sm'
   const hoverMailBg = isDark ? 'hover:bg-white/5' : 'hover:bg-black/5'
-  const emailBodyBg = isDark ? 'bg-zinc-900/50 border-white/5' : 'bg-gray-50 border-black/5'
+  const emailBodyBg = isDark ? 'bg-zinc-900/60 border-white/10' : 'bg-gray-50 border-black/5'
 
   const mailList = [
-    { 
-      id: 'github',
-      sender: 'GitHub Team',
-      email: 'noreply@github.com',
-      avatarText: 'GH',
-      subject: 'Portfolio & Code Repositories', 
-      date: '10:24 AM',
-      body: 'Hi Anas, I took a look at your portfolio and code repositories. You have developed some incredible web products and AI-powered interfaces. Let\'s check out the rest of your contributions and build something together.', 
-      href: process.env.NEXT_PUBLIC_GITHUB_URL || socialLinks.github, 
-      actionLabel: 'View GitHub Profile',
-      external: true 
-    },
-    { 
-      id: 'linkedin',
-      sender: 'LinkedIn Member',
-      email: 'notifications@linkedin.com',
-      avatarText: 'LN',
-      subject: 'Professional Connection Proposal', 
-      date: 'Yesterday',
-      body: 'Hi Anas, I would love to connect with you professionally on LinkedIn. Let\'s keep in touch to discuss potential freelance collaboration, contract projects, or full-time opportunities in Full-Stack development and AI engineering.', 
-      href: process.env.NEXT_PUBLIC_LINKEDIN_URL || socialLinks.linkedin, 
-      actionLabel: 'Connect on LinkedIn',
-      external: true 
-    },
-    { 
-      id: 'email',
-      sender: 'Collaboration Inquiry',
-      email: personalInfo.email,
+    {
+      id: 'email' as const,
+      sender: t('channels.email.sender'),
+      address: personalInfo.email,
       avatarText: 'EM',
-      subject: 'New Project Collaboration Inquiry', 
-      date: 'Friday',
-      body: 'Dear Anas, we would like to schedule an inquiry regarding a new project collaboration. Please feel free to reply directly to this mail so that we can arrange an introductory call or discuss budget estimations and timelines.', 
+      subject: t('channels.email.subject'),
+      body: t('channels.email.body'),
       href: `mailto:${personalInfo.email}`,
-      actionLabel: 'Compose Direct Email'
+      actionLabel: t('sendEmail'),
+      external: false,
     },
-    { 
-      id: 'phone',
-      sender: 'Inquiry Coordinator',
-      email: 'scheduling@telephony.com',
+    {
+      id: 'github' as const,
+      sender: t('channels.github.sender'),
+      address: 'github.com/anas-en-naqadi',
+      avatarText: 'GH',
+      subject: t('channels.github.subject'),
+      body: t('channels.github.body'),
+      href: process.env.NEXT_PUBLIC_GITHUB_URL || socialLinks.github,
+      actionLabel: t('openLink'),
+      external: true,
+    },
+    {
+      id: 'linkedin' as const,
+      sender: t('channels.linkedin.sender'),
+      address: 'linkedin.com/in/anas-en-naqadi',
+      avatarText: 'LN',
+      subject: t('channels.linkedin.subject'),
+      body: t('channels.linkedin.body'),
+      href: process.env.NEXT_PUBLIC_LINKEDIN_URL || socialLinks.linkedin,
+      actionLabel: t('openLink'),
+      external: true,
+    },
+    {
+      id: 'phone' as const,
+      sender: t('channels.phone.sender'),
+      address: personalInfo.phone,
       avatarText: 'PH',
-      subject: 'Direct Phone Inquiries & Scheduling', 
-      date: '05/07/2026',
-      body: 'Hello Anas, for immediate consulting inquires, budget pricing, or direct call scheduling, please dial my mobile phone number directly. Looking forward to speaking with you.', 
+      subject: t('channels.phone.subject'),
+      body: t('channels.phone.body'),
       href: `tel:${personalInfo.phone.replace(/\s+/g, '')}`,
-      actionLabel: 'Call Anas Directly'
+      actionLabel: t('callNow'),
+      external: false,
     },
-  ] as const
+  ]
 
   const activeMail = mailList.find((m) => m.id === activeMailId) || mailList[0]
 
+  const handleCopyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(personalInfo.email)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      // Clipboard API fallback ignored safely
+    }
+  }
+
+  const inboxThreads = (
+    <div className="ipad-sidebar-nav">
+      {mailList.map((mail) => (
+        <button
+          key={mail.id}
+          type="button"
+          onClick={() => setActiveMailId(mail.id)}
+          className={`text-left rtl:text-right px-3.5 py-2 sm:p-3.5 rounded-xl transition-all duration-200 flex gap-2.5 items-center sm:items-start shrink-0 ${
+            activeMailId === mail.id ? activeMailBg : hoverMailBg
+          }`}
+        >
+          <span
+            className={`ipad-desktop-only w-2 h-2 rounded-full bg-[#007AFF] mt-1.5 flex-shrink-0 transition-opacity duration-300 ${
+              activeMailId === mail.id ? 'opacity-0' : 'opacity-100'
+            }`}
+          />
+
+          <div className="min-w-0 flex flex-col gap-0.5">
+            <h3 className="text-xs font-bold text-gray-900 dark:text-white whitespace-nowrap sm:truncate">
+              {mail.sender}
+            </h3>
+            <h4 className="ipad-desktop-only text-[11px] font-bold text-gray-700 dark:text-gray-300 truncate">
+              {mail.subject}
+            </h4>
+            <p className="ipad-desktop-only text-[10.5px] text-zinc-400 dark:text-zinc-500 font-medium line-clamp-2 mt-0.5 leading-snug">
+              {mail.body}
+            </p>
+          </div>
+        </button>
+      ))}
+    </div>
+  )
+
+  const copyActionButton = (
+    <button
+      type="button"
+      onClick={handleCopyEmail}
+      className="text-xs text-blue-500 font-bold hover:underline flex items-center gap-1 whitespace-nowrap"
+    >
+      {copied ? <CheckmarkSymbol className="w-3.5 h-3.5" /> : <CopySymbol className="w-3.5 h-3.5" />}
+      {copied ? t('copied') : t('copyInfo')}
+    </button>
+  )
+
   return (
-    <div className="flex h-full w-full overflow-hidden select-none">
-      {/* LEFT Side: Apple Mail Inbox list */}
-      <div className={`w-[280px] md:w-[320px] h-full flex-shrink-0 border-r ${isDark ? 'border-white/10' : 'border-black/10'} ${sidebarBg} p-4 flex flex-col gap-4 overflow-y-auto`}>
-        {/* Title */}
-        <div className="px-2 pt-2 pb-1 flex justify-between items-center">
-          <span className={`text-[10px] font-extrabold uppercase tracking-widest ${isDark ? 'text-white/40' : 'text-zinc-500'}`}>
-            Inbox
-          </span>
-          <span className="text-[10px] text-blue-500 font-bold hover:underline cursor-pointer">
-            Edit
-          </span>
-        </div>
-
-        {/* Mail inbox items list */}
-        <div className="flex flex-col gap-0.5">
-          {mailList.map((mail, idx) => (
-            <button
-              key={mail.id}
-              onClick={() => setActiveMailId(mail.id as MailId)}
-              className={`w-full text-left p-3.5 rounded-xl transition-all duration-200 flex gap-2.5 items-start ${
-                activeMailId === mail.id
-                  ? activeMailBg
-                  : hoverMailBg
-              }`}
-            >
-              {/* Blue Unread Dot */}
-              <span className={`w-2.5 h-2.5 rounded-full bg-[#007AFF] mt-1.5 flex-shrink-0 transition-opacity duration-300 ${
-                activeMailId === mail.id ? 'opacity-0' : 'opacity-100'
-              }`} />
-              
-              <div className="flex-1 min-w-0 flex flex-col gap-0.5">
-                <div className="flex justify-between items-baseline gap-2">
-                  <h3 className="text-xs font-bold text-gray-900 dark:text-white truncate">
-                    {mail.sender}
-                  </h3>
-                  <span className="text-[9px] text-zinc-400 dark:text-zinc-500 font-semibold shrink-0">
-                    {mail.date}
-                  </span>
-                </div>
-                <h4 className="text-[11px] font-bold text-gray-700 dark:text-gray-300 truncate">
-                  {mail.subject}
-                </h4>
-                <p className="text-[10.5px] text-zinc-450 dark:text-zinc-500 font-medium line-clamp-2 mt-0.5 leading-snug">
-                  {mail.body}
-                </p>
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* RIGHT Side: Mail Message Detail Panel */}
-      <div className={`flex-1 h-full overflow-y-auto p-6 md:p-10 flex flex-col ${detailBg}`}>
-        <AnimatePresence mode="wait">
+    <IPadSplitView
+      theme={theme}
+      sidebarTitle={t('inbox')}
+      sidebarContent={inboxThreads}
+      detailTitle={activeMail.sender}
+      detailHeaderRight={copyActionButton}
+      detailBgClass={detailBg}
+      detailPaddingClass="p-4 sm:p-6 md:p-10 flex flex-col"
+    >
+      <AnimatePresence mode="wait">
           <motion.div
             key={activeMail.id}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.2 }}
-            className="max-w-3xl w-full mx-auto flex flex-col gap-6"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.18 }}
+            className="max-w-3xl w-full mx-auto flex flex-col gap-5 sm:gap-6"
           >
-            {/* Subject Header */}
             <div className="border-b border-black/[0.05] dark:border-white/[0.05] pb-4">
-              <h1 className="text-2xl font-extrabold text-gray-900 dark:text-white tracking-tight leading-tight">
+              <h1 className="text-xl sm:text-2xl font-extrabold text-gray-900 dark:text-white tracking-tight leading-tight">
                 {activeMail.subject}
               </h1>
             </div>
 
-            {/* Sender / Recipient Card */}
-            <div className="flex items-center gap-4.5">
-              <div className="w-11 h-11 rounded-full bg-blue-500/10 text-blue-500 dark:text-blue-400 font-extrabold text-sm flex items-center justify-center shadow-inner">
+            <div className="flex items-center gap-4">
+              <div className="w-11 h-11 rounded-full bg-blue-500/10 text-blue-500 dark:text-blue-400 font-extrabold text-sm flex items-center justify-center shadow-inner shrink-0">
                 {activeMail.avatarText}
               </div>
               <div className="flex-1 min-w-0 flex flex-col gap-0.5">
-                <div className="flex justify-between items-baseline gap-4">
-                  <h3 className="text-sm font-bold text-gray-900 dark:text-white leading-none">
-                    {activeMail.sender}
-                  </h3>
-                  <span className="text-[11px] text-zinc-400 dark:text-zinc-500 font-bold">
-                    {activeMail.date}
-                  </span>
+                <h3 className="text-sm font-bold text-gray-900 dark:text-white leading-tight truncate">
+                  {activeMail.sender}
+                </h3>
+                <div className="text-xs text-zinc-500 dark:text-zinc-400 font-semibold truncate select-text">
+                  {activeMail.address}
                 </div>
-                <div className="flex items-center gap-1.5 text-xs text-zinc-400 dark:text-zinc-500 font-semibold truncate">
-                  <span>From:</span>
-                  <span className="text-zinc-500 dark:text-zinc-400 font-bold">{activeMail.email}</span>
-                </div>
-                <div className="flex items-center gap-1.5 text-xs text-zinc-400 dark:text-zinc-500 font-semibold">
-                  <span>To:</span>
-                  <span className="font-bold">Anas En-Naqadi &lt;me@anas.dev&gt;</span>
+                <div className="text-xs text-zinc-400 dark:text-zinc-500 font-medium truncate">
+                  {personalInfo.name} &lt;{personalInfo.email}&gt;
                 </div>
               </div>
             </div>
 
-            {/* Styled Email Body Box */}
-            <div className={`p-6 rounded-2.5xl border leading-relaxed text-sm text-zinc-700 dark:text-zinc-350 flex flex-col gap-6 shadow-inner ${emailBodyBg}`}>
-              <p className="font-medium whitespace-pre-line leading-relaxed">
+            <div className={`p-5 sm:p-6 rounded-2xl border leading-relaxed text-sm text-zinc-700 dark:text-zinc-300 flex flex-col gap-6 shadow-inner ${emailBodyBg}`}>
+              <p className="font-medium whitespace-pre-line leading-relaxed select-text">
                 {activeMail.body}
               </p>
-              
-              <div className="pt-2 border-t border-black/[0.03] dark:border-white/[0.03] flex flex-col gap-2">
-                <span className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">
-                  Quick Action
-                </span>
-                
+
+              <div className="pt-3 border-t border-black/[0.05] dark:border-white/[0.05] flex flex-wrap gap-3">
                 <a
                   href={activeMail.href}
                   target={activeMail.external ? '_blank' : undefined}
                   rel={activeMail.external ? 'noopener noreferrer' : undefined}
-                  className="px-6 py-3 rounded-2xl bg-[#007AFF] hover:bg-blue-600 active:scale-98 transition-all text-white font-bold text-xs shadow-md shadow-blue-500/10 flex items-center justify-center gap-2 self-start min-w-[200px]"
+                  className="px-6 py-3 rounded-2xl bg-[#007AFF] hover:bg-blue-600 active:scale-[0.98] transition-all text-white font-bold text-xs shadow-md shadow-blue-500/10 flex items-center justify-center gap-2 min-w-[180px]"
                 >
                   {activeMail.id === 'phone' && (
                     <PhoneFillSymbol className="w-4 h-4 text-white shrink-0" />
@@ -210,7 +208,6 @@ export default function IPadContact({ theme }: IPadContactProps) {
             </div>
           </motion.div>
         </AnimatePresence>
-      </div>
-    </div>
+    </IPadSplitView>
   )
 }

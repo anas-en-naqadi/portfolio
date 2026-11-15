@@ -1,247 +1,248 @@
 'use client'
 
-import { personalInfo, socialLinks } from '@/lib/data'
-import { useTranslations } from 'next-intl'
-import WindowToolbar from '@/components/shared/WindowToolbar'
-import ModernCard from '@/components/shared/ModernCard'
-import AnimatedSection from '@/components/shared/AnimatedSection'
-import Image from 'next/image'
-import { motion } from 'framer-motion'
+import React, { useState, useMemo } from 'react'
+import { useTranslations, useLocale } from 'next-intl'
+import { getLocalizedPortfolioData } from '@/lib/data'
+import { WindowToolbar } from '@/components/shared/WindowToolbar'
 import {
   ShareSymbol,
   DownloadSymbol,
+  CopySymbol,
+  PersonSymbol,
   LaptopCodeSymbol,
   SparklesAISymbol,
   DesignSymbol,
-  PersonSymbol,
-  LinkedInGlyphSymbol,
-  GitHubGlyphSymbol,
-  EnvelopeSymbol,
   MapPinSymbol,
+  EnvelopeSymbol,
   PhoneDeviceSymbol,
 } from '@/components/shared/SFSymbols'
 
-export default function AboutWindow() {
-  const t = useTranslations()
+interface AboutWindowProps {
+  theme?: 'dark' | 'light'
+  onNotify?: (title: string, subtitle?: string) => void
+}
 
-  const shareWindow = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `${personalInfo.name} - Portfolio`,
-          url: window.location.href,
-        })
-      } catch (err) {
-        // User cancelled
-      }
-    } else {
-      navigator.clipboard.writeText(window.location.href)
-      alert('Link copied to clipboard!')
+type AboutSection = 'overview' | 'bio' | 'expertise'
+
+export function AboutWindow({ theme = 'dark', onNotify }: AboutWindowProps) {
+  const t = useTranslations('about')
+  const tCommon = useTranslations('common')
+  const tDesktop = useTranslations('desktop.windows')
+  const tToast = useTranslations('desktop.toast')
+  const locale = useLocale()
+  const isDark = theme === 'dark'
+
+  const [section, setSection] = useState<AboutSection>('overview')
+  const portfolio = useMemo(() => getLocalizedPortfolioData(locale), [locale])
+  const { personalInfo } = portfolio
+
+  const handleCopy = async (text: string, subtitle: string) => {
+    try {
+      await navigator.clipboard.writeText(text)
+      onNotify?.(tToast('copiedTitle'), subtitle)
+    } catch {
+      onNotify?.(tToast('copiedTitle'), text)
     }
   }
 
-  const downloadCV = () => {
-    const link = document.createElement('a')
-    link.href = personalInfo.cvPath
-    link.download = 'Anas_En-Naqadi_CV.pdf'
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+  const handleDownloadCV = () => {
+    onNotify?.(tToast('downloadTitle'), tToast('downloadBody'))
+    window.open(personalInfo.cvPath, '_blank', 'noopener,noreferrer')
   }
 
   const toolbarButtons = [
     {
       icon: <ShareSymbol className="w-3.5 h-3.5" />,
-      label: 'Share',
-      onClick: shareWindow,
+      label: tDesktop('actions.share'),
+      onClick: () =>
+        handleCopy(`${personalInfo.name} — ${tDesktop('about.role')} (${personalInfo.email})`, tToast('copiedProfile')),
+    },
+    {
+      icon: <CopySymbol className="w-3.5 h-3.5" />,
+      label: tDesktop('actions.copyVCard'),
+      onClick: () =>
+        handleCopy(
+          `BEGIN:VCARD\nFN:${personalInfo.name}\nEMAIL:${personalInfo.email}\nTEL:${personalInfo.phone}\nEND:VCARD`,
+          tToast('copiedVCard')
+        ),
     },
     {
       icon: <DownloadSymbol className="w-3.5 h-3.5" />,
-      label: 'Save',
-      onClick: downloadCV,
+      label: tCommon('downloadCV'),
+      onClick: handleDownloadCV,
     },
   ]
 
-  const expertise = [
-    {
-      icon: <LaptopCodeSymbol className="w-6 h-6 text-blue-600 dark:text-blue-400" />,
-      title: t('about.expertise.fullstack.title'),
-      description: t('about.expertise.fullstack.description'),
-      gradient: 'from-blue-500/20 to-cyan-500/20',
-      border: 'border-blue-400/30',
-    },
-    {
-      icon: <SparklesAISymbol className="w-6 h-6 text-purple-600 dark:text-purple-400" />,
-      title: t('about.expertise.performance.title'),
-      description: t('about.expertise.performance.description'),
-      gradient: 'from-purple-500/20 to-pink-500/20',
-      border: 'border-purple-400/30',
-    },
-    {
-      icon: <DesignSymbol className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />,
-      title: t('about.expertise.design.title'),
-      description: t('about.expertise.design.description'),
-      gradient: 'from-indigo-500/20 to-purple-500/20',
-      border: 'border-indigo-400/30',
-    },
-  ]
+  const cardClass = `rounded-xl border p-4 transition-colors ${
+    isDark ? 'bg-white/[0.04] border-white/10' : 'bg-white/80 border-black/10 shadow-sm'
+  }`
 
-  const socialIcons = [
-    { 
-      icon: <LinkedInGlyphSymbol className="w-5 h-5 text-white shrink-0" />, 
-      href: socialLinks.linkedin, 
-      label: 'LinkedIn' 
+  const expertiseCards = [
+    {
+      icon: <LaptopCodeSymbol className="w-5 h-5 text-blue-500" />,
+      title: t('expertise.fullstack.title'),
+      desc: t('expertise.fullstack.description'),
     },
-    { 
-      icon: <GitHubGlyphSymbol className="w-5 h-5 text-white shrink-0" />, 
-      href: socialLinks.github, 
-      label: 'GitHub' 
+    {
+      icon: <SparklesAISymbol className="w-5 h-5 text-purple-500" />,
+      title: t('expertise.performance.title'),
+      desc: t('expertise.performance.description'),
     },
-    { 
-      icon: <EnvelopeSymbol className="w-5 h-5 text-white shrink-0" />, 
-      href: `mailto:${personalInfo.email}`, 
-      label: 'Email' 
+    {
+      icon: <DesignSymbol className="w-5 h-5 text-pink-500" />,
+      title: t('expertise.design.title'),
+      desc: t('expertise.design.description'),
     },
   ]
 
   return (
-    <>
-      <WindowToolbar buttons={toolbarButtons} />
-      <div className="p-6 md:p-8 overflow-y-auto h-full">
-        {/* Hero Section - Modern Glassmorphism */}
-        <AnimatedSection delay={0.1}>
-          <motion.div
-            className="relative overflow-hidden rounded-3xl mb-8"
-            whileHover={{ scale: 1.01 }}
-            transition={{ duration: 0.3 }}
+    <div className="flex flex-col h-full">
+      <WindowToolbar buttons={toolbarButtons} theme={theme} />
+
+      <div className="macos-split-layout flex-1 min-h-0">
+        {/* Sidebar */}
+        <aside
+          className={`macos-split-sidebar p-3 ${isDark ? 'bg-white/[0.03]' : 'bg-black/[0.025]'}`}
+        >
+          <div
+            className={`macos-desktop-only px-2 pb-2 text-[11px] font-semibold uppercase tracking-wider ${
+              isDark ? 'text-white/40' : 'text-gray-500'
+            }`}
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary-dark to-purple-600 opacity-90" />
-            <div className="absolute inset-0 bg-[url('/images/desktop-bg.png')] bg-cover bg-center mix-blend-overlay opacity-20" />
-            <div className="relative p-10 md:p-12 text-white">
-              {/* Profile Image with Glow */}
-              <motion.div
-                className="relative w-32 h-32 mx-auto mb-6"
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                transition={{ type: 'spring', stiffness: 300 }}
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-primary to-primary-dark rounded-full blur-2xl opacity-50" />
-                <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-white/30 shadow-2xl">
-                  <Image
-                    src={personalInfo.profileImage}
-                    alt={personalInfo.name}
-                    fill
-                    className="object-cover"
-                    priority
-                  />
-                </div>
-              </motion.div>
-
-              {/* Name & Title */}
-              <motion.h1
-                className="text-4xl md:text-5xl font-bold mb-3 text-center bg-clip-text text-transparent bg-gradient-to-r from-white to-white/80"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-              >
-                {personalInfo.name}
-              </motion.h1>
-              <p className="text-xl md:text-2xl text-center mb-8 text-white/90 font-medium">
-                {personalInfo.subtitle}
-              </p>
-
-              <div className="flex flex-wrap gap-3 justify-center mb-8">
-                {[
-                  { 
-                    icon: <MapPinSymbol className="w-4 h-4 text-white shrink-0" />,
-                    text: personalInfo.location 
-                  },
-                  { 
-                    icon: <EnvelopeSymbol className="w-4 h-4 text-white shrink-0" />,
-                    text: personalInfo.email 
-                  },
-                  { 
-                    icon: <PhoneDeviceSymbol className="w-4 h-4 text-white shrink-0" />,
-                    text: personalInfo.phone 
-                  },
-                ].map((item, idx) => (
-                  <motion.div
-                    key={idx}
-                    className="flex items-center gap-2 bg-white/20 backdrop-blur-md px-5 py-2.5 rounded-full text-sm font-medium border border-white/30 shadow-lg"
-                    whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.3)' }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    {item.icon} <span>{item.text}</span>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Social Links */}
-              <div className="flex gap-4 justify-center">
-                {socialIcons.map((social, idx) => (
-                  <motion.a
-                    key={idx}
-                    href={social.href}
-                    target={social.href.startsWith('http') ? '_blank' : undefined}
-                    rel={social.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                    className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-xl border border-white/30 shadow-lg hover:bg-white/30 transition-all"
-                    whileHover={{ scale: 1.15, rotate: 360 }}
-                    whileTap={{ scale: 0.9 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    {social.icon}
-                  </motion.a>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        </AnimatedSection>
-
-        {/* Professional Profile - Modern Card */}
-        <AnimatedSection delay={0.2}>
-          <ModernCard className="mb-8" gradient>
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white flex-shrink-0 shadow-lg">
-                <PersonSymbol className="w-6 h-6" />
-              </div>
-              <div className="flex-1">
-                <h3 className="text-2xl font-bold mb-3 bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent">
-                  {t('about.profile.title')}
-                </h3>
-                <p className="text-gray-700 dark:text-gray-300 leading-relaxed text-base">
-                  {t('about.profile.description')}
-                </p>
-              </div>
-            </div>
-          </ModernCard>
-        </AnimatedSection>
-
-        {/* Expertise Grid - Modern Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {expertise.map((item, idx) => (
-            <AnimatedSection key={idx} delay={0.3 + idx * 0.1}>
-              <ModernCard
-                className={`bg-gradient-to-br ${item.gradient} border ${item.border} hover:scale-105 transition-transform duration-300`}
-                hover
-              >
-                <motion.div
-                  className="w-12 h-12 rounded-2xl bg-white/70 dark:bg-white/10 backdrop-blur-md shadow-sm flex items-center justify-center mb-4"
-                  whileHover={{ scale: 1.12, rotate: 6 }}
-                  transition={{ type: 'spring', stiffness: 300 }}
+            {tDesktop('about.sidebarTitle')}
+          </div>
+          <nav className="macos-sidebar-nav">
+            {(
+              [
+                { id: 'overview', label: tDesktop('about.overview') },
+                { id: 'bio', label: tDesktop('about.bio') },
+                { id: 'expertise', label: tDesktop('about.expertise') },
+              ] as const
+            ).map((item) => {
+              const active = section === item.id
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => setSection(item.id)}
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-[12.5px] font-medium whitespace-nowrap transition-colors ${
+                    active
+                      ? 'bg-[#007AFF] text-white'
+                      : isDark
+                        ? 'text-white/80 hover:bg-white/[0.07]'
+                        : 'text-gray-800 hover:bg-black/[0.05]'
+                  }`}
                 >
-                  {item.icon}
-                </motion.div>
-                <h4 className="text-xl font-bold mb-2 text-gray-800 dark:text-gray-200">
-                  {item.title}
-                </h4>
-                <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-                  {item.description}
-                </p>
-              </ModernCard>
-            </AnimatedSection>
-          ))}
+                  <PersonSymbol className="w-3.5 h-3.5 shrink-0 opacity-85" />
+                  <span>{item.label}</span>
+                </button>
+              )
+            })}
+          </nav>
+        </aside>
+
+        {/* Main Detail Pane */}
+        <div className="flex-1 overflow-y-auto macos-scroll p-5 space-y-5">
+          {/* Profile Card */}
+          <div className={cardClass}>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#007AFF] to-indigo-600 text-white text-xl font-bold flex items-center justify-center shrink-0 shadow-lg">
+                YB
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h2
+                    className={`text-xl font-bold tracking-tight ${
+                      isDark ? 'text-white' : 'text-gray-900'
+                    }`}
+                  >
+                    {personalInfo.name}
+                  </h2>
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/15 text-emerald-500 border border-emerald-500/25">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                    {tDesktop('about.status')}
+                  </span>
+                </div>
+                <p className="text-xs font-medium text-[#007AFF] mt-1">{t('subtitle')}</p>
+
+                <div className="flex flex-wrap gap-2 mt-3">
+                  <button
+                    type="button"
+                    onClick={() => handleCopy(personalInfo.email, tToast('copiedEmail'))}
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11.5px] font-medium transition-colors ${
+                      isDark
+                        ? 'bg-white/[0.07] hover:bg-white/[0.12] text-white/85'
+                        : 'bg-black/[0.05] hover:bg-black/[0.09] text-gray-700'
+                    }`}
+                  >
+                    <EnvelopeSymbol className="w-3.5 h-3.5 text-[#007AFF]" />
+                    <span>{personalInfo.email}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleCopy(personalInfo.phone, tToast('copiedPhone'))}
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11.5px] font-medium transition-colors ${
+                      isDark
+                        ? 'bg-white/[0.07] hover:bg-white/[0.12] text-white/85'
+                        : 'bg-black/[0.05] hover:bg-black/[0.09] text-gray-700'
+                    }`}
+                  >
+                    <PhoneDeviceSymbol className="w-3.5 h-3.5 text-emerald-500" />
+                    <span>{personalInfo.phone}</span>
+                  </button>
+                  <span
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11.5px] font-medium ${
+                      isDark ? 'bg-white/[0.05] text-white/65' : 'bg-black/[0.04] text-gray-600'
+                    }`}
+                  >
+                    <MapPinSymbol className="w-3.5 h-3.5 text-rose-500" />
+                    <span>{personalInfo.location}</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {(section === 'overview' || section === 'bio') && (
+            <div className={cardClass}>
+              <h3
+                className={`text-sm font-bold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}
+              >
+                {t('profile.title')}
+              </h3>
+              <p className={`text-[13px] leading-relaxed ${isDark ? 'text-white/75' : 'text-gray-600'}`}>
+                {t('profile.description')}
+              </p>
+            </div>
+          )}
+
+          {(section === 'overview' || section === 'expertise') && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+              {expertiseCards.map((card) => (
+                <div key={card.title} className={cardClass}>
+                  <div
+                    className={`w-9 h-9 rounded-xl flex items-center justify-center mb-3 ${
+                      isDark ? 'bg-white/[0.07]' : 'bg-black/[0.05]'
+                    }`}
+                  >
+                    {card.icon}
+                  </div>
+                  <h4
+                    className={`text-[13px] font-bold mb-1 ${
+                      isDark ? 'text-white' : 'text-gray-900'
+                    }`}
+                  >
+                    {card.title}
+                  </h4>
+                  <p className={`text-[12px] leading-relaxed ${isDark ? 'text-white/65' : 'text-gray-600'}`}>
+                    {card.desc}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
-    </>
+    </div>
   )
 }
-

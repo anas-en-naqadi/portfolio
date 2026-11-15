@@ -8,6 +8,10 @@ module.exports = {
   ],
   theme: {
     extend: {
+      screens: {
+        short: { raw: '(max-height: 760px)' },
+        tall: { raw: '(min-height: 920px)' },
+      },
       colors: {
         primary: {
           DEFAULT: '#667eea',

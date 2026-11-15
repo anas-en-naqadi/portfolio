@@ -12,6 +12,7 @@
     "scheduleCall": "Schedule Call",
     "emailMe": "Email Me",
     "theme": "Theme",
+    "language": "Language",
     "fullscreen": "Fullscreen",
     "close": "Close",
     "minimize": "Minimize",
@@ -169,6 +170,380 @@
         "sender": "Phone Call",
         "subject": "Direct Inquiries & Call Scheduling",
         "body": "Dial my mobile number directly for immediate business enquiries or freelance requests."
+      }
+    }
+  },
+  "tablet": {
+    "apps": {
+      "about": "About",
+      "experience": "Experience",
+      "projects": "Projects",
+      "skills": "Skills",
+      "contact": "Contact",
+      "settings": "Settings",
+      "github": "GitHub",
+      "linkedin": "LinkedIn",
+      "mail": "Mail",
+      "phone": "Phone",
+      "whatsapp": "WhatsApp"
+    },
+    "home": {
+      "homeScreenLabel": "iPad Home Screen",
+      "dockLabel": "iPad Dock",
+      "openApp": "Open {label}"
+    },
+    "statusBar": {
+      "label": "iPadOS Status Bar",
+      "wifiConnected": "Wi-Fi connected",
+      "batteryLevel": "Battery 85 percent",
+      "openControlCenter": "Toggle Control Center"
+    },
+    "controlCenter": {
+      "title": "Control Center",
+      "appearance": "Appearance",
+      "dark": "Dark",
+      "light": "Light",
+      "language": "Language",
+      "returnHome": "Home Screen"
+    },
+    "sheet": {
+      "close": "Close",
+      "returnHome": "Return to Home Screen",
+      "hideSidebar": "Hide Sidebar",
+      "showSidebar": "Show Sidebar",
+      "multitasking": "Window Controls"
+    },
+    "widgets": {
+      "weather": {
+        "label": "Weather",
+        "high": "H",
+        "low": "L",
+        "conditions": {
+          "clearSky": "Clear Sky",
+          "partlyCloudy": "Partly Cloudy",
+          "foggy": "Foggy",
+          "drizzle": "Drizzle",
+          "rainy": "Rainy",
+          "snowy": "Snowy",
+          "showers": "Showers",
+          "thunderstorm": "Thunderstorm",
+          "clear": "Clear"
+        }
+      },
+      "availability": "Available for Work",
+      "downloadCV": "Download CV",
+      "viewGithub": "GitHub",
+      "clock": "Clock",
+      "profile": "Profile",
+      "resumeTitle": "CV / Resume",
+      "curriculumVitae": "Curriculum Vitae",
+      "resumeDesc": "Download latest resume for professional overview.",
+      "marrakech": "Marrakech"
+    },
+    "about": {
+      "sidebarTitle": "Profile",
+      "overview": "Overview",
+      "expertise": "Core Expertise",
+      "contactDetails": "Contact Information",
+      "available": "Open to Opportunities",
+      "phone": "Phone",
+      "email": "Email",
+      "location": "Location",
+      "downloadCV": "Download Resume",
+      "viewGithub": "View GitHub",
+      "summaryTitle": "About Me"
+    },
+    "experience": {
+      "sidebarTitle": "Calendars",
+      "calendarTitle": "Calendars",
+      "workExperience": "Work Experience",
+      "education": "Education",
+      "present": "Present",
+      "rolesCount": "{count} roles",
+      "degreesCount": "{count} degrees",
+      "agenda": "Agenda",
+      "month": "Month",
+      "year": "Year",
+      "today": "Today",
+      "noCalendars": "No calendars selected"
+    },
+    "projects": {
+      "sidebarTitle": "Discover",
+      "all": "All Apps",
+      "searchPlaceholder": "Search apps...",
+      "get": "GET",
+      "viewDetails": "Details",
+      "openGithub": "Open on GitHub",
+      "technologies": "Technologies",
+      "impact": "Impact",
+      "close": "Done",
+      "empty": "No projects in this category",
+      "categories": {
+        "ai": "AI & Agents",
+        "ml": "Machine Learning",
+        "mobile": "Mobile Apps",
+        "fullstack": "Full-Stack Web",
+        "tools": "Developer Tools",
+        "web": "Web Platforms"
+      }
+    },
+    "skills": {
+      "sidebarTitle": "Folders",
+      "allSkills": "All Skills",
+      "searchPlaceholder": "Search skills...",
+      "empty": "No matching skills found",
+      "itemsCount": "{count} items",
+      "categories": {
+        "languages": "Languages",
+        "frameworks": "Frameworks",
+        "libraries": "AI & Libraries",
+        "databases": "Databases",
+        "methodologies": "Methodologies",
+        "tools": "Cloud & Tools",
+        "spoken": "Spoken Languages"
+      }
+    },
+    "contact": {
+      "sidebarTitle": "Mailboxes",
+      "inbox": "Inbox",
+      "copyInfo": "Copy Email",
+      "copied": "Copied!",
+      "sendEmail": "Compose Email",
+      "openLink": "Open Link",
+      "callNow": "Call Now",
+      "empty": "Select a message to read",
+      "channels": {
+        "email": {
+          "sender": "Direct Email",
+          "subject": "Project Collaboration & Inquiries",
+          "body": "Reach out directly via email to discuss full-stack engineering, AI agents, consulting, or to request my detailed CV."
+        },
+        "github": {
+          "sender": "GitHub",
+          "subject": "Open Source & Engineering Repositories",
+          "body": "Explore my source code, production templates, AI pipelines, and system architecture repositories on GitHub."
+        },
+        "linkedin": {
+          "sender": "LinkedIn",
+          "subject": "Professional Network & Career",
+          "body": "Connect with me on LinkedIn for full-time engineering roles, research collaborations, or technical leadership."
+        },
+        "phone": {
+          "sender": "Phone",
+          "subject": "Direct Call & Scheduling",
+          "body": "Available for direct phone calls regarding urgent freelance engagements, interviews, or technical consultations."
+        }
+      }
+    },
+    "settings": {
+      "sidebarTitle": "Settings",
+      "appleId": "Apple ID",
+      "sections": {
+        "profile": "Personal Info",
+        "general": "General",
+        "appearance": "Display & Brightness",
+        "about": "About"
+      },
+      "darkMode": "Dark Appearance",
+      "darkModeDesc": "Switch between light and dark iPadOS surfaces",
+      "systemLanguage": "Language & Region",
+      "systemLanguageDesc": "Change the active portfolio interface language",
+      "roleLabel": "Role",
+      "locationLabel": "Location",
+      "portfolioVersion": "Portfolio OS",
+      "versionValue": "iPadOS 18 Web Edition",
+      "framework": "Framework",
+      "styling": "Responsive Styling",
+      "repository": "Source Repository",
+      "openRepo": "View on GitHub"
+    }
+  },
+  "desktop": {
+    "menuBar": {
+      "finder": "Finder",
+      "file": "File",
+      "edit": "Edit",
+      "view": "View",
+      "go": "Go",
+      "window": "Window",
+      "help": "Help",
+      "appleMenu": {
+        "aboutThisMac": "About This Mac",
+        "systemSettings": "System Settings...",
+        "downloadCV": "Download CV",
+        "closeAllWindows": "Close All Windows"
+      },
+      "fileMenu": {
+        "openAbout": "Open About Me",
+        "openProjects": "Open Projects",
+        "openSettings": "System Settings...",
+        "downloadCV": "Download CV",
+        "closeWindow": "Close Active Window"
+      },
+      "editMenu": {
+        "copyEmail": "Copy Email Address",
+        "copyPhone": "Copy Phone Number",
+        "spotlight": "Spotlight Search"
+      },
+      "viewMenu": {
+        "toggleTheme": "Switch Appearance",
+        "toggleMaximize": "Zoom Active Window",
+        "openLaunchpad": "Open Launchpad"
+      },
+      "windowMenu": {
+        "minimize": "Minimize",
+        "zoom": "Zoom",
+        "closeAll": "Close All Windows",
+        "noOpenWindows": "No open windows"
+      },
+      "helpMenu": {
+        "spotlightShortcut": "Spotlight Search (⌘K / ⌘Space)",
+        "closeShortcut": "Close Window (⌘W)",
+        "escShortcut": "Dismiss Overlays (Esc)",
+        "contactDeveloper": "Contact Developer"
+      },
+      "controlCenter": {
+        "title": "Control Center",
+        "wifi": "Portfolio Net",
+        "connected": "Connected",
+        "appearance": "Appearance",
+        "dark": "Dark",
+        "light": "Light",
+        "language": "Language",
+        "wallpaper": "Wallpaper",
+        "openSettings": "All Settings..."
+      }
+    },
+    "wallpapers": {
+      "default": "Sequoia Dusk",
+      "aurora": "Aurora Borealis",
+      "midnight": "Midnight Studio",
+      "horizon": "Liquid Horizon"
+    },
+    "dock": {
+      "launchpad": "Launchpad",
+      "settings": "System Settings",
+      "trash": "Trash",
+      "trashEmptyTitle": "Trash is Empty",
+      "trashEmptyBody": "All temporary files have already been cleared."
+    },
+    "launchpad": {
+      "title": "Launchpad",
+      "searchPlaceholder": "Search apps...",
+      "noResults": "No matching apps",
+      "hint": "Press Esc or click outside to close"
+    },
+    "spotlight": {
+      "placeholder": "Spotlight Search — Apps, Projects, Skills, Actions...",
+      "empty": "Type to search across apps, projects, skills, or quick actions",
+      "noResults": "No results found",
+      "categories": {
+        "app": "Applications",
+        "action": "Quick Actions",
+        "project": "Projects",
+        "experience": "Experience",
+        "skill": "Skills"
+      },
+      "actions": {
+        "downloadCV": "Download Curriculum Vitae (PDF)",
+        "toggleTheme": "Toggle Dark / Light Appearance",
+        "switchLanguage": "Switch Interface Language",
+        "openGithub": "Open GitHub Profile",
+        "openLinkedin": "Open LinkedIn Profile",
+        "openSettings": "Open System Settings"
+      },
+      "footerHint": "↑↓ Navigate • ↵ Open • Esc Dismiss"
+    },
+    "contextMenu": {
+      "openAbout": "Get Info (About Me)",
+      "openSpotlight": "Spotlight Search",
+      "changeWallpaper": "Next Wallpaper",
+      "toggleTheme": "Switch Appearance",
+      "openSettings": "System Settings...",
+      "downloadCV": "Download CV"
+    },
+    "toast": {
+      "copiedTitle": "Copied to Clipboard",
+      "copiedEmail": "Email address copied",
+      "copiedPhone": "Phone number copied",
+      "copiedProfile": "Profile summary copied",
+      "copiedVCard": "vCard details copied",
+      "downloadTitle": "Curriculum Vitae",
+      "downloadBody": "Opening CV PDF...",
+      "printTitle": "Print Preview",
+      "printBody": "Opening system print dialog...",
+      "wallpaperTitle": "Wallpaper Updated"
+    },
+    "windows": {
+      "actions": {
+        "share": "Share",
+        "save": "Save",
+        "print": "Print",
+        "export": "Export",
+        "copyVCard": "Copy vCard",
+        "openGithub": "GitHub",
+        "openMail": "Send Email",
+        "callNow": "Call"
+      },
+      "about": {
+        "sidebarTitle": "Profile",
+        "overview": "Overview",
+        "bio": "Biography",
+        "expertise": "Expertise",
+        "role": "Full-Stack Developer & AI Engineer",
+        "status": "Available for Projects & Roles"
+      },
+      "experience": {
+        "sidebarTitle": "Timeline",
+        "all": "All Timeline",
+        "work": "Work Experience",
+        "education": "Education",
+        "subtitle": "{workCount} Roles • {eduCount} Degrees",
+        "present": "Present",
+        "empty": "No timeline items found"
+      },
+      "projects": {
+        "sidebarTitle": "Categories",
+        "searchPlaceholder": "Filter projects...",
+        "subtitle": "{count} Featured Engineering Works",
+        "viewCode": "Source Code",
+        "featuredBadge": "Featured"
+      },
+      "skills": {
+        "sidebarTitle": "Categories",
+        "allCategories": "All Skills",
+        "searchPlaceholder": "Search skills...",
+        "levelAll": "All Tiers",
+        "levelCore": "Core Stack",
+        "itemsCount": "{count} items",
+        "empty": "No matching skills"
+      },
+      "contact": {
+        "sidebarTitle": "Channels",
+        "directChannels": "Direct Channels",
+        "quickAction": "Quick Actions",
+        "availabilityTitle": "Current Availability",
+        "availabilityBadge": "Open to Opportunities",
+        "availabilityDesc": "Available for Full-Stack Engineering, AI / LLM Systems Architecture, and freelance technical consulting."
+      },
+      "settings": {
+        "sidebarTitle": "System Settings",
+        "sections": {
+          "profile": "Apple ID & Profile",
+          "appearance": "Appearance",
+          "wallpaper": "Wallpaper",
+          "language": "Language & Region",
+          "about": "About This Mac"
+        },
+        "appearanceDesc": "Customize the desktop glass appearance and contrast.",
+        "wallpaperDesc": "Choose a desktop backdrop for macOS.",
+        "languageDesc": "Select the active language across the portfolio.",
+        "chipLabel": "Architecture",
+        "chipValue": "Apple Silicon M-Series Web Runtime",
+        "osLabel": "macOS",
+        "osValue": "macOS Sequoia 15 (Liquid Glass)",
+        "frameworkLabel": "Framework",
+        "motionLabel": "Motion Engine"
       }
     }
   }

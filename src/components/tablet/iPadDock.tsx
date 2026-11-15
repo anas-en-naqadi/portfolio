@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { useTranslations } from 'next-intl'
 import IPadAppIcon from './iPadAppIcon'
 
 interface DockApp {
@@ -12,24 +13,25 @@ interface DockApp {
 interface iPadDockProps {
   apps: DockApp[]
   theme: 'dark' | 'light'
+  iconSize?: number
 }
 
-export default function iPadDock({ apps, theme }: iPadDockProps) {
+export default function iPadDock({ apps, theme, iconSize = 62 }: iPadDockProps) {
+  const t = useTranslations('tablet.home')
   const isDark = theme === 'dark'
 
   return (
-    <motion.div
-      className="fixed bottom-6 z-40"
+    <motion.nav
+      className="fixed bottom-4 sm:bottom-6 z-40 max-w-[calc(100vw-2rem)]"
       initial={{ y: 40, opacity: 0, x: '-50%' }}
       animate={{ y: 0, opacity: 1, x: '-50%' }}
       style={{ left: '50%' }}
       transition={{ duration: 0.5, ease: 'easeOut', delay: 0.3 }}
-      role="navigation"
-      aria-label="iPad Dock"
+      aria-label={t('dockLabel')}
     >
       {/* Glassmorphic dock pill */}
       <div
-        className="flex items-end gap-4 px-8 py-3.5 rounded-3xl"
+        className="flex items-end justify-center gap-2 sm:gap-4 px-4 sm:px-6 py-2.5 sm:py-3 rounded-[26px] sm:rounded-[30px]"
         style={{
           background: isDark
             ? 'rgba(255, 255, 255, 0.15)'
@@ -51,10 +53,11 @@ export default function iPadDock({ apps, theme }: iPadDockProps) {
             label={app.label}
             onClick={app.onClick}
             index={index}
-            size={82}
+            size={iconSize}
+            showLabel={false}
           />
         ))}
       </div>
-    </motion.div>
+    </motion.nav>
   )
 }

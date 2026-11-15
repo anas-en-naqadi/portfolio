@@ -3,17 +3,20 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
-import { useTranslations } from 'next-intl'
-import { projects, socialLinks } from '@/lib/data'
+import { useLocale, useTranslations } from 'next-intl'
+import { getLocalizedPortfolioData, socialLinks } from '@/lib/data'
 import AnimatedSection from '../shared/AnimatedSection'
+import IPadSplitView from './IPadSplitView'
 import {
   AppCubeSymbol,
+  ArrowUpRightSymbol,
   GlobeSymbol,
   GridSymbol,
   PhoneDeviceSymbol,
   SearchSymbol,
   SparklesAISymbol,
   XMarkCircleSymbol,
+  XMarkSymbol,
 } from '../shared/SFSymbols'
 
 interface IPadProjectsProps {
@@ -21,143 +24,155 @@ interface IPadProjectsProps {
 }
 
 export default function IPadProjects({ theme }: IPadProjectsProps) {
-  const t = useTranslations()
+  const locale = useLocale()
+  const t = useTranslations('tablet.projects')
+  const { projects } = getLocalizedPortfolioData(locale)
   const [activeFilter, setActiveFilter] = useState<'all' | 'ai' | 'web' | 'mobile'>('all')
   const [searchQuery, setSearchQuery] = useState('')
+  const [selectedProject, setSelectedProject] = useState<(typeof projects)[number] | null>(null)
   const isDark = theme === 'dark'
 
-  const sidebarBg = isDark ? 'bg-zinc-900/40' : 'bg-black/5'
   const detailBg = isDark ? 'bg-zinc-900/20' : 'bg-white/40'
   const cardBg = isDark ? 'bg-zinc-900 border-white/[0.04]' : 'bg-white border-black/[0.04]'
   const searchBg = isDark ? 'bg-white/10 text-white' : 'bg-black/5 text-black'
-  const activeFilterBg = isDark ? 'bg-white/10 text-white' : 'bg-black/10 text-black'
-  const hoverFilterBg = isDark ? 'hover:bg-white/5' : 'hover:bg-black/5'
+  const activeFilterBg = 'bg-[#007AFF] text-white shadow-sm shadow-[#007AFF]/25'
+  const hoverFilterBg = isDark
+    ? 'hover:bg-[#007AFF]/15 text-zinc-300'
+    : 'hover:bg-[#007AFF]/10 text-zinc-700'
 
   const filters = [
-    { 
-      id: 'all', 
-      label: t('projects.all') || 'All Apps', 
-      icon: <GridSymbol className="w-4 h-4 shrink-0" />
+    {
+      id: 'all',
+      label: t('all'),
+      icon: <GridSymbol className="w-4 h-4 shrink-0" />,
     },
-    { 
-      id: 'ai', 
-      label: t('projects.ai') || 'AI', 
-      icon: <SparklesAISymbol className="w-4 h-4 shrink-0" />
+    {
+      id: 'ai',
+      label: t('categories.ai'),
+      icon: <SparklesAISymbol className="w-4 h-4 shrink-0" />,
     },
-    { 
-      id: 'web', 
-      label: t('projects.web') || 'Web Apps', 
-      icon: <GlobeSymbol className="w-4 h-4 shrink-0" />
+    {
+      id: 'web',
+      label: t('categories.web'),
+      icon: <GlobeSymbol className="w-4 h-4 shrink-0" />,
     },
-    { 
-      id: 'mobile', 
-      label: t('projects.mobile') || 'Mobile Apps', 
-      icon: <PhoneDeviceSymbol className="w-4 h-4 shrink-0" />
+    {
+      id: 'mobile',
+      label: t('categories.mobile'),
+      icon: <PhoneDeviceSymbol className="w-4 h-4 shrink-0" />,
     },
   ] as const
 
-  const getCategory = (project: typeof projects[number]) => {
+  const getCategory = (project: (typeof projects)[number]) => {
     if (project.technologies.includes('Machine Learning')) {
-      return 'Machine Learning'
-    } else if (project.type === 'ai' || project.technologies.includes('Deep Learning') || project.technologies.includes('AI')) {
-      return 'Artificial Intelligence'
+      return t('categories.ml')
+    } else if (
+      project.type === 'ai' ||
+      project.technologies.includes('Deep Learning') ||
+      project.technologies.includes('AI')
+    ) {
+      return t('categories.ai')
     } else if (project.type === 'mobile') {
-      return 'iOS & Android App'
-    } else if (project.technologies.includes('React.js') || project.technologies.includes('Vue.js') || project.technologies.includes('Laravel')) {
-      return 'Full-Stack Web App'
+      return t('categories.mobile')
+    } else if (
+      project.technologies.includes('React.js') ||
+      project.technologies.includes('Vue.js') ||
+      project.technologies.includes('Laravel')
+    ) {
+      return t('categories.fullstack')
     }
-    return 'Developer Tools'
+    return t('categories.tools')
   }
 
   const filteredProjects = projects.filter((p) => {
     const matchesFilter = activeFilter === 'all' || p.type === activeFilter
-    const matchesSearch = 
-      p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.technologies.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()))
+    const q = searchQuery.toLowerCase()
+    const matchesSearch =
+      p.title.toLowerCase().includes(q) ||
+      p.description.toLowerCase().includes(q) ||
+      p.technologies.some((tech) => tech.toLowerCase().includes(q))
     return matchesFilter && matchesSearch
   })
 
-  return (
-    <div className="flex h-full w-full overflow-hidden select-none">
-      {/* LEFT Side: App Store Sidebar */}
-      <div className={`w-[260px] md:w-[280px] h-full flex-shrink-0 border-r ${isDark ? 'border-white/10' : 'border-black/10'} ${sidebarBg} p-4 flex flex-col gap-5 overflow-y-auto`}>
-        {/* Title */}
-        <div className="px-2 pt-2">
-          <span className={`text-[10px] font-extrabold uppercase tracking-widest ${isDark ? 'text-white/40' : 'text-zinc-500'}`}>
-            App Store
-          </span>
-        </div>
+  const activeFilterLabel =
+    filters.find((f) => f.id === activeFilter)?.label ?? t('all')
 
-        {/* iOS Search Bar */}
-        <div className="px-1.5">
-          <div className="relative">
-            <span className="absolute inset-y-0 left-3 flex items-center text-zinc-400 dark:text-zinc-500 pointer-events-none">
-              <SearchSymbol className="w-3.5 h-3.5" />
-            </span>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search Apps..."
-              className={`w-full pl-8 pr-8 py-2 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-all ${searchBg}`}
-            />
-            {searchQuery && (
-              <button 
-                onClick={() => setSearchQuery('')}
-                aria-label="Clear search"
-                className="absolute inset-y-0 right-2.5 flex items-center justify-center text-zinc-400 dark:text-zinc-500 hover:text-zinc-600"
-              >
-                <XMarkCircleSymbol className="w-4 h-4" />
-              </button>
-            )}
-          </div>
-        </div>
+  const searchBar = (
+    <div className="px-0.5 sm:px-1.5">
+      <div className="relative">
+        <span className="absolute inset-y-0 left-3 rtl:left-auto rtl:right-3 flex items-center text-zinc-400 dark:text-zinc-500 pointer-events-none">
+          <SearchSymbol className="w-3.5 h-3.5" />
+        </span>
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder={t('searchPlaceholder')}
+          aria-label={t('searchPlaceholder')}
+          className={`w-full pl-8 pr-8 py-2 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-all ${searchBg}`}
+        />
+        {searchQuery && (
+          <button
+            type="button"
+            onClick={() => setSearchQuery('')}
+            aria-label="Clear search"
+            className="absolute inset-y-0 right-2.5 rtl:right-auto rtl:left-2.5 flex items-center justify-center text-zinc-400 dark:text-zinc-500 hover:text-zinc-600"
+          >
+            <XMarkCircleSymbol className="w-4 h-4" />
+          </button>
+        )}
+      </div>
+    </div>
+  )
 
-        {/* Categories / Filters */}
-        <nav className="flex flex-col gap-1.5" aria-label="App Store Category Navigation">
-          {filters.map((f) => (
-            <button
-              key={f.id}
-              onClick={() => setActiveFilter(f.id)}
-              className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
-                activeFilter === f.id
-                  ? activeFilterBg
-                  : `text-zinc-600 dark:text-zinc-400 ${hoverFilterBg}`
+  const filterNav = (
+    <nav className="ipad-sidebar-nav" aria-label={t('sidebarTitle')}>
+      {filters.map((f) => {
+        const isActive = activeFilter === f.id
+        return (
+          <button
+            key={f.id}
+            type="button"
+            onClick={() => setActiveFilter(f.id)}
+            className={`flex items-center gap-2.5 px-3.5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 whitespace-nowrap shrink-0 ${
+              isActive ? activeFilterBg : hoverFilterBg
+            }`}
+          >
+            <span
+              className={`flex items-center justify-center shrink-0 ${
+                isActive ? 'text-white' : 'text-[#007AFF] dark:text-[#0A84FF]'
               }`}
             >
-              <span className="flex items-center justify-center shrink-0">{f.icon}</span>
-              <span className="truncate">{f.label}</span>
-            </button>
-          ))}
-        </nav>
-      </div>
+              {f.icon}
+            </span>
+            <span className="truncate">{f.label}</span>
+          </button>
+        )
+      })}
+    </nav>
+  )
 
-      {/* RIGHT Side: App Grid */}
-      <div className={`flex-1 h-full overflow-y-auto p-6 md:p-8 ${detailBg}`}>
-        <div className="max-w-4xl mx-auto flex flex-col gap-6">
-          {/* Header */}
-          <div className="flex flex-col gap-1 mb-2">
-            <h2 className="text-2xl font-extrabold text-gray-900 dark:text-white tracking-tight">
-              Discover My Projects
-            </h2>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">
-              Explore featured applications, tools, and AI projects I've built.
-            </p>
-          </div>
-
+  return (
+    <div className="relative h-full w-full select-none">
+      <IPadSplitView
+        theme={theme}
+        sidebarTitle={t('sidebarTitle')}
+        sidebarHeaderExtra={searchBar}
+        sidebarContent={filterNav}
+        detailTitle={`${activeFilterLabel} (${filteredProjects.length})`}
+        detailBgClass={detailBg}
+        detailPaddingClass="p-4 sm:p-6 md:p-8"
+      >
+        <div className="max-w-4xl mx-auto flex flex-col gap-5 sm:gap-6">
           <AnimatePresence mode="popLayout">
             {filteredProjects.length > 0 ? (
-              <motion.div 
-                className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-8"
-                layout
-              >
+              <motion.div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6 pb-8" layout>
                 {filteredProjects.map((project, idx) => {
                   const category = getCategory(project)
                   return (
                     <AnimatedSection key={project.title} delay={idx * 0.04}>
-                      <motion.div 
-                        className={`border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col group ${cardBg}`}
+                      <motion.div
+                        className={`border rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col group h-full ${cardBg}`}
                         layout
                       >
                         {/* Spotlight Image */}
@@ -184,31 +199,30 @@ export default function IPadProjects({ theme }: IPadProjectsProps) {
                                 <h3 className="text-sm font-bold text-gray-900 dark:text-white truncate">
                                   {project.title}
                                 </h3>
-                                <span className="text-[9.5px] font-bold text-blue-500 dark:text-blue-400 uppercase tracking-wide truncate">
+                                <span className="text-[10px] font-bold text-blue-500 dark:text-blue-400 uppercase tracking-wide truncate block">
                                   {category}
                                 </span>
                               </div>
 
-                              <a
-                                href={socialLinks.github}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700 text-[#007AFF] dark:text-[#0A84FF] font-extrabold text-[10px] px-5 py-1.5 rounded-full tracking-wider active:scale-95 transition-all duration-100 flex-shrink-0 shadow-sm"
+                              <button
+                                type="button"
+                                onClick={() => setSelectedProject(project)}
+                                className="bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700 text-[#007AFF] dark:text-[#0A84FF] font-extrabold text-[10px] px-4 sm:px-5 py-1.5 rounded-full tracking-wider active:scale-95 transition-all duration-100 flex-shrink-0 shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                               >
-                                GET
-                              </a>
+                                {t('get')}
+                              </button>
                             </div>
 
-                            <p className="text-[11.5px] text-zinc-600 dark:text-zinc-400 leading-relaxed font-medium line-clamp-3">
+                            <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed font-medium line-clamp-3">
                               {project.description}
                             </p>
                           </div>
 
-                          <div className="flex flex-wrap -mt-2 gap-1 pt-2 border-t border-black/[0.03] dark:border-white/[0.03]">
+                          <div className="flex flex-wrap gap-1.5 pt-2.5 border-t border-black/[0.05] dark:border-white/[0.05]">
                             {project.technologies.slice(0, 4).map((tech) => (
                               <span
                                 key={tech}
-                                className="text-[8.5px] font-bold bg-[#007AFF]/10 text-[#007AFF] dark:bg-[#0A84FF]/10 dark:text-[#0A84FF] px-2 py-0.5 rounded-md"
+                                className="text-[9px] font-bold bg-[#007AFF]/10 text-[#007AFF] dark:bg-[#0A84FF]/10 dark:text-[#0A84FF] px-2 py-0.5 rounded-md"
                               >
                                 {tech}
                               </span>
@@ -221,20 +235,125 @@ export default function IPadProjects({ theme }: IPadProjectsProps) {
                 })}
               </motion.div>
             ) : (
-              <motion.div 
-                className="flex flex-col items-center justify-center p-16 text-center text-zinc-400 dark:text-zinc-500"
+              <motion.div
+                className="flex flex-col items-center justify-center p-12 text-center text-zinc-400 dark:text-zinc-500"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
               >
                 <SearchSymbol className="w-10 h-10 text-zinc-400 dark:text-zinc-500 mb-2 shrink-0" />
-                <p className="text-sm font-semibold">No Projects Found</p>
-                <p className="text-xs mt-1">Try adjusting your search query or categories.</p>
+                <p className="text-sm font-semibold">{t('empty')}</p>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
-      </div>
+      </IPadSplitView>
+
+      {/* App Store Project Detail Modal */}
+      <AnimatePresence>
+        {selectedProject && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 z-30 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6"
+            onClick={() => setSelectedProject(null)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.94, y: 12 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.94, y: 12 }}
+              transition={{ type: 'spring', damping: 24, stiffness: 280 }}
+              onClick={(e) => e.stopPropagation()}
+              role="dialog"
+              aria-modal="true"
+              aria-label={selectedProject.title}
+              className={`w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl border max-h-[85%] flex flex-col ${
+                isDark
+                  ? 'bg-zinc-900 border-white/15 text-white'
+                  : 'bg-white border-black/10 text-zinc-900'
+              }`}
+            >
+              <div className="relative w-full h-44 sm:h-48 bg-gradient-to-br from-primary/20 to-primary-dark/25 shrink-0">
+                {selectedProject.image ? (
+                  <Image
+                    src={selectedProject.image}
+                    alt={selectedProject.title}
+                    fill
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <AppCubeSymbol className="w-12 h-12 text-blue-500" />
+                  </div>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setSelectedProject(null)}
+                  aria-label={t('close')}
+                  className="absolute top-3 right-3 rtl:right-auto rtl:left-3 w-8 h-8 rounded-full bg-black/50 text-white hover:bg-black/70 flex items-center justify-center transition"
+                >
+                  <XMarkSymbol className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="p-5 sm:p-6 overflow-y-auto flex flex-col gap-4">
+                <div>
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-blue-500 dark:text-blue-400">
+                    {getCategory(selectedProject)}
+                  </span>
+                  <h3 className="text-lg sm:text-xl font-extrabold mt-0.5 tracking-tight">
+                    {selectedProject.title}
+                  </h3>
+                </div>
+
+                <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                  {selectedProject.description}
+                </p>
+
+                <div className="flex flex-col gap-2">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">
+                    {t('technologies')}
+                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {selectedProject.technologies.map((tech) => (
+                      <span
+                        key={tech}
+                        className="text-[11px] font-semibold bg-[#007AFF]/10 text-[#007AFF] dark:bg-[#0A84FF]/15 dark:text-[#0A84FF] px-2.5 py-1 rounded-lg"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-black/5 dark:border-white/10">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedProject(null)}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold transition ${
+                      isDark
+                        ? 'bg-white/10 hover:bg-white/15 text-white'
+                        : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-800'
+                    }`}
+                  >
+                    {t('close')}
+                  </button>
+                  <a
+                    href={socialLinks.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2 rounded-xl text-xs font-bold bg-[#007AFF] hover:bg-blue-600 text-white flex items-center gap-1.5 shadow-sm transition active:scale-95"
+                  >
+                    <ArrowUpRightSymbol className="w-3.5 h-3.5" />
+                    {t('openGithub')}
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

@@ -12,6 +12,7 @@
     "scheduleCall": "Planifier un appel",
     "emailMe": "M'envoyer un email",
     "theme": "Thème",
+    "language": "Langue",
     "fullscreen": "Plein écran",
     "close": "Fermer",
     "minimize": "Réduire",
@@ -169,6 +170,380 @@
         "sender": "Appel Téléphonique",
         "subject": "Demandes Directes & Planification d'Appel",
         "body": "Appelez directement mon numéro mobile pour toute demande professionnelle ou mission freelance."
+      }
+    }
+  },
+  "tablet": {
+    "apps": {
+      "about": "À Propos",
+      "experience": "Expérience",
+      "projects": "Projets",
+      "skills": "Compétences",
+      "contact": "Contact",
+      "settings": "Réglages",
+      "github": "GitHub",
+      "linkedin": "LinkedIn",
+      "mail": "Mail",
+      "phone": "Téléphone",
+      "whatsapp": "WhatsApp"
+    },
+    "home": {
+      "homeScreenLabel": "Écran d'accueil iPad",
+      "dockLabel": "Dock iPad",
+      "openApp": "Ouvrir {label}"
+    },
+    "statusBar": {
+      "label": "Barre d'état iPadOS",
+      "wifiConnected": "Wi-Fi connecté",
+      "batteryLevel": "Batterie à 85 pour cent",
+      "openControlCenter": "Ouvrir le Centre de contrôle"
+    },
+    "controlCenter": {
+      "title": "Centre de contrôle",
+      "appearance": "Apparence",
+      "dark": "Sombre",
+      "light": "Clair",
+      "language": "Langue",
+      "returnHome": "Écran d'accueil"
+    },
+    "sheet": {
+      "close": "Fermer",
+      "returnHome": "Revenir à l'écran d'accueil",
+      "hideSidebar": "Masquer la barre latérale",
+      "showSidebar": "Afficher la barre latérale",
+      "multitasking": "Contrôles de fenêtre"
+    },
+    "widgets": {
+      "weather": {
+        "label": "Météo",
+        "high": "Max",
+        "low": "Min",
+        "conditions": {
+          "clearSky": "Ciel dégagé",
+          "partlyCloudy": "Partiellement nuageux",
+          "foggy": "Brumeux",
+          "drizzle": "Bruine",
+          "rainy": "Pluvieux",
+          "snowy": "Neigeux",
+          "showers": "Averses",
+          "thunderstorm": "Orageux",
+          "clear": "Dégagé"
+        }
+      },
+      "availability": "Disponible pour collaborer",
+      "downloadCV": "Télécharger CV",
+      "viewGithub": "GitHub",
+      "clock": "Horloge",
+      "profile": "Profil",
+      "resumeTitle": "CV / Parcours",
+      "curriculumVitae": "Curriculum Vitae",
+      "resumeDesc": "Téléchargez mon dernier CV pour un aperçu complet.",
+      "marrakech": "Marrakech"
+    },
+    "about": {
+      "sidebarTitle": "Profil",
+      "overview": "Aperçu",
+      "expertise": "Expertise Clé",
+      "contactDetails": "Coordonnées",
+      "available": "Ouvert aux opportunités",
+      "phone": "Téléphone",
+      "email": "E-mail",
+      "location": "Localisation",
+      "downloadCV": "Télécharger le CV",
+      "viewGithub": "Voir GitHub",
+      "summaryTitle": "À Propos de Moi"
+    },
+    "experience": {
+      "sidebarTitle": "Calendriers",
+      "calendarTitle": "Calendriers",
+      "workExperience": "Expérience Pro",
+      "education": "Formation",
+      "present": "Présent",
+      "rolesCount": "{count} postes",
+      "degreesCount": "{count} diplômes",
+      "agenda": "Agenda",
+      "month": "Mois",
+      "year": "Année",
+      "today": "Aujourd'hui",
+      "noCalendars": "Aucun calendrier sélectionné"
+    },
+    "projects": {
+      "sidebarTitle": "Découvrir",
+      "all": "Toutes les apps",
+      "searchPlaceholder": "Rechercher des apps...",
+      "get": "OBTENIR",
+      "viewDetails": "Détails",
+      "openGithub": "Ouvrir sur GitHub",
+      "technologies": "Technologies",
+      "impact": "Impact",
+      "close": "OK",
+      "empty": "Aucun projet dans cette catégorie",
+      "categories": {
+        "ai": "IA & Agents",
+        "ml": "Machine Learning",
+        "mobile": "Apps Mobile",
+        "fullstack": "Web Full-Stack",
+        "tools": "Outils Dev",
+        "web": "Plateformes Web"
+      }
+    },
+    "skills": {
+      "sidebarTitle": "Dossiers",
+      "allSkills": "Toutes les compétences",
+      "searchPlaceholder": "Rechercher des compétences...",
+      "empty": "Aucune compétence trouvée",
+      "itemsCount": "{count} éléments",
+      "categories": {
+        "languages": "Langages",
+        "frameworks": "Frameworks",
+        "libraries": "IA & Bibliothèques",
+        "databases": "Bases de données",
+        "methodologies": "Méthodologies",
+        "tools": "Cloud & Outils",
+        "spoken": "Langues parlées"
+      }
+    },
+    "contact": {
+      "sidebarTitle": "Boîtes",
+      "inbox": "Boîte de réception",
+      "copyInfo": "Copier l'e-mail",
+      "copied": "Copié !",
+      "sendEmail": "Écrire un e-mail",
+      "openLink": "Ouvrir le lien",
+      "callNow": "Appeler",
+      "empty": "Sélectionnez un message à lire",
+      "channels": {
+        "email": {
+          "sender": "E-mail Direct",
+          "subject": "Collaboration & Demandes de Projets",
+          "body": "Contactez-moi directement par e-mail pour discuter de projets Full-Stack, systèmes IA ou demander mon CV complet."
+        },
+        "github": {
+          "sender": "GitHub",
+          "subject": "Open Source & Dépôts de Code",
+          "body": "Découvrez mon code source, mes architectures système, pipelines IA et contributions open source sur GitHub."
+        },
+        "linkedin": {
+          "sender": "LinkedIn",
+          "subject": "Réseau Professionnel & Opportunités",
+          "body": "Connectons-nous sur LinkedIn pour échanger sur des opportunités d'ingénierie, recherche ou missions freelance."
+        },
+        "phone": {
+          "sender": "Téléphone",
+          "subject": "Appel Direct & Planification",
+          "body": "Disponible par téléphone pour des entretiens, missions urgentes ou consultations techniques."
+        }
+      }
+    },
+    "settings": {
+      "sidebarTitle": "Réglages",
+      "appleId": "Identifiant Apple",
+      "sections": {
+        "profile": "Informations personnelles",
+        "general": "Général",
+        "appearance": "Luminosité et affichage",
+        "about": "Informations"
+      },
+      "darkMode": "Apparence sombre",
+      "darkModeDesc": "Basculer entre les thèmes clair et sombre d'iPadOS",
+      "systemLanguage": "Langue et région",
+      "systemLanguageDesc": "Changer la langue active du portfolio",
+      "roleLabel": "Poste",
+      "locationLabel": "Localisation",
+      "portfolioVersion": "Système",
+      "versionValue": "iPadOS 18 Édition Web",
+      "framework": "Framework",
+      "styling": "Style Responsive",
+      "repository": "Dépôt source",
+      "openRepo": "Voir sur GitHub"
+    }
+  },
+  "desktop": {
+    "menuBar": {
+      "finder": "Finder",
+      "file": "Fichier",
+      "edit": "Édition",
+      "view": "Présentation",
+      "go": "Aller",
+      "window": "Fenêtre",
+      "help": "Aide",
+      "appleMenu": {
+        "aboutThisMac": "À propos de ce Mac",
+        "systemSettings": "Réglages Système...",
+        "downloadCV": "Télécharger le CV",
+        "closeAllWindows": "Fermer toutes les fenêtres"
+      },
+      "fileMenu": {
+        "openAbout": "Ouvrir À Propos",
+        "openProjects": "Ouvrir Projets",
+        "openSettings": "Réglages Système...",
+        "downloadCV": "Télécharger le CV",
+        "closeWindow": "Fermer la fenêtre active"
+      },
+      "editMenu": {
+        "copyEmail": "Copier l'adresse e-mail",
+        "copyPhone": "Copier le numéro",
+        "spotlight": "Recherche Spotlight"
+      },
+      "viewMenu": {
+        "toggleTheme": "Changer l'apparence",
+        "toggleMaximize": "Agrandir / Restaurer",
+        "openLaunchpad": "Ouvrir le Launchpad"
+      },
+      "windowMenu": {
+        "minimize": "Réduire",
+        "zoom": "Zoom",
+        "closeAll": "Fermer toutes les fenêtres",
+        "noOpenWindows": "Aucune fenêtre ouverte"
+      },
+      "helpMenu": {
+        "spotlightShortcut": "Recherche Spotlight (⌘K / ⌘Espace)",
+        "closeShortcut": "Fermer la fenêtre (⌘W)",
+        "escShortcut": "Fermer les panneaux (Échap)",
+        "contactDeveloper": "Contacter le développeur"
+      },
+      "controlCenter": {
+        "title": "Centre de contrôle",
+        "wifi": "Réseau Portfolio",
+        "connected": "Connecté",
+        "appearance": "Apparence",
+        "dark": "Sombre",
+        "light": "Clair",
+        "language": "Langue",
+        "wallpaper": "Fond d'écran",
+        "openSettings": "Tous les réglages..."
+      }
+    },
+    "wallpapers": {
+      "default": "Crépuscule Sequoia",
+      "aurora": "Aurore Boréale",
+      "midnight": "Studio Minuit",
+      "horizon": "Horizon Liquide"
+    },
+    "dock": {
+      "launchpad": "Launchpad",
+      "settings": "Réglages Système",
+      "trash": "Corbeille",
+      "trashEmptyTitle": "La Corbeille est vide",
+      "trashEmptyBody": "Tous les fichiers temporaires ont déjà été nettoyés."
+    },
+    "launchpad": {
+      "title": "Launchpad",
+      "searchPlaceholder": "Rechercher une app...",
+      "noResults": "Aucune application trouvée",
+      "hint": "Appuyez sur Échap ou cliquez ailleurs pour fermer"
+    },
+    "spotlight": {
+      "placeholder": "Spotlight — Applications, Projets, Compétences, Actions...",
+      "empty": "Saisissez un mot-clé pour rechercher dans le portfolio",
+      "noResults": "Aucun résultat trouvé",
+      "categories": {
+        "app": "Applications",
+        "action": "Actions rapides",
+        "project": "Projets",
+        "experience": "Parcours",
+        "skill": "Compétences"
+      },
+      "actions": {
+        "downloadCV": "Télécharger le Curriculum Vitae (PDF)",
+        "toggleTheme": "Basculer le mode Sombre / Clair",
+        "switchLanguage": "Changer la langue du portfolio",
+        "openGithub": "Ouvrir le profil GitHub",
+        "openLinkedin": "Ouvrir le profil LinkedIn",
+        "openSettings": "Ouvrir les Réglages Système"
+      },
+      "footerHint": "↑↓ Naviguer • ↵ Ouvrir • Échap Fermer"
+    },
+    "contextMenu": {
+      "openAbout": "Lire les informations (À Propos)",
+      "openSpotlight": "Recherche Spotlight",
+      "changeWallpaper": "Fond d'écran suivant",
+      "toggleTheme": "Changer l'apparence",
+      "openSettings": "Réglages Système...",
+      "downloadCV": "Télécharger le CV"
+    },
+    "toast": {
+      "copiedTitle": "Copié dans le presse-papiers",
+      "copiedEmail": "Adresse e-mail copiée",
+      "copiedPhone": "Numéro de téléphone copié",
+      "copiedProfile": "Résumé du profil copié",
+      "copiedVCard": "Fiche vCard copiée",
+      "downloadTitle": "Curriculum Vitae",
+      "downloadBody": "Ouverture du CV PDF...",
+      "printTitle": "Aperçu avant impression",
+      "printBody": "Ouverture du dialogue d'impression...",
+      "wallpaperTitle": "Fond d'écran mis à jour"
+    },
+    "windows": {
+      "actions": {
+        "share": "Partager",
+        "save": "Enregistrer",
+        "print": "Imprimer",
+        "export": "Exporter",
+        "copyVCard": "Copier vCard",
+        "openGithub": "GitHub",
+        "openMail": "Envoyer e-mail",
+        "callNow": "Appeler"
+      },
+      "about": {
+        "sidebarTitle": "Profil",
+        "overview": "Aperçu",
+        "bio": "Biographie",
+        "expertise": "Expertise",
+        "role": "Développeur Full-Stack & AI Engineer",
+        "status": "Disponible pour projets & postes"
+      },
+      "experience": {
+        "sidebarTitle": "Parcours",
+        "all": "Parcours complet",
+        "work": "Expériences Pro",
+        "education": "Formation",
+        "subtitle": "{workCount} Postes • {eduCount} Diplômes",
+        "present": "Présent",
+        "empty": "Aucun élément dans cette vue"
+      },
+      "projects": {
+        "sidebarTitle": "Catégories",
+        "searchPlaceholder": "Filtrer les projets...",
+        "subtitle": "{count} Projets d'ingénierie phares",
+        "viewCode": "Code source",
+        "featuredBadge": "Phare"
+      },
+      "skills": {
+        "sidebarTitle": "Catégories",
+        "allCategories": "Toutes",
+        "searchPlaceholder": "Rechercher...",
+        "levelAll": "Tous niveaux",
+        "levelCore": "Stack principale",
+        "itemsCount": "{count} éléments",
+        "empty": "Aucune compétence trouvée"
+      },
+      "contact": {
+        "sidebarTitle": "Canaux",
+        "directChannels": "Canaux directs",
+        "quickAction": "Actions rapides",
+        "availabilityTitle": "Disponibilité actuelle",
+        "availabilityBadge": "Ouvert aux opportunités",
+        "availabilityDesc": "Disponible pour des missions Full-Stack, architecture systèmes IA / LLM et conseil technique."
+      },
+      "settings": {
+        "sidebarTitle": "Réglages Système",
+        "sections": {
+          "profile": "Identifiant Apple & Profil",
+          "appearance": "Apparence",
+          "wallpaper": "Fond d'écran",
+          "language": "Langue et région",
+          "about": "À propos de ce Mac"
+        },
+        "appearanceDesc": "Personnalisez l'apparence Liquid Glass et le contraste du bureau.",
+        "wallpaperDesc": "Choisissez un fond d'écran pour macOS.",
+        "languageDesc": "Sélectionnez la langue active dans tout le portfolio.",
+        "chipLabel": "Architecture",
+        "chipValue": "Moteur Web Apple Silicon M-Series",
+        "osLabel": "macOS",
+        "osValue": "macOS Sequoia 15 (Liquid Glass)",
+        "frameworkLabel": "Framework",
+        "motionLabel": "Moteur d'animation"
       }
     }
   }

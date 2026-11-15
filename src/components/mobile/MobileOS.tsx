@@ -953,13 +953,13 @@ export default function MobileOS() {
       {/* iOS Dock */}
       <IOSDock onOpenApp={openApp} theme={theme} apps={dockApps} />
 
-      {/* iOS Home Indicator */}
-      <div
-        className="fixed bottom-2 left-1/2 -translate-x-1/2 w-[134px] h-[5px] bg-white/60 dark:bg-white/40 rounded-full z-50 cursor-pointer pointer-events-auto hover:bg-white/80 active:bg-white transition-colors"
-        onClick={closeApp}
-        aria-label={t('mobile.home.homeLabel')}
-        title={t('mobile.home.goHome')}
-      />
+      {/* iOS Home Indicator (shown on Home Screen; open apps use IOSSheet swipe-up bar) */}
+      {activeApp === 'home' && (
+        <div
+          className="fixed bottom-2 left-1/2 -translate-x-1/2 w-[134px] h-[5px] bg-white/60 dark:bg-white/40 rounded-full z-40 pointer-events-none"
+          aria-hidden="true"
+        />
+      )}
 
       {/* Slide-Up App Sheets */}
       <AnimatePresence>

@@ -704,6 +704,42 @@ export function ContactsIcon({ size = 48, className }: IconProps) {
   )
 }
 
+export function TrashIcon({ size = 48, className }: IconProps) {
+  const uid = useId()
+  return (
+    <svg width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id={`trBody-${uid}`} x1="120" y1="112" x2="392" y2="440" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#E4E7EC" />
+          <stop offset="50%" stopColor="#B8C0CC" />
+          <stop offset="100%" stopColor="#838C9B" />
+        </linearGradient>
+        <linearGradient id={`trRim-${uid}`} x1="112" y1="88" x2="400" y2="148" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#F8FAFC" />
+          <stop offset="100%" stopColor="#CBD5E1" />
+        </linearGradient>
+        <linearGradient id={`trInner-${uid}`} x1="256" y1="92" x2="256" y2="152" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#475569" />
+          <stop offset="100%" stopColor="#94A3B8" />
+        </linearGradient>
+      </defs>
+      {/* Shadow */}
+      <ellipse cx="256" cy="442" rx="110" ry="18" fill="rgba(0,0,0,0.24)" />
+      {/* Bin Body */}
+      <path d="M128 122 L156 410 C158 428 198 442 256 442 C314 442 354 428 356 410 L384 122 Z" fill={`url(#trBody-${uid})`} stroke="rgba(255,255,255,0.45)" strokeWidth="3" />
+      {/* Subtle metallic flutes */}
+      <path d="M180 156 L192 406" stroke="rgba(255,255,255,0.35)" strokeWidth="6" strokeLinecap="round" />
+      <path d="M218 160 L224 412" stroke="rgba(15,23,42,0.12)" strokeWidth="5" strokeLinecap="round" />
+      <path d="M256 162 L256 414" stroke="rgba(255,255,255,0.28)" strokeWidth="6" strokeLinecap="round" />
+      <path d="M294 160 L288 412" stroke="rgba(15,23,42,0.12)" strokeWidth="5" strokeLinecap="round" />
+      <path d="M332 156 L320 406" stroke="rgba(255,255,255,0.25)" strokeWidth="5" strokeLinecap="round" />
+      {/* Top Rim & Hollow */}
+      <ellipse cx="256" cy="122" rx="132" ry="30" fill={`url(#trRim-${uid})`} stroke="rgba(255,255,255,0.65)" strokeWidth="2.5" />
+      <ellipse cx="256" cy="122" rx="112" ry="20" fill={`url(#trInner-${uid})`} />
+    </svg>
+  )
+}
+
 export function getAppleIcon(id: string, size: number | string = 48) {
   switch (id.toLowerCase()) {
     case 'finder':
@@ -759,6 +795,8 @@ export function getAppleIcon(id: string, size: number | string = 48) {
       return <WalletIcon size={size} />
     case 'health':
       return <HealthIcon size={size} />
+    case 'trash':
+      return <TrashIcon size={size} />
     default:
       return <SafariIcon size={size} />
   }
