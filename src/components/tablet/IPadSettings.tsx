@@ -8,6 +8,7 @@ import { useRouter, usePathname } from '@/i18n/routing'
 import { locales, localeNames, type Locale } from '@/i18n/config'
 import { personalInfo } from '@/lib/data'
 import AnimatedSection from '../shared/AnimatedSection'
+import { PersonSymbol, MoonSymbol, GlobeSymbol, LaptopCodeSymbol } from '../shared/SFSymbols'
 
 interface IPadSettingsProps {
   theme: 'dark' | 'light'
@@ -34,10 +35,10 @@ export default function IPadSettings({ theme, toggleTheme }: IPadSettingsProps) 
   }
 
   const sections = [
-    { id: 'profile', label: 'IT ID', icon: '👤', iconBg: 'bg-blue-500' },
-    { id: 'appearance', label: 'Appearance', icon: '🌙', iconBg: 'bg-indigo-500' },
-    { id: 'language', label: 'Language', icon: '🌐', iconBg: 'bg-emerald-500' },
-    { id: 'developer', label: 'Developer', icon: '💻', iconBg: 'bg-zinc-700' },
+    { id: 'profile', label: 'IT ID', icon: <PersonSymbol className="w-3.5 h-3.5" />, iconBg: 'bg-blue-500' },
+    { id: 'appearance', label: 'Appearance', icon: <MoonSymbol className="w-3.5 h-3.5" />, iconBg: 'bg-indigo-500' },
+    { id: 'language', label: 'Language', icon: <GlobeSymbol className="w-3.5 h-3.5" />, iconBg: 'bg-emerald-500' },
+    { id: 'developer', label: 'Developer', icon: <LaptopCodeSymbol className="w-3.5 h-3.5" />, iconBg: 'bg-zinc-700' },
   ] as const
 
   return (
@@ -159,7 +160,9 @@ export default function IPadSettings({ theme, toggleTheme }: IPadSettingsProps) 
 
                 <div className="bg-white dark:bg-zinc-900 border rounded-md p-4 border-black/[0.05] dark:border-white/[0.05] rounded-2.5xl p-4.5 flex justify-between items-center shadow-sm">
                   <span className="flex items-center gap-3 text-sm font-bold text-gray-800 dark:text-zinc-200">
-                    <span className="text-base p-1 bg-indigo-500/10 text-indigo-500 rounded-lg">🌙</span>
+                    <span className="w-7 h-7 bg-indigo-500 text-white rounded-lg flex items-center justify-center shrink-0">
+                      <MoonSymbol className="w-4 h-4" />
+                    </span>
                     Dark Mode Appearance
                   </span>
                   
@@ -191,7 +194,9 @@ export default function IPadSettings({ theme, toggleTheme }: IPadSettingsProps) 
 
                 <div className="bg-white p-4 rounded-md dark:bg-zinc-900 border border-black/[0.05] dark:border-white/[0.05] rounded-2.5xl p-4.5 flex justify-between items-center shadow-sm">
                   <span className="flex items-center gap-3 text-sm font-bold text-gray-800 dark:text-zinc-200">
-                    <span className="text-base p-1 bg-emerald-500/10 text-emerald-500 rounded-lg">🌐</span>
+                    <span className="w-7 h-7 bg-emerald-500 text-white rounded-lg flex items-center justify-center shrink-0">
+                      <GlobeSymbol className="w-4 h-4" />
+                    </span>
                     System Language
                   </span>
                   

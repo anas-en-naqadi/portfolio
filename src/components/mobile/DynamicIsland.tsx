@@ -2,6 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useTranslations } from 'next-intl'
+import { getAppleIcon } from '../shared/AppleIcons'
+import { GlobeSymbol } from '../shared/SFSymbols'
 
 interface DynamicIslandProps {
   activeApp?: string | null
@@ -9,6 +12,7 @@ interface DynamicIslandProps {
 }
 
 export default function DynamicIsland({ activeApp, activeLang }: DynamicIslandProps) {
+  const t = useTranslations()
   const [islandState, setIslandState] = useState<'collapsed' | 'appOpen' | 'langChange' | 'hover'>('collapsed')
   const [prevApp, setPrevApp] = useState<string | null>(null)
   const [prevLang, setPrevLang] = useState<string>('')
@@ -37,19 +41,19 @@ export default function DynamicIsland({ activeApp, activeLang }: DynamicIslandPr
     }
   }, [activeLang, prevLang])
 
-  const appMeta: Record<string, { icon: string; name: string }> = {
-    about: { icon: '👤', name: 'About Me' },
-    experience: { icon: '💼', name: 'Experience' },
-    projects: { icon: '🚀', name: 'Projects' },
-    skills: { icon: '📝', name: 'Skills' },
-    contact: { icon: '📧', name: 'Contact' },
-    settings: { icon: '⚙️', name: 'Settings' },
+  const appMeta: Record<string, { name: string }> = {
+    about: { name: t('common.about') },
+    experience: { name: t('common.experience') },
+    projects: { name: t('common.projects') },
+    skills: { name: t('common.skills') },
+    contact: { name: t('common.contact') },
+    settings: { name: t('common.settings') },
   }
 
-  const langNames: Record<string, { flag: string; name: string }> = {
-    en: { flag: '🇺🇸', name: 'English' },
-    fr: { flag: '🇫🇷', name: 'Français' },
-    ar: { flag: '🇲🇦', name: 'العربية' },
+  const langNames: Record<string, { code: string; name: string }> = {
+    en: { code: 'EN', name: 'English' },
+    fr: { code: 'FR', name: 'Français' },
+    ar: { code: 'AR', name: 'العربية' },
   }
 
   // Define sizes and contents based on active state
@@ -111,10 +115,12 @@ export default function DynamicIsland({ activeApp, activeLang }: DynamicIslandPr
               className="w-full flex items-center justify-between text-xs text-white"
             >
               <div className="flex items-center gap-2">
-                <span className="text-sm">{appMeta[activeApp].icon}</span>
+                <span className="flex items-center justify-center shrink-0">
+                  {getAppleIcon(activeApp, 18)}
+                </span>
                 <span className="font-semibold">{appMeta[activeApp].name}</span>
               </div>
-              <span className="text-[10px] text-green-400 font-bold uppercase tracking-wider">Opened</span>
+              <span className="text-[10px] text-green-400 font-bold uppercase tracking-wider">{t('mobile.dynamicIsland.opened')}</span>
             </motion.div>
           )}
 
@@ -127,10 +133,10 @@ export default function DynamicIsland({ activeApp, activeLang }: DynamicIslandPr
               className="w-full flex items-center justify-between text-xs text-white"
             >
               <div className="flex items-center gap-2">
-                <span className="text-sm">{langNames[activeLang].flag}</span>
+                <GlobeSymbol className="w-3.5 h-3.5 text-blue-400 shrink-0" />
                 <span className="font-semibold">{langNames[activeLang].name}</span>
               </div>
-              <span className="text-[10px] text-blue-400 font-bold uppercase tracking-wider">Set</span>
+              <span className="text-[10px] text-blue-400 font-bold uppercase tracking-wider">{langNames[activeLang].code}</span>
             </motion.div>
           )}
 

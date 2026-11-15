@@ -65,9 +65,9 @@ export default function TabletOS() {
     router.replace(pathname, { locale: newLocale })
   }
 
-  // Gorgeous iOS/iPadOS 18 fluid vector gradients instead of static wallpapers with laptop drawings
-  const lightBackground = 'radial-gradient(circle at 80% 20%, rgba(255, 180, 200, 0.45) 0%, transparent 50%), radial-gradient(circle at 20% 80%, rgba(100, 180, 255, 0.4) 0%, transparent 60%), #f4f4f6'
-  const darkBackground = 'radial-gradient(circle at 80% 20%, rgba(120, 50, 150, 0.25) 0%, transparent 50%), radial-gradient(circle at 20% 80%, rgba(50, 80, 180, 0.3) 0%, transparent 60%), #0c0f1d'
+  const fallbackGradient = isDark
+    ? 'radial-gradient(circle at 80% 20%, rgba(120, 50, 150, 0.25) 0%, transparent 50%), radial-gradient(circle at 20% 80%, rgba(50, 80, 180, 0.3) 0%, transparent 60%)'
+    : 'radial-gradient(circle at 80% 20%, rgba(255, 180, 200, 0.45) 0%, transparent 50%), radial-gradient(circle at 20% 80%, rgba(100, 180, 255, 0.4) 0%, transparent 60%)'
 
   const dockApps = [
     { 
@@ -105,12 +105,26 @@ export default function TabletOS() {
     <div
       className="h-screen w-full overflow-hidden relative flex flex-col select-none"
       style={{
-        background: isDark ? darkBackground : lightBackground,
+        backgroundColor: '#150f28',
+        backgroundImage: `url('/images/tablet-bg.png'), ${fallbackGradient}`,
+        backgroundSize: 'cover',
+        backgroundPosition: '58% center',
+        backgroundRepeat: 'no-repeat',
       }}
     >
+      {/* Subtle blur + soft contrast scrim over wallpaper (consistent across light & dark modes) */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 z-0 pointer-events-none backdrop-blur-[1.5px]"
+        style={{
+          background:
+            'linear-gradient(to bottom, rgba(10, 12, 24, 0.14) 0%, rgba(10, 12, 24, 0.04) 45%, rgba(10, 12, 24, 0.25) 100%)',
+        }}
+      />
+
       {/* Status Bar */}
       <div className="relative z-50">
-        <IPadStatusBar theme={theme} />
+        <IPadStatusBar theme={theme} isAppOpen={activeSheet !== null} />
       </div>
 
       {/* Main content layout (Widgets & Apps centered on X/Y, stretched to 90%) */}
@@ -151,7 +165,7 @@ export default function TabletOS() {
         isOpen={activeSheet !== null}
         onClose={closeSheet}
         title={activeSheet ? appTitles[activeSheet] : ''}
-        icon={activeSheet ? getAppleIcon(activeSheet, 28) : '📱'}
+        icon={activeSheet ? getAppleIcon(activeSheet, 28) : null}
         theme={theme}
       >
         {activeSheet && windowComponents[activeSheet]}

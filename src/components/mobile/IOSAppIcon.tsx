@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { useTranslations } from 'next-intl'
 import { getAppleIcon } from '../shared/AppleIcons'
 
 interface IOSAppIconProps {
@@ -20,6 +21,7 @@ export default function IOSAppIcon({
   size = 60,
   badge,
 }: IOSAppIconProps) {
+  const t = useTranslations()
   return (
     <motion.div
       className="flex flex-col items-center gap-1.5 cursor-pointer select-none w-full"
@@ -35,28 +37,36 @@ export default function IOSAppIcon({
       whileTap={{ scale: 0.96 }}
       onClick={onClick}
       role="button"
-      aria-label={`Open ${label}`}
+      aria-label={t('mobile.home.openApp', { label })}
       tabIndex={0}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') onClick()
       }}
     >
-      {/* Squircle shaped icon container */}
+      {/* Icon + Notification Badge wrapper (unclipped so badge sits cleanly on the corner) */}
       <div
         style={{
           width: size,
           height: size,
-          borderRadius: '22%',
-          position: 'relative',
-          overflow: 'hidden',
         }}
-        className="shadow-lg shadow-black/25 flex items-center justify-center flex-shrink-0 overflow-hidden"
+        className="relative flex-shrink-0"
       >
-        {getAppleIcon(id, '100%')}
+        {/* Squircle shaped icon container */}
+        <div
+          style={{
+            borderRadius: '22%',
+          }}
+          className="w-full h-full overflow-hidden shadow-lg shadow-black/25 flex items-center justify-center"
+        >
+          {getAppleIcon(id, '100%')}
+        </div>
 
-        {/* Red notification badge */}
+        {/* Real iPhone style red notification badge */}
         {badge !== undefined && badge > 0 && (
-          <span className="absolute -top-1 -right-1 bg-[#FF3B30] text-white text-[9px] font-bold h-4 min-w-[16px] px-1 rounded-full flex items-center justify-center border border-white shadow-md z-10 pointer-events-none">
+          <span
+            className="absolute -top-1.5 -right-1.5 bg-[#FF3B30] text-white text-[11px] font-semibold leading-none h-[20px] min-w-[20px] px-1.5 rounded-full flex items-center justify-center shadow-[0_2px_6px_rgba(0,0,0,0.35)] z-10 pointer-events-none select-none"
+            style={{ fontVariantNumeric: 'tabular-nums' }}
+          >
             {badge}
           </span>
         )}

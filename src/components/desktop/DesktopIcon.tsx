@@ -5,14 +5,14 @@ import { getAppleIcon } from '../shared/AppleIcons'
 
 interface DesktopIconProps {
   id: string
-  icon?: string
+  icon?: React.ReactNode
   image?: string
   label: string
   onClick: () => void
   isSelected?: boolean
 }
 
-export default function DesktopIcon({ id, icon, image, label, onClick, isSelected }: DesktopIconProps) {
+export default function DesktopIcon({ id, image, label, onClick, isSelected }: DesktopIconProps) {
   const handleDoubleClick = () => {
     onClick()
   }
@@ -22,7 +22,7 @@ export default function DesktopIcon({ id, icon, image, label, onClick, isSelecte
       className={`desktop-icon ${isSelected ? 'selected' : ''}`}
       onDoubleClick={handleDoubleClick}
     >
-      <div className="icon-wrapper bg-transparent shadow-none after:display-none">
+      <div className="w-16 h-16 flex items-center justify-center mb-2 transition-transform duration-200">
         {image ? (
           <Image
             src={image}

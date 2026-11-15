@@ -5,6 +5,8 @@
     "projects": "Projects",
     "skills": "Skills",
     "contact": "Contact",
+    "settings": "Settings",
+    "phone": "Phone",
     "downloadCV": "Download CV",
     "viewGithub": "View GitHub",
     "scheduleCall": "Schedule Call",
@@ -49,6 +51,7 @@
   "projects": {
     "title": "Featured Projects",
     "all": "All",
+    "ai": "AI",
     "web": "Web",
     "mobile": "Mobile",
     "impact": "Impact"
@@ -84,6 +87,90 @@
     "viewRepos": "View repos",
     "bookMeeting": "Book meeting",
     "directContact": "Direct contact"
+  },
+  "mobile": {
+    "weather": {
+      "label": "Weather",
+      "high": "H",
+      "low": "L",
+      "conditions": {
+        "clearSky": "Clear Sky",
+        "partlyCloudy": "Partly Cloudy",
+        "foggy": "Foggy",
+        "drizzle": "Drizzle",
+        "rainy": "Rainy",
+        "snowy": "Snowy",
+        "showers": "Showers",
+        "thunderstorm": "Thunderstorm",
+        "clear": "Clear"
+      }
+    },
+    "home": {
+      "homeLabel": "Home",
+      "goHome": "Go to Home Screen",
+      "openApp": "Open {label}",
+      "homeScreenLabel": "Home screen",
+      "dockLabel": "iPhone Dock"
+    },
+    "statusBar": {
+      "label": "iOS Status Bar",
+      "wifiConnected": "Wi-Fi connected",
+      "batteryLevel": "Battery 85 percent"
+    },
+    "dynamicIsland": {
+      "opened": "Opened"
+    },
+    "about": {
+      "actions": {
+        "call": "Call",
+        "mail": "Mail"
+      },
+      "fields": {
+        "mobile": "Mobile",
+        "email": "Email",
+        "home": "Location"
+      }
+    },
+    "projects": {
+      "get": "GET",
+      "categories": {
+        "ai": "Artificial Intelligence",
+        "ml": "Machine Learning",
+        "mobile": "iOS & Android App",
+        "fullstack": "Full-Stack Web App",
+        "tools": "Developer Tools"
+      }
+    },
+    "skills": {
+      "searchPlaceholder": "Search Skills",
+      "empty": "No matching skills found"
+    },
+    "settings": {
+      "sectionTitle": "General System Settings",
+      "darkMode": "Dark Mode",
+      "systemLanguage": "System Language",
+      "toggleDarkMode": "Toggle dark mode"
+    },
+    "contact": {
+      "github": {
+        "subject": "Portfolio & Code Repositories",
+        "body": "Hi, check out my latest open source contributions and repositories. Let's build something together."
+      },
+      "linkedin": {
+        "subject": "Professional Connection Proposal",
+        "body": "Let's connect professionally on LinkedIn to discuss freelance opportunities or full-time roles."
+      },
+      "email": {
+        "sender": "Email Inbox",
+        "subject": "New Project Collaboration Inquiry",
+        "body": "Send me a direct email to initiate a conversation, request my resume, or get a quotation."
+      },
+      "phone": {
+        "sender": "Phone Call",
+        "subject": "Direct Inquiries & Call Scheduling",
+        "body": "Dial my mobile number directly for immediate business enquiries or freelance requests."
+      }
+    }
   }
 }
 

@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslations } from 'next-intl'
+import { socialLinks } from '@/lib/data'
 import { getAppleIcon } from '../shared/AppleIcons'
 
 type WindowType = 'about' | 'experience' | 'projects' | 'skills' | 'contact'
@@ -17,20 +18,19 @@ interface StartMenuProps {
 }
 
 interface LaunchpadApp {
-  id: WindowType | 'cv' | 'github'
-  icon: string
+  id: WindowType | 'cv' | 'github' | 'linkedin'
   label: string
-  color: string
 }
 
 const LAUNCHPAD_APPS: LaunchpadApp[] = [
-  { id: 'about', icon: '💼', label: 'About', color: 'linear-gradient(135deg, #007aff, #0055d4)' },
-  { id: 'experience', icon: '🚀', label: 'Experience', color: 'linear-gradient(135deg, #ff9500, #ff6000)' },
-  { id: 'projects', icon: '📱', label: 'Projects', color: 'linear-gradient(135deg, #34c759, #248a3d)' },
-  { id: 'skills', icon: '⚡', label: 'Skills', color: 'linear-gradient(135deg, #ffcc00, #ff9500)' },
-  { id: 'contact', icon: '📧', label: 'Contact', color: 'linear-gradient(135deg, #af52de, #5e17eb)' },
-  { id: 'cv', icon: '📥', label: 'Download CV', color: 'linear-gradient(135deg, #ff3b30, #c0392b)' },
-  { id: 'github', icon: '🐙', label: 'GitHub', color: 'linear-gradient(135deg, #3a3a3c, #1c1c1e)' },
+  { id: 'about', label: 'About' },
+  { id: 'experience', label: 'Experience' },
+  { id: 'projects', label: 'Projects' },
+  { id: 'skills', label: 'Skills' },
+  { id: 'contact', label: 'Contact' },
+  { id: 'cv', label: 'Download CV' },
+  { id: 'github', label: 'GitHub' },
+  { id: 'linkedin', label: 'LinkedIn' },
 ]
 
 export default function StartMenu({
@@ -55,7 +55,10 @@ export default function StartMenu({
       onDownloadCV()
       onClose()
     } else if (app.id === 'github') {
-      window.open('https://github.com/anas-en-naqadi', '_blank', 'noopener,noreferrer')
+      window.open(process.env.NEXT_PUBLIC_GITHUB_URL || socialLinks.github, '_blank', 'noopener,noreferrer')
+      onClose()
+    } else if (app.id === 'linkedin') {
+      window.open(process.env.NEXT_PUBLIC_LINKEDIN_URL || socialLinks.linkedin, '_blank', 'noopener,noreferrer')
       onClose()
     } else {
       onOpenWindow(app.id as WindowType)

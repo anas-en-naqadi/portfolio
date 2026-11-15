@@ -13,6 +13,7 @@ import ProjectsWindow from './windows/ProjectsWindow'
 import SkillsWindow from './windows/SkillsWindow'
 import ContactWindow from './windows/ContactWindow'
 import { personalInfo, socialLinks } from '@/lib/data'
+import { getAppleIcon } from '@/components/shared/AppleIcons'
 import { useTranslations } from 'next-intl'
 import { useTheme } from '@/hooks/useTheme'
 import clsx from 'clsx'
@@ -57,12 +58,12 @@ export default function DesktopOS() {
     }
   }, [isLaunchpadOpen])
 
-  const desktopIcons = [
-    { id: 'about' as WindowType, icon: undefined as string | undefined, image: personalInfo.profileImage, label: t('common.about') },
-    { id: 'experience' as WindowType, icon: '🚀', label: t('common.experience') },
-    { id: 'projects' as WindowType, icon: '📱', label: t('common.projects') },
-    { id: 'skills' as WindowType, icon: '⚡', label: t('common.skills') },
-    { id: 'contact' as WindowType, icon: '📧', label: t('common.contact') },
+  const desktopIcons: { id: WindowType; image?: string; label: string }[] = [
+    { id: 'about', image: personalInfo.profileImage, label: t('common.about') },
+    { id: 'experience', label: t('common.experience') },
+    { id: 'projects', label: t('common.projects') },
+    { id: 'skills', label: t('common.skills') },
+    { id: 'contact', label: t('common.contact') },
   ]
 
   const openWindow = (windowId: WindowType) => {
@@ -129,17 +130,9 @@ export default function DesktopOS() {
 
   const dockApps = (Object.keys(openWindows) as WindowType[]).map((id) => {
     const state = openWindows[id]
-    const iconMap: Record<WindowType, string> = {
-      about: '💼',
-      experience: '🚀',
-      projects: '📱',
-      skills: '⚡',
-      contact: '📧',
-    }
     return {
       id,
-      name: id.charAt(0).toUpperCase() + id.slice(1),
-      icon: iconMap[id],
+      label: id.charAt(0).toUpperCase() + id.slice(1),
       isOpen: state.isOpen,
       isMinimized: state.isMinimized,
       onClick: () => {
@@ -166,12 +159,12 @@ export default function DesktopOS() {
     contact: t('common.contact'),
   }
 
-  const windowIcons: Record<WindowType, string> = {
-    about: '💼',
-    experience: '🚀',
-    projects: '📱',
-    skills: '⚡',
-    contact: '📧',
+  const windowIcons: Record<WindowType, React.ReactNode> = {
+    about: getAppleIcon('about', 16),
+    experience: getAppleIcon('experience', 16),
+    projects: getAppleIcon('projects', 16),
+    skills: getAppleIcon('skills', 16),
+    contact: getAppleIcon('contact', 16),
   }
 
   const windowComponents: Record<WindowType, React.ReactNode> = {
@@ -190,7 +183,10 @@ export default function DesktopOS() {
     }
   }
 
-  const wallpaper = isDark ? '/images/dark-mode.jpg' : '/images/light-mode.jpg'
+  const wallpaper = '/images/desktop-bg.png'
+  const fallbackGradient = isDark
+    ? 'radial-gradient(circle at 80% 20%, rgba(120, 50, 150, 0.35) 0%, transparent 55%), radial-gradient(circle at 20% 80%, rgba(50, 80, 180, 0.35) 0%, transparent 60%)'
+    : 'radial-gradient(circle at 80% 20%, rgba(255, 180, 200, 0.45) 0%, transparent 50%), radial-gradient(circle at 20% 80%, rgba(100, 180, 255, 0.4) 0%, transparent 60%)'
 
   // Find currently active window (highest zIndex)
   const activeWindowId = (Object.keys(openWindows) as WindowType[])
@@ -209,12 +205,23 @@ export default function DesktopOS() {
         flexDirection: 'column',
         overflow: 'hidden',
         position: 'relative',
-        backgroundImage: `url('${wallpaper}')`,
+        backgroundColor: '#121024',
+        backgroundImage: `url('${wallpaper}'), ${fallbackGradient}`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
       }}
     >
+      {/* Soft contrast scrim over wallpaper (consistent across light & dark modes) */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{
+          background:
+            'linear-gradient(to bottom, rgba(10, 12, 24, 0.14) 0%, rgba(10, 12, 24, 0.04) 45%, rgba(10, 12, 24, 0.25) 100%)',
+        }}
+      />
+
       {/* macOS Menu Bar — pinned top, z-50 */}
       <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50000 }}>
         <MacOSMenuBar theme={theme} toggleTheme={toggleTheme} activeAppTitle={activeAppTitle} />
@@ -247,7 +254,6 @@ export default function DesktopOS() {
             <DesktopIcon
               key={icon.id}
               id={icon.id}
-              icon={icon.icon}
               image={icon.image}
               label={icon.label}
               onClick={() => openWindow(icon.id)}
@@ -286,7 +292,8 @@ export default function DesktopOS() {
         onStartClick={() => setIsLaunchpadOpen(!isLaunchpadOpen)}
         theme={theme}
         onDownloadCV={downloadCV}
-        onGitHub={() => window.open(socialLinks.github, '_blank', 'noopener,noreferrer')}
+        onGitHub={() => window.open(process.env.NEXT_PUBLIC_GITHUB_URL || socialLinks.github, '_blank', 'noopener,noreferrer')}
+        onLinkedIn={() => window.open(process.env.NEXT_PUBLIC_LINKEDIN_URL || socialLinks.linkedin, '_blank', 'noopener,noreferrer')}
       />
 
       {/* Launchpad */}

@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { useTranslations } from 'next-intl'
 import { experiences, education } from '@/lib/data'
 import AnimatedSection from '../shared/AnimatedSection'
+import { CalendarSymbol, MapPinSymbol } from '../shared/SFSymbols'
 
 interface IPadExperienceProps {
   theme: 'dark' | 'light'
@@ -139,11 +140,8 @@ export default function IPadExperience({ theme }: IPadExperienceProps) {
                           <span className="text-[9px] font-extrabold text-[#007AFF] uppercase tracking-widest leading-none">
                             {edu.period}
                           </span>
-                          <span className="text-[9px] font-bold text-zinc-400 flex items-center gap-1 leading-none">
-                            <svg className="w-2.5 h-2.5 text-zinc-400 dark:text-zinc-550" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25s-7.5-4.108-7.5-11.25C4.5 6.63 7.63 3.5 11.5 3.5s7 3.13 7 7z" />
-                            </svg>
+                          <span className="text-[9px] font-bold text-zinc-400 dark:text-zinc-500 flex items-center gap-1 leading-none">
+                            <MapPinSymbol className="w-2.5 h-2.5 shrink-0" />
                             {edu.city}
                           </span>
                         </div>
@@ -177,11 +175,8 @@ export default function IPadExperience({ theme }: IPadExperienceProps) {
                           <span className="text-[9px] font-extrabold text-[#FF2D55] uppercase tracking-widest leading-none">
                             {exp.period}
                           </span>
-                          <span className="text-[9px] font-bold text-zinc-400 flex items-center gap-1 leading-none">
-                            <svg className="w-2.5 h-2.5 text-zinc-400 dark:text-zinc-550" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25s-7.5-4.108-7.5-11.25C4.5 6.63 7.63 3.5 11.5 3.5s7 3.13 7 7z" />
-                            </svg>
+                          <span className="text-[9px] font-bold text-zinc-400 dark:text-zinc-500 flex items-center gap-1 leading-none">
+                            <MapPinSymbol className="w-2.5 h-2.5 shrink-0" />
                             {exp.location}
                           </span>
                         </div>
@@ -222,9 +217,7 @@ export default function IPadExperience({ theme }: IPadExperienceProps) {
 
             {!showWork && !showEdu && (
               <div className="flex flex-col items-center justify-center p-12 text-center text-zinc-400 dark:text-zinc-500">
-                <svg className="w-9 h-9 text-zinc-400 dark:text-zinc-650 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
-                </svg>
+                <CalendarSymbol className="w-9 h-9 text-zinc-400 dark:text-zinc-500 mb-2 shrink-0" />
                 <p className="text-xs font-semibold">No calendars selected</p>
                 <p className="text-[10px] mt-0.5">Select a calendar from the sidebar to view events.</p>
               </div>

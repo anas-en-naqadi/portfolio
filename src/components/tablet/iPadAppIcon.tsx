@@ -2,7 +2,6 @@
 
 import { motion } from 'framer-motion'
 import { getAppleIcon } from '../shared/AppleIcons'
-import { useTheme } from '@/hooks/useTheme'
 
 interface iPadAppIconProps {
   id: string
@@ -19,9 +18,7 @@ export default function iPadAppIcon({
   index = 0,
   size = 76,
 }: iPadAppIconProps) {
-  const { theme } = useTheme()
-  const isDark = theme === 'dark'
-  const textColorClass = 'text-zinc-800 dark:text-white'
+  const textColorClass = 'text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)]'
 
   return (
     <motion.div

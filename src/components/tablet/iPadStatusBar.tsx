@@ -2,17 +2,19 @@
 
 import { useTime } from '@/hooks/useTime'
 import { motion } from 'framer-motion'
+import { BatterySymbol, WifiSymbol } from '@/components/shared/SFSymbols'
 
 interface iPadStatusBarProps {
   theme: 'dark' | 'light'
+  isAppOpen?: boolean
 }
 
-export default function iPadStatusBar({ theme }: iPadStatusBarProps) {
+export default function iPadStatusBar({ theme, isAppOpen = false }: iPadStatusBarProps) {
   const { timeShort } = useTime()
 
-  const isDark = theme === 'dark'
-  const textColor = isDark ? 'text-white' : 'text-gray-900'
-  const bgStyle = isDark
+  const isLightText = !isAppOpen || theme === 'dark'
+  const textColor = isLightText ? 'text-white' : 'text-gray-900'
+  const bgStyle = isLightText
     ? 'bg-black/20 backdrop-blur-xl border-b border-white/10'
     : 'bg-white/20 backdrop-blur-xl border-b border-black/10'
 
@@ -42,9 +44,7 @@ export default function iPadStatusBar({ theme }: iPadStatusBarProps) {
       <div className={`flex items-center gap-2.5 ${textColor} select-none`}>
         {/* Wi-Fi Icon */}
         <div className="flex items-center opacity-90" aria-label="Wi-Fi connected">
-          <svg className="w-4 h-3.5" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" />
-          </svg>
+          <WifiSymbol className="w-4 h-3.5 shrink-0" />
         </div>
 
         {/* Battery Percentage */}
@@ -52,11 +52,7 @@ export default function iPadStatusBar({ theme }: iPadStatusBarProps) {
 
         {/* Battery Icon */}
         <div className="flex items-center opacity-90" aria-label="Battery 85 percent">
-          <svg className="w-5 h-2.5" viewBox="0 0 22 11" fill="none">
-            <rect x="0.5" y="0.5" width="18" height="10" rx="2.5" stroke="currentColor" strokeWidth="1.2" />
-            <rect x="19" y="3.5" width="1.5" height="4" rx="0.5" fill="currentColor" />
-            <rect x="2" y="2" width="13" height="7" rx="1.5" fill="currentColor" />
-          </svg>
+          <BatterySymbol className="w-5 h-2.5 shrink-0" />
         </div>
       </div>
     </motion.div>

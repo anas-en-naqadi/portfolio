@@ -5,6 +5,14 @@ import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { personalInfo } from '@/lib/data'
 import { useTime } from '@/hooks/useTime'
+import {
+  ClockSymbol,
+  DocumentTextSymbol,
+  DownloadSymbol,
+  LocationArrowSymbol,
+  MapPinSymbol,
+  PersonSymbol,
+} from '../shared/SFSymbols'
 
 interface iPadWidgetsProps {
   theme: 'dark' | 'light'
@@ -56,7 +64,7 @@ function getWeatherIcon(code: number, size = 20) {
     return (
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
         <path d="M17 14H7C4.79 14 3 12.21 3 10C3 8.08 4.35 6.48 6.18 6.1C6.91 3.72 9.13 2 11.75 2C14.8 2 17.37 4.27 17.89 7.23C19.64 7.57 21 9.13 21 11C21 12.66 19.66 14 17 14Z" fill="#636366" />
-        <path d="M11 14L9 17H13L11 20" stroke="#FFCC00" strokeWidth="2" strokeLinecap="round" strokeJoin="round" />
+        <path d="M11 14L9 17H13L11 20" stroke="#FFCC00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     )
   } else {
@@ -132,9 +140,7 @@ export default function iPadWidgets({ theme }: iPadWidgetsProps) {
         aria-label="Clock widget"
       >
         <div className="flex items-center gap-2 mb-2">
-          <svg className="w-4 h-4 text-zinc-500 dark:text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
+          <ClockSymbol className="w-4 h-4 text-zinc-500 dark:text-zinc-400 shrink-0" />
           <span className={`${subTextColorClass} text-[9px] font-bold uppercase tracking-wider`}>
             Clock
           </span>
@@ -166,7 +172,10 @@ export default function iPadWidgets({ theme }: iPadWidgetsProps) {
         aria-label="Weather widget"
       >
         <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-wider text-white/60">
-          <span className="flex items-center gap-1">Marrakech ↗</span>
+          <span className="flex items-center gap-1">
+            Marrakech
+            <LocationArrowSymbol className="w-2.5 h-2.5" />
+          </span>
           {getWeatherIcon(weather.code, 22)}
         </div>
         <div>
@@ -192,9 +201,7 @@ export default function iPadWidgets({ theme }: iPadWidgetsProps) {
         aria-label="Profile widget"
       >
         <div className="flex items-center gap-2">
-          <svg className="w-4 h-4 text-zinc-500 dark:text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-          </svg>
+          <PersonSymbol className="w-4 h-4 text-zinc-500 dark:text-zinc-400 shrink-0" />
           <span className={`${subTextColorClass} text-[9px] font-bold uppercase tracking-wider`}>
             Profile
           </span>
@@ -231,10 +238,7 @@ export default function iPadWidgets({ theme }: iPadWidgetsProps) {
           className="flex items-center gap-1.5 px-3 py-1 rounded-full self-start mt-1"
           style={{ background: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.05)' }}
         >
-          <svg className="w-3 h-3 text-[#FF2D55]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25s-7.5-4.108-7.5-11.25C4.5 6.63 7.63 3.5 11.5 3.5s7 3.13 7 7z" />
-          </svg>
+          <MapPinSymbol className="w-3 h-3 text-[#FF2D55] shrink-0" />
           <span className={`${textColorClass} text-[9px] font-semibold`}>
             {personalInfo.location.split(',')[0]}
           </span>
@@ -251,9 +255,7 @@ export default function iPadWidgets({ theme }: iPadWidgetsProps) {
         aria-label="Resume widget"
       >
         <div className="flex items-center gap-2 mb-1">
-          <svg className="w-4 h-4 text-zinc-500 dark:text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-          </svg>
+          <DocumentTextSymbol className="w-4 h-4 text-zinc-500 dark:text-zinc-400 shrink-0" />
           <span className={`${subTextColorClass} text-[9px] font-bold uppercase tracking-wider`}>
             CV / Resume
           </span>
@@ -285,11 +287,9 @@ export default function iPadWidgets({ theme }: iPadWidgetsProps) {
             link.click()
             document.body.removeChild(link)
           }}
-          className="w-full py-2 mb-4 rounded-xl text-[10px] font-bold text-white bg-blue-500 hover:bg-blue-600 transition-colors shadow-sm mt-1.5 flex items-center justify-center gap-1"
+          className="w-full py-2 mb-4 rounded-xl text-[10px] font-bold text-white bg-blue-500 hover:bg-blue-600 transition-colors shadow-sm mt-1.5 flex items-center justify-center gap-1.5"
         >
-          <svg className="w-3 h-3 fill-current" viewBox="0 0 24 24">
-            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
-          </svg>
+          <DownloadSymbol className="w-3 h-3 shrink-0" />
           Download CV
         </button>
       </motion.div>

@@ -8,6 +8,17 @@ import { useRouter, usePathname } from '@/i18n/routing'
 import { locales, localeNames, type Locale } from '@/i18n/config'
 import { personalInfo } from '@/lib/data'
 import { useTranslations } from 'next-intl'
+import {
+  AppleLogoSymbol,
+  BatterySymbol,
+  CheckmarkSymbol,
+  DownloadSymbol,
+  GlobeSymbol,
+  MoonSymbol,
+  SearchSymbol,
+  SunSymbol,
+  WifiSymbol,
+} from '@/components/shared/SFSymbols'
 
 interface MacOSMenuBarProps {
   theme: 'dark' | 'light'
@@ -84,7 +95,7 @@ export default function MacOSMenuBar({ theme, toggleTheme, activeAppTitle = 'Fin
           aria-label="Apple Menu"
           style={{ color: isDark ? '#fff' : '#1c1c1e' }}
         >
-          <span className="apple-logo" aria-hidden="true">🍎</span>
+          <AppleLogoSymbol className="w-3.5 h-3.5" />
         </button>
 
         {/* Active App Title */}
@@ -123,10 +134,11 @@ export default function MacOSMenuBar({ theme, toggleTheme, activeAppTitle = 'Fin
               {/* Language Section */}
               <div className="apple-dropdown-section">
                 <div
-                  className="apple-dropdown-label"
+                  className="apple-dropdown-label flex items-center gap-1.5"
                   style={{ color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)' }}
                 >
-                  🌐 {t('common.language') || 'Language'}
+                  <GlobeSymbol className="w-3 h-3" />
+                  <span>{t('common.language') || 'Language'}</span>
                 </div>
                 {locales.map((loc) => (
                   <button
@@ -139,7 +151,11 @@ export default function MacOSMenuBar({ theme, toggleTheme, activeAppTitle = 'Fin
                     }}
                   >
                     <span>{localeNames[loc as Locale]}</span>
-                    {locale === loc && <span className="apple-check" aria-hidden="true">✓</span>}
+                    {locale === loc && (
+                      <span className="apple-check inline-flex items-center justify-center shrink-0" aria-hidden="true">
+                        <CheckmarkSymbol className="w-3 h-3" />
+                      </span>
+                    )}
                   </button>
                 ))}
               </div>
@@ -156,7 +172,10 @@ export default function MacOSMenuBar({ theme, toggleTheme, activeAppTitle = 'Fin
                 className="apple-dropdown-item"
                 style={{ color: isDark ? '#f2f2f7' : '#1c1c1e' }}
               >
-                {isDark ? '☀️ Light Mode' : '🌙 Dark Mode'}
+                <span className="flex items-center gap-2">
+                  {isDark ? <SunSymbol className="w-3.5 h-3.5 text-amber-400" /> : <MoonSymbol className="w-3.5 h-3.5 text-indigo-500" />}
+                  <span>{isDark ? 'Light Mode' : 'Dark Mode'}</span>
+                </span>
               </button>
 
               <div
@@ -171,7 +190,10 @@ export default function MacOSMenuBar({ theme, toggleTheme, activeAppTitle = 'Fin
                 className="apple-dropdown-item"
                 style={{ color: isDark ? '#f2f2f7' : '#1c1c1e' }}
               >
-                📥 {t('common.downloadCV') || 'Download CV'}
+                <span className="flex items-center gap-2">
+                  <DownloadSymbol className="w-3.5 h-3.5 text-blue-500" />
+                  <span>{t('common.downloadCV') || 'Download CV'}</span>
+                </span>
               </button>
             </motion.div>
           )}
@@ -191,28 +213,28 @@ export default function MacOSMenuBar({ theme, toggleTheme, activeAppTitle = 'Fin
       {/* Right: System Icons + Time */}
       <div className="menu-bar-right">
         <span
-          className="menu-bar-icon"
+          className="menu-bar-icon flex items-center"
           aria-label="Wi-Fi connected"
           title="Wi-Fi"
-          style={{ color: isDark ? 'rgba(255,255,255,0.85)' : 'rgba(0,0,0,0.75)' }}
+          style={{ color: isDark ? 'rgba(255,255,255,0.88)' : 'rgba(0,0,0,0.78)' }}
         >
-          📶
+          <WifiSymbol className="w-4 h-3.5" />
         </span>
         <span
-          className="menu-bar-icon"
+          className="menu-bar-icon flex items-center"
           aria-label="Battery"
           title="Battery"
-          style={{ color: isDark ? 'rgba(255,255,255,0.85)' : 'rgba(0,0,0,0.75)' }}
+          style={{ color: isDark ? 'rgba(255,255,255,0.88)' : 'rgba(0,0,0,0.78)' }}
         >
-          🔋
+          <BatterySymbol className="w-5 h-3" />
         </span>
         <span
-          className="menu-bar-icon"
+          className="menu-bar-icon flex items-center"
           aria-label="Spotlight Search"
           title="Search"
-          style={{ color: isDark ? 'rgba(255,255,255,0.85)' : 'rgba(0,0,0,0.75)' }}
+          style={{ color: isDark ? 'rgba(255,255,255,0.88)' : 'rgba(0,0,0,0.78)' }}
         >
-          🔍
+          <SearchSymbol className="w-3.5 h-3.5" />
         </span>
         <span
           className="menu-bar-time"

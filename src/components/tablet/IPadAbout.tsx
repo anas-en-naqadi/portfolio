@@ -6,6 +6,18 @@ import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import { personalInfo, socialLinks } from '@/lib/data'
 import AnimatedSection from '../shared/AnimatedSection'
+import {
+  DesignSymbol,
+  DocumentTextSymbol,
+  EnvelopeSymbol,
+  GearSymbol,
+  GitHubGlyphSymbol,
+  LaptopCodeSymbol,
+  LinkedInGlyphSymbol,
+  PersonSymbol,
+  PhoneFillSymbol,
+  SparklesAISymbol,
+} from '../shared/SFSymbols'
 
 interface IPadAboutProps {
   theme: 'dark' | 'light'
@@ -27,50 +39,37 @@ export default function IPadAbout({ theme }: IPadAboutProps) {
     { 
       id: 'contact', 
       label: 'Contact Info', 
-      icon: (
-        <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-        </svg>
-      ) 
+      icon: <PersonSymbol className="w-4 h-4 shrink-0" /> 
     },
     { 
       id: 'bio', 
       label: 'Personal Bio', 
-      icon: (
-        <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-        </svg>
-      ) 
+      icon: <DocumentTextSymbol className="w-4 h-4 shrink-0" /> 
     },
     { 
       id: 'expertise', 
       label: 'Expertise Focus', 
-      icon: (
-        <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.43l-1.003.828c-.293.241-.438.613-.43.992a7.723 7.723 0 010 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.43l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.991l-1.004-.827a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.645-.869l.214-1.28z" />
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-        </svg>
-      )
+      icon: <GearSymbol className="w-4 h-4 shrink-0" />
     },
   ]
 
   const expertiseList = [
     {
-      icon: '💻',
+      icon: <LaptopCodeSymbol className="w-6 h-6 text-blue-600 dark:text-blue-400" />,
       title: t('about.expertise.fullstack.title'),
       description: t('about.expertise.fullstack.description'),
       gradient: 'from-blue-500/10 to-cyan-500/10',
       border: 'border-blue-400/20',
     },
     {
-      icon: '🤖',
+      icon: <SparklesAISymbol className="w-6 h-6 text-purple-600 dark:text-purple-400" />,
       title: t('about.expertise.performance.title'),
       description: t('about.expertise.performance.description'),
       gradient: 'from-purple-500/10 to-pink-500/10',
       border: 'border-purple-400/20',
     },
     {
-      icon: '🎨',
+      icon: <DesignSymbol className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />,
       title: t('about.expertise.design.title'),
       description: t('about.expertise.design.description'),
       gradient: 'from-indigo-500/10 to-purple-500/10',
@@ -99,7 +98,7 @@ export default function IPadAbout({ theme }: IPadAboutProps) {
                   : `text-zinc-600 dark:text-zinc-400 ${hoverTabBg}`
               }`}
             >
-              <span className="text-base shrink-0">{tab.icon}</span>
+              <span className="flex items-center justify-center shrink-0">{tab.icon}</span>
               <span className="truncate">{tab.label}</span>
             </button>
           ))}
@@ -136,40 +135,23 @@ export default function IPadAbout({ theme }: IPadAboutProps) {
                 {[
                   { 
                     label: 'call', 
-                    icon: (
-                      <svg className="w-5 h-5 text-[#007AFF] dark:text-[#0A84FF]" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M6.62 10.79a15.15 15.15 0 006.59 6.59l2.2-2.2a1 1 0 011.08-.24c1.22.4 2.52.61 3.86.61a1 1 0 011 1v3.5a1 1 0 01-1 1A16 16 0 013 3a1 1 0 011-1h3.5a1 1 0 011 1c0 1.34.2 2.64.61 3.86a1 1 0 01-.24 1.08l-2.2 2.2z" />
-                      </svg>
-                    ), 
+                    icon: <PhoneFillSymbol className="w-5 h-5 text-[#007AFF] dark:text-[#0A84FF] shrink-0" />, 
                     href: `tel:${personalInfo.phone.replace(/\s+/g, '')}` 
                   },
                   { 
                     label: 'mail', 
-                    icon: (
-                      <svg className="w-5 h-5 text-[#007AFF] dark:text-[#0A84FF]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                        <polyline points="22,6 12,13 2,6" />
-                      </svg>
-                    ), 
+                    icon: <EnvelopeSymbol className="w-5 h-5 text-[#007AFF] dark:text-[#0A84FF] shrink-0" />, 
                     href: `mailto:${personalInfo.email}` 
                   },
                   { 
                     label: 'github', 
-                    icon: (
-                      <svg className="w-5 h-5 text-[#007AFF] dark:text-[#0A84FF]" viewBox="0 0 24 24" fill="currentColor">
-                        <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.579.688.481C19.138 20.161 22 16.416 22 12c0-5.523-4.477-10-10-10z" />
-                      </svg>
-                    ), 
+                    icon: <GitHubGlyphSymbol className="w-5 h-5 text-[#007AFF] dark:text-[#0A84FF] shrink-0" />, 
                     href: socialLinks.github, 
                     external: true 
                   },
                   { 
                     label: 'linkedin', 
-                    icon: (
-                      <svg className="w-5 h-5 text-[#007AFF] dark:text-[#0A84FF]" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-                      </svg>
-                    ), 
+                    icon: <LinkedInGlyphSymbol className="w-5 h-5 text-[#007AFF] dark:text-[#0A84FF] shrink-0" />, 
                     href: socialLinks.linkedin, 
                     external: true 
                   }
@@ -251,7 +233,7 @@ export default function IPadAbout({ theme }: IPadAboutProps) {
                     key={index}
                     className={`p-5 rounded-2xl border ${exp.border} bg-gradient-to-br ${exp.gradient} dark:bg-zinc-900/60 shadow-sm flex items-start gap-4`}
                   >
-                    <span className="text-3xl p-1 bg-white dark:bg-zinc-800 rounded-xl shadow-sm leading-none shrink-0">
+                    <span className="w-11 h-11 flex items-center justify-center bg-white dark:bg-zinc-800 rounded-xl shadow-sm shrink-0">
                       {exp.icon}
                     </span>
                     <div className="flex-1">

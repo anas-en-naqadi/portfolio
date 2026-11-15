@@ -1,9 +1,10 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { useTranslations } from 'next-intl'
 import IOSAppIcon from './IOSAppIcon'
 
-type AppId = 'about' | 'experience' | 'projects' | 'skills' | 'contact'
+type AppId = 'home' | 'about' | 'experience' | 'projects' | 'skills' | 'contact' | 'settings'
 
 interface DockApp {
   id: string
@@ -13,20 +14,20 @@ interface DockApp {
 }
 
 interface IOSDockProps {
-  onOpenApp: (appId: any) => void
+  onOpenApp: (appId: AppId) => void
   theme?: 'dark' | 'light'
   apps?: DockApp[]
 }
 
-const defaultDockApps: DockApp[] = [
-  { id: 'about', label: 'About' },
-  { id: 'projects', label: 'Projects' },
-  { id: 'skills', label: 'Skills' },
-  { id: 'contact', label: 'Contact' },
-]
-
 export default function IOSDock({ onOpenApp, theme = 'dark', apps }: IOSDockProps) {
+  const t = useTranslations()
   const isDark = theme === 'dark'
+  const defaultDockApps: DockApp[] = [
+    { id: 'about', label: t('common.about') },
+    { id: 'projects', label: t('common.projects') },
+    { id: 'skills', label: t('common.skills') },
+    { id: 'contact', label: t('common.contact') },
+  ]
   const displayApps = apps || defaultDockApps
 
   return (
@@ -37,7 +38,7 @@ export default function IOSDock({ onOpenApp, theme = 'dark', apps }: IOSDockProp
       style={{ left: '50%' }}
       transition={{ duration: 0.5, ease: 'easeOut', delay: 0.2 }}
       role="navigation"
-      aria-label="iPhone Dock"
+      aria-label={t('mobile.home.dockLabel')}
     >
       <div
         className="flex items-center gap-4 px-6 py-3 rounded-[28px]"
@@ -60,7 +61,7 @@ export default function IOSDock({ onOpenApp, theme = 'dark', apps }: IOSDockProp
             key={app.id}
             id={app.id}
             label={app.label}
-            onClick={app.onClick || (() => onOpenApp(app.id))}
+            onClick={app.onClick || (() => onOpenApp(app.id as AppId))}
             index={index}
             size={54}
             badge={app.badge}

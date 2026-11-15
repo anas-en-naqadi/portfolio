@@ -7,9 +7,17 @@ import ModernCard from '@/components/shared/ModernCard'
 import ModernBadge from '@/components/shared/ModernBadge'
 import AnimatedSection from '@/components/shared/AnimatedSection'
 import WindowToolbar from '@/components/shared/WindowToolbar'
+import {
+  GlobeSymbol,
+  GridSymbol,
+  LaptopCodeSymbol,
+  PhoneDeviceSymbol,
+  SearchSymbol,
+  SparklesAISymbol,
+} from '@/components/shared/SFSymbols'
 import { motion } from 'framer-motion'
 
-type ProjectFilter = 'all' | 'web' | 'mobile'
+type ProjectFilter = 'all' | 'ai' | 'web' | 'mobile'
 
 export default function ProjectsWindow() {
   const t = useTranslations()
@@ -23,29 +31,22 @@ export default function ProjectsWindow() {
   const filterButtons = [
     { 
       id: 'all' as ProjectFilter, 
-      icon: (
-        <svg className="w-4 h-4 inline-block align-text-bottom" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25h-2.25a2.25 2.25 0 01-2.25-2.25v-2.25z" />
-        </svg>
-      ), 
+      icon: <GridSymbol className="w-4 h-4 shrink-0" />, 
       label: t('projects.all') 
     },
     { 
+      id: 'ai' as ProjectFilter, 
+      icon: <SparklesAISymbol className="w-4 h-4 shrink-0" />, 
+      label: t('projects.ai') 
+    },
+    { 
       id: 'web' as ProjectFilter, 
-      icon: (
-        <svg className="w-4 h-4 inline-block align-text-bottom" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-.778.099-1.533.284-2.253" />
-        </svg>
-      ), 
+      icon: <GlobeSymbol className="w-4 h-4 shrink-0" />, 
       label: t('projects.web') 
     },
     { 
       id: 'mobile' as ProjectFilter, 
-      icon: (
-        <svg className="w-4 h-4 inline-block align-text-bottom" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3M12 18.75h.008v.008H12v-.008z" />
-        </svg>
-      ), 
+      icon: <PhoneDeviceSymbol className="w-4 h-4 shrink-0" />, 
       label: t('projects.mobile') 
     },
   ]
@@ -59,24 +60,14 @@ export default function ProjectsWindow() {
 
   const getProjectIcon = (type: string) => {
     switch (type) {
+      case 'ai':
+        return <SparklesAISymbol className="w-6 h-6 text-white" />
       case 'web':
-        return (
-          <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-.778.099-1.533.284-2.253" />
-          </svg>
-        )
+        return <GlobeSymbol className="w-6 h-6 text-white" />
       case 'mobile':
-        return (
-          <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3M12 18.75h.008v.008H12v-.008z" />
-          </svg>
-        )
+        return <PhoneDeviceSymbol className="w-6 h-6 text-white" />
       default:
-        return (
-          <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25M7.5 12h9" />
-          </svg>
-        )
+        return <LaptopCodeSymbol className="w-6 h-6 text-white" />
     }
   }
 
@@ -101,7 +92,7 @@ export default function ProjectsWindow() {
                   key={btn.id}
                   onClick={() => setFilter(btn.id)}
                   className={`
-                    px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300
+                    inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300
                     ${filter === btn.id
                       ? 'bg-gradient-to-r from-primary to-primary-dark text-white shadow-lg scale-105'
                       : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
@@ -110,8 +101,8 @@ export default function ProjectsWindow() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <span className="mr-2">{btn.icon}</span>
-                  {btn.label}
+                  <span className="inline-flex items-center justify-center shrink-0">{btn.icon}</span>
+                  <span>{btn.label}</span>
                 </motion.button>
               ))}
             </div>
@@ -179,7 +170,9 @@ export default function ProjectsWindow() {
         {filteredProjects.length === 0 && (
           <AnimatedSection delay={0.3}>
             <ModernCard className="text-center py-12">
-              <div className="text-6xl mb-4">🔍</div>
+              <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-gray-100 dark:bg-white/10 flex items-center justify-center text-gray-400 dark:text-gray-300">
+                <SearchSymbol className="w-7 h-7" />
+              </div>
               <p className="text-gray-600 dark:text-gray-400 text-lg">
                 No {filter === 'all' ? '' : filter} projects found
               </p>

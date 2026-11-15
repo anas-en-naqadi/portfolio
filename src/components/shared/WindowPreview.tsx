@@ -1,10 +1,11 @@
 'use client'
 
+import { type ReactNode } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 interface WindowPreviewProps {
   isVisible: boolean
-  icon: string
+  icon: ReactNode
   title: string
   subtitle: string
 }
@@ -22,7 +23,7 @@ export default function WindowPreview({ isVisible, icon, title, subtitle }: Wind
         >
           <div className="text-center text-white">
             <motion.div
-              className="text-6xl mb-3"
+              className="flex items-center justify-center mb-3 text-6xl"
               animate={{ 
                 scale: [1, 1.1, 1],
                 rotate: [0, 5, -5, 0]

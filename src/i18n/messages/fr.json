@@ -5,6 +5,8 @@
     "projects": "Projets",
     "skills": "Compétences",
     "contact": "Contact",
+    "settings": "Paramètres",
+    "phone": "Téléphone",
     "downloadCV": "Télécharger CV",
     "viewGithub": "Voir GitHub",
     "scheduleCall": "Planifier un appel",
@@ -49,6 +51,7 @@
   "projects": {
     "title": "Projets en Vedette",
     "all": "Tous",
+    "ai": "IA",
     "web": "Web",
     "mobile": "Mobile",
     "impact": "Impact"
@@ -84,6 +87,90 @@
     "viewRepos": "Voir repos",
     "bookMeeting": "Réserver une réunion",
     "directContact": "Contact direct"
+  },
+  "mobile": {
+    "weather": {
+      "label": "Météo",
+      "high": "Max",
+      "low": "Min",
+      "conditions": {
+        "clearSky": "Ciel dégagé",
+        "partlyCloudy": "Partiellement nuageux",
+        "foggy": "Brumeux",
+        "drizzle": "Bruine",
+        "rainy": "Pluvieux",
+        "snowy": "Neigeux",
+        "showers": "Averses",
+        "thunderstorm": "Orageux",
+        "clear": "Dégagé"
+      }
+    },
+    "home": {
+      "homeLabel": "Accueil",
+      "goHome": "Aller à l'écran d'accueil",
+      "openApp": "Ouvrir {label}",
+      "homeScreenLabel": "Écran d'accueil",
+      "dockLabel": "Dock iPhone"
+    },
+    "statusBar": {
+      "label": "Barre d'état iOS",
+      "wifiConnected": "Wi-Fi connecté",
+      "batteryLevel": "Batterie à 85 pour cent"
+    },
+    "dynamicIsland": {
+      "opened": "Ouvert"
+    },
+    "about": {
+      "actions": {
+        "call": "Appeler",
+        "mail": "E-mail"
+      },
+      "fields": {
+        "mobile": "Mobile",
+        "email": "E-mail",
+        "home": "Localisation"
+      }
+    },
+    "projects": {
+      "get": "OBTENIR",
+      "categories": {
+        "ai": "Intelligence Artificielle",
+        "ml": "Machine Learning",
+        "mobile": "Application iOS & Android",
+        "fullstack": "Application Web Full-Stack",
+        "tools": "Outils Développeur"
+      }
+    },
+    "skills": {
+      "searchPlaceholder": "Rechercher des compétences",
+      "empty": "Aucune compétence trouvée"
+    },
+    "settings": {
+      "sectionTitle": "Paramètres généraux du système",
+      "darkMode": "Mode sombre",
+      "systemLanguage": "Langue du système",
+      "toggleDarkMode": "Basculer le mode sombre"
+    },
+    "contact": {
+      "github": {
+        "subject": "Portfolio & Dépôts de Code",
+        "body": "Découvrez mes dernières contributions open source et mes dépôts. Construisons quelque chose ensemble."
+      },
+      "linkedin": {
+        "subject": "Proposition de Connexion Professionnelle",
+        "body": "Connectons-nous sur LinkedIn pour discuter d'opportunités freelance ou de postes à temps plein."
+      },
+      "email": {
+        "sender": "Boîte de réception",
+        "subject": "Nouvelle Demande de Collaboration",
+        "body": "Envoyez-moi un e-mail direct pour démarrer une discussion, demander mon CV ou obtenir un devis."
+      },
+      "phone": {
+        "sender": "Appel Téléphonique",
+        "subject": "Demandes Directes & Planification d'Appel",
+        "body": "Appelez directement mon numéro mobile pour toute demande professionnelle ou mission freelance."
+      }
+    }
   }
 }
 

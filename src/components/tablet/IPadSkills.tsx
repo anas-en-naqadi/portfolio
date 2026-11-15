@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslations } from 'next-intl'
 import { skills } from '@/lib/data'
 import AnimatedSection from '../shared/AnimatedSection'
+import { SearchSymbol, XMarkCircleSymbol } from '../shared/SFSymbols'
 
 interface IPadSkillsProps {
   theme: 'dark' | 'light'
@@ -58,23 +59,22 @@ export default function IPadSkills({ theme }: IPadSkillsProps) {
         <div className="px-1.5">
           <div className="relative">
             <span className="absolute inset-y-0 left-3 flex items-center text-zinc-400 dark:text-zinc-500 pointer-events-none">
-              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.602 10.602z" />
-              </svg>
+              <SearchSymbol className="w-3.5 h-3.5" />
             </span>
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search Notes..."
-              className={`w-full pl-8 pr-3 py-2 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#D08A00]/30 transition-all ${searchBg}`}
+              className={`w-full pl-8 pr-8 py-2 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#D08A00]/30 transition-all ${searchBg}`}
             />
             {searchQuery && (
               <button 
                 onClick={() => setSearchQuery('')}
-                className="absolute inset-y-0 right-3 flex items-center text-zinc-400 dark:text-zinc-500 text-xs hover:text-zinc-600"
+                aria-label="Clear search"
+                className="absolute inset-y-0 right-2.5 flex items-center justify-center text-zinc-400 dark:text-zinc-500 hover:text-zinc-600"
               >
-                ✕
+                <XMarkCircleSymbol className="w-4 h-4" />
               </button>
             )}
           </div>

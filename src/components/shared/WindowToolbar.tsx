@@ -19,14 +19,19 @@ export default function WindowToolbar({ buttons }: WindowToolbarProps) {
   return (
     <div className="window-toolbar">
       {buttons.map((btn, idx) => (
-        <div
+        <button
           key={idx}
-          className="toolbar-btn"
+          type="button"
+          className={`toolbar-btn ${btn.active ? 'active' : ''}`}
           onClick={btn.onClick}
         >
-          {btn.icon && <span>{btn.icon}</span>}
-          {btn.label}
-        </div>
+          {btn.icon && (
+            <span className="inline-flex items-center justify-center shrink-0">
+              {btn.icon}
+            </span>
+          )}
+          <span>{btn.label}</span>
+        </button>
       ))}
     </div>
   )

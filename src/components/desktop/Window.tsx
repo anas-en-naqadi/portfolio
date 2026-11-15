@@ -2,11 +2,12 @@
 
 import React, { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { CloseGlyph, MinusGlyph, PlusGlyph } from '@/components/shared/SFSymbols'
 
 interface WindowProps {
   id: string
   title: string
-  icon?: string
+  icon?: React.ReactNode
   isOpen: boolean
   onClose: () => void
   onMinimize: () => void
@@ -196,14 +197,12 @@ export default function Window({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: 9,
-                  fontWeight: 'bold',
-                  color: 'rgba(0,0,0,0.55)',
+                  color: 'rgba(0,0,0,0.6)',
                   flexShrink: 0,
                   boxShadow: '0 0 0 0.5px rgba(0,0,0,0.15)',
                 }}
               >
-                {controlsHovered ? '×' : ''}
+                {controlsHovered ? <CloseGlyph className="w-2 h-2" /> : null}
               </button>
               {/* Minimize — Yellow */}
               <button
@@ -220,14 +219,12 @@ export default function Window({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: 9,
-                  fontWeight: 'bold',
-                  color: 'rgba(0,0,0,0.55)',
+                  color: 'rgba(0,0,0,0.6)',
                   flexShrink: 0,
                   boxShadow: '0 0 0 0.5px rgba(0,0,0,0.15)',
                 }}
               >
-                {controlsHovered ? '−' : ''}
+                {controlsHovered ? <MinusGlyph className="w-2 h-2" /> : null}
               </button>
               {/* Maximize — Green */}
               {onMaximize && (
@@ -245,14 +242,12 @@ export default function Window({
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: 9,
-                    fontWeight: 'bold',
-                    color: 'rgba(0,0,0,0.55)',
+                    color: 'rgba(0,0,0,0.6)',
                     flexShrink: 0,
                     boxShadow: '0 0 0 0.5px rgba(0,0,0,0.15)',
                   }}
                 >
-                  {controlsHovered ? '+' : ''}
+                  {controlsHovered ? <PlusGlyph className="w-2 h-2" /> : null}
                 </button>
               )}
             </div>
@@ -269,7 +264,7 @@ export default function Window({
                 pointerEvents: 'none',
               }}
             >
-              {icon && <span style={{ fontSize: '14px' }}>{icon}</span>}
+              {icon && <span className="flex items-center shrink-0">{icon}</span>}
               <span>{title}</span>
             </div>
           </div>

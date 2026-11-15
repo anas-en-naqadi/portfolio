@@ -112,42 +112,42 @@ export const projects = [
     title: "Diagnostic Radiographique IA",
     description: "Système de diagnostic et d'analyse automatique d'images radiographiques thoraciques utilisant l'architecture EfficientNet et PyTorch.",
     technologies: ["Python", "FastAPI", "PyTorch", "EfficientNet", "Deep Learning"],
-    type: "web",
+    type: "ai",
     image: "/images/projects/radiography_ai.png"
   },
   {
     title: "Prédiction du Cancer du Côlon",
     description: "Modèle de prédiction médicale basé sur l'apprentissage automatique (Scikit-Learn) pour la détection précoce du cancer du côlon.",
     technologies: ["Python", "FastAPI", "React", "Scikit-Learn", "Machine Learning"],
-    type: "web",
+    type: "ai",
     image: "/images/projects/colon_cancer_prediction.png"
   },
   {
     title: "Code Review Automatisé par IA",
     description: "Application d'audit et de révision de code automatique s'appuyant sur des LLMs via Groq pour détecter des vulnérabilités de sécurité.",
     technologies: ["Next.js", "TypeScript", "Groq", "LlamaIndex", "AI"],
-    type: "web",
+    type: "ai",
     image: "/images/projects/code_review_ai.png"
   },
   {
     title: "Assistant de Recherche Doctorale",
     description: "Outil d'intelligence artificielle pour la recherche bibliographique automatisée et la synthèse documentaire structurée.",
     technologies: ["Python", "Streamlit", "CrewAI", "Groq", "LLMs"],
-    type: "web",
+    type: "ai",
     image: "/images/projects/phd_research_assistant.png"
   },
   {
     title: "Orchestrateur d'Agents IA",
     description: "Plateforme complète d'orchestration d'agents autonomes à rôles multiples avec CrewAI pour l'automatisation de tâches complexes.",
     technologies: ["Next.js", "FastAPI", "CrewAI", "Groq", "Python"],
-    type: "web",
+    type: "ai",
     image: "/images/projects/agents_orchestrator.png"
   },
   {
     title: "Générateur d'APIs REST par IA",
     description: "Générateur d'interfaces d'API documentées et sécurisées à la volée à l'aide de modèles d'IA générative.",
     technologies: ["React", "Fastify", "TypeScript", "Groq", "FastAPI"],
-    type: "web",
+    type: "ai",
     image: "/images/projects/rest_api_generator.png"
   },
   {
@@ -161,7 +161,7 @@ export const projects = [
     title: "Flux Optique: LK vs HS",
     description: "Comparateur de flux optique de vision par ordinateur comparant les approches de Lucas-Kanade et Horn-Schunck.",
     technologies: ["Python", "OpenCV", "Streamlit", "Computer Vision"],
-    type: "web",
+    type: "ai",
     image: "/images/projects/optical_flow_comparison.png"
   },
   {
@@ -192,6 +192,192 @@ export const skills = {
     { language: 'French', level: 'Current' },
     { language: 'English', level: 'Current' },
   ],
+}
+
+const englishData = {
+  personalInfo: {
+    ...personalInfo,
+    title: 'Full-Stack Developer & AI Engineer',
+    location: 'Marrakech, Morocco',
+  },
+  education: [
+    {
+      degree: "Master's in Artificial Intelligence and Computer Engineering",
+      period: '2025 - 2027',
+      institution: 'Faculty of Sciences and Techniques (FSTG)',
+      city: 'Marrakech',
+    },
+    {
+      degree: 'Professional Bachelor in Computer Science and Applied Mathematics',
+      period: '2024 - 2025',
+      institution: 'Polydisciplinary Faculty (FPSB)',
+      city: 'El Jadida',
+    },
+    {
+      degree: 'University Diploma of Technology in Computer Engineering',
+      period: '2022 - 2024',
+      institution: 'Higher School of Technology (ESTSB)',
+      city: 'Sidi Bennour',
+    },
+    {
+      degree: 'Baccalaureate in Physical Sciences',
+      period: '2022',
+      institution: 'El Qods High School',
+      city: 'El Jadida',
+    },
+  ],
+  experiences: [
+    {
+      title: 'FullStack Developer | Freelance',
+      company: 'Melodia',
+      location: 'Canada (Remote)',
+      period: 'January 2026 - March 2026',
+      description: [
+        'End-to-end multi-role QA & audit (Artist, Agent, Station, Admin): resolved critical bugs, failing APIs, and inconsistent flows.',
+        'Production-ready UX implementation: contextual spinners, status toasts, Optimistic UI with rollback, and standardized error handling across the app.',
+        'Full-stack optimization: N+1 query resolution, server-side pagination, full EN/FR internationalization, and JWT/RBAC security.',
+        'CI/CD deployment on Microsoft Azure via GitHub Actions (frontend & backend) with Application Insights monitoring.',
+      ],
+      technologies: ['React.js', '.NET / C#', 'Microsoft Azure', 'MySQL', 'GitHub Actions', 'Testing and Debugging', 'JavaScript'],
+    },
+    {
+      title: 'FullStack Developer | Freelance',
+      company: '3ommy',
+      location: 'Rabat, Morocco (Remote)',
+      period: 'September 2025 - January 2026',
+      description: [
+        'Production release of a cross-platform app (Web, iOS, Android) with end-to-end QA testing and business workflow validation.',
+        'Frontend development: new UI screens, REST API integration, mobile-first responsiveness, and performance optimization.',
+        'RESTful API design and fixes with Supabase (PostgreSQL): endpoints, business logic refactoring, JWT/RLS security, and Edge Functions.',
+        'Architecture refactoring (maintainability, scalability), critical production bug fixes, and Agile/Scrum collaboration.',
+      ],
+      technologies: ['React Native', 'Expo', 'Supabase', 'PostgreSQL', 'TypeScript', 'Testing and Debugging', 'Agile'],
+    },
+    {
+      title: 'FullStack Developer | Final Year Internship',
+      company: 'GRANDE CHARTE Inc',
+      location: 'El Jadida, Morocco',
+      period: 'April 2025 - June 2025',
+      description: [
+        'Designed and built an internal e-learning platform: secure JWT authentication, fine-grained roles and permissions, activity logs, notifications and email delivery, backend hardening, and frontend integration.',
+        'Quality & stability: wrote unit and integration tests, identified and fixed defects through production release, and deployed from scratch on a VPS.',
+      ],
+      technologies: ['Node.js', 'Express.js', 'Next.js', 'React.js', 'PostgreSQL', 'TypeScript', 'TailwindCss', 'VPS', 'Testing and Debugging'],
+    },
+    {
+      title: 'FullStack Developer | Final Year Internship',
+      company: 'OCP MAINTENANCE SOLUTIONS',
+      location: 'Jorf Lasfar, Morocco',
+      period: 'April 2024 - May 2024',
+      description: [
+        'Designed, developed, and integrated new features in an access-management web application (access & activity logs, dashboards, support, badges, etc.).',
+        'Tested the application to ensure reliability, and identified and resolved bugs.',
+      ],
+      technologies: ['Laravel', 'Vue.js', 'SQL', 'Jira', 'GitLab', 'Bootstrap', 'Git', 'Testing and Debugging', 'Clean Code'],
+    },
+    {
+      title: 'Junior Developer | Introductory Internship',
+      company: 'OCP/DSI',
+      location: 'Jorf Lasfar, Morocco',
+      period: 'July 2023 - August 2023',
+      description: [
+        'Designed and developed web applications.',
+        'Built an automated invoice generation solution.',
+        'Optimized features to improve user experience.',
+      ],
+      technologies: ['HTML', 'CSS', 'JS', 'PHP', 'SQL', 'MYSQL'],
+    },
+  ],
+  projects: [
+    {
+      title: 'AI Radiographic Diagnosis',
+      description: 'Automated chest X-ray diagnostic and analysis system powered by EfficientNet and PyTorch.',
+      technologies: ['Python', 'FastAPI', 'PyTorch', 'EfficientNet', 'Deep Learning'],
+      type: 'ai',
+      image: '/images/projects/radiography_ai.png',
+    },
+    {
+      title: 'Colon Cancer Prediction',
+      description: 'Medical prediction model built with machine learning (Scikit-Learn) for early colon cancer detection.',
+      technologies: ['Python', 'FastAPI', 'React', 'Scikit-Learn', 'Machine Learning'],
+      type: 'ai',
+      image: '/images/projects/colon_cancer_prediction.png',
+    },
+    {
+      title: 'AI Automated Code Review',
+      description: 'Automated code audit and review application leveraging LLMs via Groq to detect security vulnerabilities.',
+      technologies: ['Next.js', 'TypeScript', 'Groq', 'LlamaIndex', 'AI'],
+      type: 'ai',
+      image: '/images/projects/code_review_ai.png',
+    },
+    {
+      title: 'PhD Research Assistant',
+      description: 'AI tool for automated bibliographic search and structured literature synthesis.',
+      technologies: ['Python', 'Streamlit', 'CrewAI', 'Groq', 'LLMs'],
+      type: 'ai',
+      image: '/images/projects/phd_research_assistant.png',
+    },
+    {
+      title: 'AI Agents Orchestrator',
+      description: 'Complete multi-role autonomous agent orchestration platform using CrewAI to automate complex workflows.',
+      technologies: ['Next.js', 'FastAPI', 'CrewAI', 'Groq', 'Python'],
+      type: 'ai',
+      image: '/images/projects/agents_orchestrator.png',
+    },
+    {
+      title: 'AI REST API Generator',
+      description: 'On-the-fly generator for documented and secured REST API interfaces powered by generative AI models.',
+      technologies: ['React', 'Fastify', 'TypeScript', 'Groq', 'FastAPI'],
+      type: 'ai',
+      image: '/images/projects/rest_api_generator.png',
+    },
+    {
+      title: 'Anime Mobile App',
+      description: 'Cross-platform anime streaming and info mobile application featuring offline management and favorites.',
+      technologies: ['React Native', 'Expo', 'Firebase', 'Mobile'],
+      type: 'mobile',
+      image: '/images/projects/anime_mobile_app.png',
+    },
+    {
+      title: 'Optical Flow: LK vs HS',
+      description: 'Computer vision optical flow comparator contrasting Lucas-Kanade and Horn-Schunck methods.',
+      technologies: ['Python', 'OpenCV', 'Streamlit', 'Computer Vision'],
+      type: 'ai',
+      image: '/images/projects/optical_flow_comparison.png',
+    },
+    {
+      title: 'E-Learning Platform',
+      description: 'Full-featured JWT-secured e-learning platform with granular role/permission management and activity logging.',
+      technologies: ['Node.js', 'Express.js', 'Next.js', 'React.js', 'PostgreSQL'],
+      type: 'web',
+      image: '/images/projects/elearning_platform.png',
+    },
+    {
+      title: 'Access Management App',
+      description: 'Physical and digital access control and tracking system featuring activity logs and dashboards.',
+      technologies: ['Laravel', 'Vue.js', 'SQL', 'Bootstrap', 'Git'],
+      type: 'web',
+      image: '/images/projects/access_management.png',
+    },
+  ],
+  skills: {
+    ...skills,
+    methodologies: ['Agile Scrum', 'MVC2 Pattern', 'UML'],
+  },
+}
+
+/** Returns portfolio data localized for the active locale ('en' or 'fr'). */
+export function getLocalizedPortfolioData(locale: string) {
+  if (locale === 'en') {
+    return englishData
+  }
+  return {
+    personalInfo,
+    education,
+    experiences,
+    projects,
+    skills,
+  }
 }
 
 

@@ -2,12 +2,14 @@
 
 import { ReactNode } from "react";
 import { motion, AnimatePresence, PanInfo } from "framer-motion";
+import { useTranslations } from "next-intl";
+import { XMarkSymbol } from "../shared/SFSymbols";
 
 interface IOSSheetProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
-  icon: string;
+  icon: ReactNode;
   children: ReactNode;
   theme?: "dark" | "light";
 }
@@ -20,9 +22,10 @@ export default function IOSSheet({
   children,
   theme = "dark",
 }: IOSSheetProps) {
+  const t = useTranslations();
   const isDark = theme === "dark";
 
-  const handleDragEnd = (_event: any, info: PanInfo) => {
+  const handleDragEnd = (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     // Dismiss if dragged down far enough or fast enough
     if (info.offset.y > 150 || info.velocity.y > 400) {
       onClose();
@@ -70,7 +73,7 @@ export default function IOSSheet({
             transition={{ type: "spring", stiffness: 380, damping: 38 }}
             role="dialog"
             aria-modal="true"
-            aria-label={`${title} sheet`}
+            aria-label={title}
           >
             {/* Grab Bar Container */}
             <div className="h-6 w-full flex items-center justify-center flex-shrink-0 cursor-grab active:cursor-grabbing">
@@ -102,12 +105,9 @@ export default function IOSSheet({
               <button
                 className="w-7 h-7 rounded-full flex items-center justify-center transition-colors bg-[#E5E5EA]/85 hover:bg-[#D1D1D6] dark:bg-[#2C2C2E]/90 dark:hover:bg-[#3A3A3C] text-zinc-500 dark:text-zinc-400"
                 onClick={onClose}
-                aria-label="Close sheet"
+                aria-label={t("common.close")}
               >
-                <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
+                <XMarkSymbol className="w-3 h-3 shrink-0" />
               </button>
             </div>
 

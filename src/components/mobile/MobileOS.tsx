@@ -5,11 +5,25 @@ import { useTranslations, useLocale } from 'next-intl'
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import { useTheme } from '@/hooks/useTheme'
-import { useTime } from '@/hooks/useTime'
 import { useRouter, usePathname } from '@/i18n/routing'
 import { locales, localeNames, type Locale } from '@/i18n/config'
-import { personalInfo, socialLinks, experiences, education, projects, skills } from '@/lib/data'
+import { personalInfo, socialLinks, getLocalizedPortfolioData } from '@/lib/data'
 import { getAppleIcon } from '../shared/AppleIcons'
+import {
+  AppCubeSymbol,
+  ChevronRightSymbol,
+  DocumentTextSymbol,
+  EnvelopeSymbol,
+  GitHubGlyphSymbol,
+  GlobeSymbol,
+  LinkedInGlyphSymbol,
+  LocationArrowSymbol,
+  MapPinSymbol,
+  MoonSymbol,
+  PhoneFillSymbol,
+  SearchSymbol,
+  XMarkCircleSymbol,
+} from '../shared/SFSymbols'
 
 import IOSStatusBar from './IOSStatusBar'
 import DynamicIsland from './DynamicIsland'
@@ -17,8 +31,6 @@ import IOSAppIcon from './IOSAppIcon'
 import IOSSheet from './IOSSheet'
 import IOSDock from './IOSDock'
 
-import ModernCard from '../shared/ModernCard'
-import ModernBadge from '../shared/ModernBadge'
 import AnimatedSection from '../shared/AnimatedSection'
 
 type AppId = 'home' | 'about' | 'experience' | 'projects' | 'skills' | 'contact' | 'settings'
@@ -29,25 +41,36 @@ interface HourlyForecast {
   code: number
 }
 
+type WeatherConditionKey =
+  | 'clearSky'
+  | 'partlyCloudy'
+  | 'foggy'
+  | 'drizzle'
+  | 'rainy'
+  | 'snowy'
+  | 'showers'
+  | 'thunderstorm'
+  | 'clear'
+
 interface WeatherState {
   temp: number
-  condition: string
+  conditionKey: WeatherConditionKey
   high: number
   low: number
   code: number
   hourly: HourlyForecast[]
 }
 
-function getWeatherConditionText(code: number): string {
-  if (code === 0) return 'Clear Sky'
-  if ([1, 2, 3].includes(code)) return 'Partly Cloudy'
-  if ([45, 48].includes(code)) return 'Foggy'
-  if ([51, 53, 55].includes(code)) return 'Drizzle'
-  if ([61, 63, 65].includes(code)) return 'Rainy'
-  if ([71, 73, 75].includes(code)) return 'Snowy'
-  if ([80, 81, 82].includes(code)) return 'Showers'
-  if ([95, 96, 99].includes(code)) return 'Thunderstorm'
-  return 'Clear'
+function getWeatherConditionKey(code: number): WeatherConditionKey {
+  if (code === 0) return 'clearSky'
+  if ([1, 2, 3].includes(code)) return 'partlyCloudy'
+  if ([45, 48].includes(code)) return 'foggy'
+  if ([51, 53, 55].includes(code)) return 'drizzle'
+  if ([61, 63, 65].includes(code)) return 'rainy'
+  if ([71, 73, 75].includes(code)) return 'snowy'
+  if ([80, 81, 82].includes(code)) return 'showers'
+  if ([95, 96, 99].includes(code)) return 'thunderstorm'
+  return 'clear'
 }
 
 function getWeatherIcon(code: number, size = 20) {
@@ -80,7 +103,7 @@ function getWeatherIcon(code: number, size = 20) {
     return (
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className="mx-auto">
         <path d="M17 14H7C4.79 14 3 12.21 3 10C3 8.08 4.35 6.48 6.18 6.1C6.91 3.72 9.13 2 11.75 2C14.8 2 17.37 4.27 17.89 7.23C19.64 7.57 21 9.13 21 11C21 12.66 19.66 14 17 14Z" fill="#636366" />
-        <path d="M11 14L9 17H13L11 20" stroke="#FFCC00" strokeWidth="2" strokeLinecap="round" strokeJoin="round" />
+        <path d="M11 14L9 17H13L11 20" stroke="#FFCC00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     )
   } else {
@@ -100,15 +123,21 @@ export default function MobileOS() {
   const pathname = usePathname()
   const { theme, toggleTheme } = useTheme()
   const [activeApp, setActiveApp] = useState<AppId>('home')
-  const isDark = theme === 'dark'
-  const [projectFilter, setProjectFilter] = useState<'all' | 'web' | 'mobile'>('all')
+  const [projectFilter, setProjectFilter] = useState<'all' | 'ai' | 'web' | 'mobile'>('all')
   const [expandedSkillFolder, setExpandedSkillFolder] = useState<number | null>(null)
   const [skillSearchQuery, setSkillSearchQuery] = useState('')
+  const {
+    personalInfo: localizedPersonalInfo,
+    education: localizedEducation,
+    experiences: localizedExperiences,
+    projects: localizedProjects,
+    skills: localizedSkills,
+  } = getLocalizedPortfolioData(locale)
 
-  // Weather state (Marrakech Marrakech Marrakech)
+  // Weather state (Marrakech)
   const [weather, setWeather] = useState<WeatherState>({
     temp: 23,
-    condition: 'Partly Cloudy',
+    conditionKey: 'partlyCloudy',
     high: 25,
     low: 22,
     code: 2,
@@ -132,7 +161,7 @@ export default function MobileOS() {
         const code = data.current.weather_code
         const high = Math.round(data.daily.temperature_2m_max[0])
         const low = Math.round(data.daily.temperature_2m_min[0])
-        const conditionText = getWeatherConditionText(code)
+        const conditionKey = getWeatherConditionKey(code)
         
         // Next 6 hours starting from current hour
         const currentHour = new Date().getHours()
@@ -148,7 +177,7 @@ export default function MobileOS() {
         
         setWeather({
           temp,
-          condition: conditionText,
+          conditionKey,
           high,
           low,
           code,
@@ -175,21 +204,12 @@ export default function MobileOS() {
 
   // App details mapping
   const appTitles: Record<Exclude<AppId, 'home'>, string> = {
-    about: 'About Me',
-    experience: 'Experience',
-    projects: 'Projects',
-    skills: 'Skills',
-    contact: 'Contact',
-    settings: 'Settings',
-  }
-
-  const appIcons: Record<Exclude<AppId, 'home'>, string> = {
-    about: '👤',
-    experience: '💼',
-    projects: '🚀',
-    skills: '📝',
-    contact: '📧',
-    settings: '⚙️',
+    about: t('common.about'),
+    experience: t('common.experience'),
+    projects: t('common.projects'),
+    skills: t('common.skills'),
+    contact: t('common.contact'),
+    settings: t('common.settings'),
   }
 
   // Contents of each app designed to look like real iOS native applications
@@ -207,55 +227,38 @@ export default function MobileOS() {
                 className="object-cover"
               />
             </div>
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">
-              {personalInfo.name}
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight text-center mb-0">
+              {localizedPersonalInfo.name}
             </h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mt-0.5">
-              {personalInfo.title}
+            <p className="text-xs text-gray-500 dark:text-zinc-400 font-medium mt-1 mb-0 text-center">
+              {localizedPersonalInfo.title}
             </p>
           </div>
         </AnimatedSection>
 
         {/* Quick Actions Row */}
         <AnimatedSection delay={0.1}>
-          <div className="grid grid-cols-4 gap-3 px-2">
+          <div className="grid grid-cols-4 gap-3">
             {[
               { 
-                label: 'call', 
-                icon: (
-                  <svg className="w-5 h-5 text-[#007AFF] dark:text-[#0A84FF]" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M6.62 10.79a15.15 15.15 0 006.59 6.59l2.2-2.2a1 1 0 011.08-.24c1.22.4 2.52.61 3.86.61a1 1 0 011 1v3.5a1 1 0 01-1 1A16 16 0 013 3a1 1 0 011-1h3.5a1 1 0 011 1c0 1.34.2 2.64.61 3.86a1 1 0 01-.24 1.08l-2.2 2.2z" />
-                  </svg>
-                ), 
+                label: t('mobile.about.actions.call'), 
+                icon: <PhoneFillSymbol className="w-5 h-5 text-[#7E634B] dark:text-[#D7BFA8] shrink-0" />, 
                 href: `tel:${personalInfo.phone.replace(/\s+/g, '')}` 
               },
               { 
-                label: 'mail', 
-                icon: (
-                  <svg className="w-5 h-5 text-[#007AFF] dark:text-[#0A84FF]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                    <polyline points="22,6 12,13 2,6" />
-                  </svg>
-                ), 
+                label: t('mobile.about.actions.mail'), 
+                icon: <EnvelopeSymbol className="w-5 h-5 text-[#7E634B] dark:text-[#D7BFA8] shrink-0" />, 
                 href: `mailto:${personalInfo.email}` 
               },
               { 
-                label: 'github', 
-                icon: (
-                  <svg className="w-5 h-5 text-[#007AFF] dark:text-[#0A84FF]" viewBox="0 0 24 24" fill="currentColor">
-                    <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.579.688.481C19.138 20.161 22 16.416 22 12c0-5.523-4.477-10-10-10z" />
-                  </svg>
-                ), 
+                label: 'GitHub', 
+                icon: <GitHubGlyphSymbol className="w-5 h-5 text-[#7E634B] dark:text-[#D7BFA8] shrink-0" />, 
                 href: socialLinks.github, 
                 external: true 
               },
               { 
-                label: 'linkedin', 
-                icon: (
-                  <svg className="w-5 h-5 text-[#007AFF] dark:text-[#0A84FF]" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-                  </svg>
-                ), 
+                label: 'LinkedIn', 
+                icon: <LinkedInGlyphSymbol className="w-5 h-5 text-[#7E634B] dark:text-[#D7BFA8] shrink-0" />, 
                 href: socialLinks.linkedin, 
                 external: true 
               }
@@ -267,10 +270,10 @@ export default function MobileOS() {
                 rel={action.external ? 'noopener noreferrer' : undefined}
                 className="flex flex-col items-center gap-1.5 p-2 bg-white dark:bg-zinc-900 border border-black/[0.04] dark:border-white/[0.04] rounded-2xl hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors shadow-sm active:scale-95 duration-100"
               >
-                <div className="w-10 h-10 rounded-full bg-[#007AFF]/10 dark:bg-[#0A84FF]/10 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#D7BFA8]/35 to-[#9A7E64]/20 dark:from-[#D7BFA8]/20 dark:to-[#9A7E64]/15 flex items-center justify-center">
                   {action.icon}
                 </div>
-                <span className="text-[9px] font-bold text-[#007AFF] dark:text-[#0A84FF] capitalize tracking-tight">{action.label}</span>
+                <span className="text-[9px] font-bold text-[#7E634B] dark:text-[#D7BFA8] tracking-tight">{action.label}</span>
               </a>
             ))}
           </div>
@@ -282,33 +285,41 @@ export default function MobileOS() {
             <div className="bg-white dark:bg-zinc-900 border border-black/[0.05] dark:border-white/[0.05] rounded-2xl divide-y divide-black/[0.05] dark:divide-white/[0.05] shadow-sm overflow-hidden">
               {/* Phone Cell */}
               <div className="p-4 flex flex-col gap-0.5">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">mobile</span>
-                <a href={`tel:${personalInfo.phone.replace(/\s+/g, '')}`} className="text-sm font-semibold text-primary">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-zinc-400">
+                  {t('mobile.about.fields.mobile')}
+                </span>
+                <a href={`tel:${personalInfo.phone.replace(/\s+/g, '')}`} className="text-sm font-semibold text-[#7E634B] dark:text-[#D7BFA8]">
                   {personalInfo.phone}
                 </a>
               </div>
 
               {/* Email Cell */}
               <div className="p-4 flex flex-col gap-0.5">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">email</span>
-                <a href={`mailto:${personalInfo.email}`} className="text-sm font-semibold text-primary truncate">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-zinc-400">
+                  {t('mobile.about.fields.email')}
+                </span>
+                <a href={`mailto:${personalInfo.email}`} className="text-sm font-semibold text-[#7E634B] dark:text-[#D7BFA8] truncate">
                   {personalInfo.email}
                 </a>
               </div>
 
               {/* Location Cell */}
               <div className="p-4 flex flex-col gap-0.5">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">home</span>
-                <span className="text-sm font-semibold text-gray-800 dark:text-gray-200">
-                  {personalInfo.location}
+                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-zinc-400">
+                  {t('mobile.about.fields.home')}
+                </span>
+                <span className="text-sm font-semibold text-gray-800 dark:text-zinc-200">
+                  {localizedPersonalInfo.location}
                 </span>
               </div>
             </div>
 
             {/* Note Bio Cell */}
             <div className="bg-white dark:bg-zinc-900 border border-black/[0.05] dark:border-white/[0.05] rounded-2xl p-4 shadow-sm flex flex-col gap-1.5">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">About Me</span>
-              <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed font-medium">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-zinc-400">
+                {t('common.about')}
+              </span>
+              <p className="text-xs text-gray-600 dark:text-zinc-300 leading-relaxed font-medium mb-0">
                 {t('about.profile.description')}
               </p>
             </div>
@@ -322,9 +333,9 @@ export default function MobileOS() {
         {/* Education List as Calendar Events */}
         <div className="flex flex-col gap-4">
           <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wide ml-4">
-            {t('experience.education.title') || 'Education'}
+            {t('experience.education.title')}
           </span>
-          {education.map((edu, idx) => (
+          {localizedEducation.map((edu, idx) => (
             <AnimatedSection key={idx} delay={0.1 + idx * 0.08}>
               <div className="bg-white dark:bg-zinc-900 border border-black/[0.04] dark:border-white/[0.04] rounded-2xl shadow-sm flex overflow-hidden relative">
                 {/* Left accent bar (Calendar event style) */}
@@ -336,16 +347,13 @@ export default function MobileOS() {
                       {edu.period}
                     </span>
                     <span className="text-[9px] font-bold text-gray-400 flex items-center gap-1 leading-none">
-                      <svg className="w-2.5 h-2.5 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25s-7.5-4.108-7.5-11.25C4.5 6.63 7.63 3.5 11.5 3.5s7 3.13 7 7z" />
-                      </svg>
-                      {edu.institution.toLowerCase().includes('marrakech') ? 'MARRAKECH' : 'EL JADIDA'}
+                      <MapPinSymbol className="w-2.5 h-2.5 text-gray-400 dark:text-gray-500 shrink-0" />
+                      {edu.city.toUpperCase()}
                     </span>
                   </div>
 
                   <div>
-                    <h3 className="text-sm font-bold text-gray-900 dark:text-white leading-snug">
+                    <h3 className="text-sm font-bold text-gray-900 dark:text-white leading-snug mb-0">
                       {edu.degree}
                     </h3>
                     <h4 className="text-xs font-semibold text-gray-500 dark:text-gray-400 mt-0.5">
@@ -363,7 +371,7 @@ export default function MobileOS() {
           <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wide ml-4">
             {t('experience.title')}
           </span>
-          {experiences.map((exp, idx) => (
+          {localizedExperiences.map((exp, idx) => (
             <AnimatedSection key={idx} delay={0.2 + idx * 0.08}>
               <div className="bg-white dark:bg-zinc-900 border border-black/[0.04] dark:border-white/[0.04] rounded-2xl shadow-sm flex overflow-hidden relative">
                 {/* Left accent bar (Calendar event style) */}
@@ -375,10 +383,7 @@ export default function MobileOS() {
                       {exp.period}
                     </span>
                     <span className="text-[9px] font-bold text-gray-400 flex items-center gap-1 leading-none">
-                      <svg className="w-2.5 h-2.5 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25s-7.5-4.108-7.5-11.25C4.5 6.63 7.63 3.5 11.5 3.5s7 3.13 7 7z" />
-                      </svg>
+                      <MapPinSymbol className="w-2.5 h-2.5 text-gray-400 dark:text-gray-500 shrink-0" />
                       {exp.location}
                     </span>
                   </div>
@@ -420,46 +425,49 @@ export default function MobileOS() {
     ),
 
     projects: (
-      <div className="p-4 flex flex-col gap-5">
+      <div className="flex flex-col">
 
-        {/* iOS style Segmented Control */}
-        <AnimatedSection delay={0.08}>
-          <div className="bg-gray-100 dark:bg-zinc-850 p-0.5 rounded-xl flex w-full select-none shadow-inner border border-black/[0.03] dark:border-white/[0.03]">
-            {([
-              { key: 'all', label: t('projects.all') || 'All' },
-              { key: 'web', label: t('projects.web') || 'Web' },
-              { key: 'mobile', label: t('projects.mobile') || 'Mobile' }
-            ] as const).map((filter) => (
-              <button
-                key={filter.key}
-                onClick={() => setProjectFilter(filter.key)}
-                className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                  projectFilter === filter.key
-                    ? 'bg-white dark:bg-zinc-700 text-gray-900 dark:text-white shadow-sm'
-                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-                }`}
-              >
-                {filter.label}
-              </button>
-            ))}
-          </div>
-        </AnimatedSection>
+        {/* Sticky iOS style Segmented Control */}
+        <div className="sticky top-0 z-20 px-4 pt-3 pb-3 bg-[#f2f2f7]/90 dark:bg-[#1c1c1e]/90 backdrop-blur-md border-b border-black/[0.04] dark:border-white/[0.06]">
+          <AnimatedSection delay={0.08}>
+            <div className="bg-gray-100 dark:bg-zinc-800 p-0.5 rounded-xl flex w-full select-none shadow-inner border border-black/[0.04] dark:border-white/[0.06]">
+              {([
+                { key: 'all', label: t('projects.all') },
+                { key: 'ai', label: t('projects.ai') },
+                { key: 'web', label: t('projects.web') },
+                { key: 'mobile', label: t('projects.mobile') }
+              ] as const).map((filter) => (
+                <button
+                  key={filter.key}
+                  onClick={() => setProjectFilter(filter.key)}
+                  className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                    projectFilter === filter.key
+                      ? 'bg-white dark:bg-zinc-700 text-gray-900 dark:text-white shadow-sm'
+                      : 'text-gray-500 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-200 hover:bg-black/[0.04] dark:hover:bg-white/[0.06]'
+                  }`}
+                >
+                  {filter.label}
+                </button>
+              ))}
+            </div>
+          </AnimatedSection>
+        </div>
 
         {/* Projects Cards List */}
-        <div className="flex flex-col gap-6">
-          {projects
+        <div className="px-4 pt-3 pb-4 flex flex-col gap-6">
+          {localizedProjects
             .filter((p) => projectFilter === 'all' || p.type === projectFilter)
             .map((project, idx) => {
               // Extract a category label based on technologies or type
-              let category = 'Developer Tools';
-              if (project.technologies.includes('Deep Learning') || project.technologies.includes('AI')) {
-                category = 'Artificial Intelligence';
-              } else if (project.technologies.includes('Machine Learning')) {
-                category = 'Machine Learning';
+              let category = t('mobile.projects.categories.tools')
+              if (project.technologies.includes('Machine Learning')) {
+                category = t('mobile.projects.categories.ml')
+              } else if (project.type === 'ai' || project.technologies.includes('Deep Learning') || project.technologies.includes('AI')) {
+                category = t('mobile.projects.categories.ai')
               } else if (project.type === 'mobile') {
-                category = 'iOS & Android App';
+                category = t('mobile.projects.categories.mobile')
               } else if (project.technologies.includes('React.js') || project.technologies.includes('Vue.js') || project.technologies.includes('Laravel')) {
-                category = 'Full-Stack Web App';
+                category = t('mobile.projects.categories.fullstack')
               }
 
               return (
@@ -476,7 +484,7 @@ export default function MobileOS() {
                         />
                       ) : (
                         <div className="w-full h-full bg-gradient-to-br from-primary/20 via-indigo-500/10 to-cyan-500/25 flex items-center justify-center">
-                          <span className="text-4xl">🚀</span>
+                          <AppCubeSymbol className="w-10 h-10 text-blue-500/80 dark:text-blue-400/80" />
                         </div>
                       )}
                     </div>
@@ -503,7 +511,7 @@ export default function MobileOS() {
                           rel="noopener noreferrer"
                           className="bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700 text-[#007AFF] dark:text-[#0A84FF] font-extrabold text-xs px-5 py-1.5 rounded-full tracking-wide active:scale-95 transition-all duration-100 flex-shrink-0 shadow-sm"
                         >
-                          GET
+                          {t('mobile.projects.get')}
                         </a>
                       </div>
 
@@ -538,21 +546,21 @@ export default function MobileOS() {
         {/* iOS style Search Bar */}
         <AnimatedSection delay={0.08}>
           <div className="bg-[#E5E5EA] dark:bg-zinc-800/80 rounded-xl px-3 py-2 flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 shadow-inner">
-            <svg className="w-4 h-4 text-gray-400 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clipRule="evenodd" />
-            </svg>
+            <SearchSymbol className="w-4 h-4 text-gray-400 flex-shrink-0" />
             <input
               type="text"
               value={skillSearchQuery}
               onChange={(e) => setSkillSearchQuery(e.target.value)}
-              placeholder="Search Skills"
+              placeholder={t('mobile.skills.searchPlaceholder')}
               className="w-full bg-transparent border-none outline-none focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 text-xs text-gray-900 dark:text-white placeholder-gray-400 font-medium"
             />
             {skillSearchQuery && (
-              <button onClick={() => setSkillSearchQuery('')} className="text-gray-400 hover:text-gray-650 dark:hover:text-gray-200">
-                <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                </svg>
+              <button
+                onClick={() => setSkillSearchQuery('')}
+                aria-label="Clear search"
+                className="flex items-center justify-center shrink-0 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+              >
+                <XMarkCircleSymbol className="w-3.5 h-3.5" />
               </button>
             )}
           </div>
@@ -560,20 +568,28 @@ export default function MobileOS() {
 
         {/* Note List styled exactly like iOS Notes list */}
         <AnimatedSection delay={0.1}>
-          <div className="bg-white dark:bg-zinc-900 border border-black/[0.05] dark:border-white/[0.05] rounded-2xl shadow-sm overflow-hidden divide-y divide-black/[0.05] dark:divide-white/[0.05]">
-            {[
-              { title: t('skills.languages') || 'Languages', items: skills.languages, excerpt: skills.languages.join(', ') },
-              { title: t('skills.frameworks') || 'Frameworks', items: skills.frameworks, excerpt: skills.frameworks.join(', ') },
-              { title: t('skills.databases') || 'Databases', items: skills.databases, excerpt: skills.databases.join(', ') },
-              { title: t('skills.libraries') || 'Libraries', items: skills.libraries, excerpt: skills.libraries.join(', ') },
-              { title: t('skills.tools') || 'Tools', items: skills.tools, excerpt: skills.tools.join(', ') },
-              { title: t('skills.methodologies') || 'Methodologies', items: skills.methodologies, excerpt: skills.methodologies.join(', ') },
-            ]
-              .filter((note) => 
+          {(() => {
+            const filteredSkillNotes = [
+              { title: t('skills.languages'), items: localizedSkills.languages, excerpt: localizedSkills.languages.join(', ') },
+              { title: t('skills.frameworks'), items: localizedSkills.frameworks, excerpt: localizedSkills.frameworks.join(', ') },
+              { title: t('skills.databases'), items: localizedSkills.databases, excerpt: localizedSkills.databases.join(', ') },
+              { title: t('skills.libraries'), items: localizedSkills.libraries, excerpt: localizedSkills.libraries.join(', ') },
+              { title: t('skills.tools'), items: localizedSkills.tools, excerpt: localizedSkills.tools.join(', ') },
+              { title: t('skills.methodologies'), items: localizedSkills.methodologies, excerpt: localizedSkills.methodologies.join(', ') },
+            ].filter(
+              (note) =>
                 note.title.toLowerCase().includes(skillSearchQuery.toLowerCase()) ||
                 note.excerpt.toLowerCase().includes(skillSearchQuery.toLowerCase())
-              )
-              .map((note, idx) => {
+            )
+
+            return (
+              <div className="bg-white dark:bg-zinc-900 border border-black/[0.05] dark:border-white/[0.05] rounded-2xl shadow-sm overflow-hidden divide-y divide-black/[0.05] dark:divide-white/[0.05]">
+                {filteredSkillNotes.length === 0 ? (
+                  <div className="p-6 text-center text-xs font-medium text-gray-500 dark:text-zinc-400">
+                    {t('mobile.skills.empty')}
+                  </div>
+                ) : (
+                  filteredSkillNotes.map((note, idx) => {
                 const isExpanded = expandedSkillFolder === idx;
                 return (
                   <div key={idx} className="flex flex-col">
@@ -584,13 +600,7 @@ export default function MobileOS() {
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         {/* Notes App Yellow Icon */}
-                        <svg className="w-5 h-5 text-[#D08A00] dark:text-[#EAA135] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
-                          <polyline points="14 2 14 8 20 8" />
-                          <line x1="16" y1="13" x2="8" y2="13" />
-                          <line x1="16" y1="17" x2="8" y2="17" />
-                          <line x1="10" y1="9" x2="8" y2="9" />
-                        </svg>
+                        <DocumentTextSymbol className="w-5 h-5 text-[#D08A00] dark:text-[#EAA135] flex-shrink-0" />
 
                         <div className="min-w-0 flex flex-col gap-0.5">
                           <span className="text-sm font-bold text-gray-900 dark:text-white">
@@ -603,17 +613,11 @@ export default function MobileOS() {
                       </div>
 
                       {/* Chevron Rotating */}
-                      <svg
+                      <ChevronRightSymbol
                         className={`w-4 h-4 text-gray-300 transform transition-transform duration-200 flex-shrink-0 ${
                           isExpanded ? 'rotate-90 text-[#D08A00] dark:text-[#EAA135]' : ''
                         }`}
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2.5"
-                        viewBox="0 0 24 24"
-                      >
-                        <polyline points="9 18 15 12 9 6" />
-                      </svg>
+                      />
                     </button>
 
                     {/* Expanded Skill Tags Container */}
@@ -624,7 +628,7 @@ export default function MobileOS() {
                           animate={{ height: 'auto', opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
                           transition={{ duration: 0.2, ease: 'easeInOut' }}
-                          className="overflow-hidden bg-gray-50 dark:bg-zinc-950/40"
+                          className="overflow-hidden bg-gradient-to-b from-gray-100/70 to-white dark:from-zinc-800/50 dark:to-zinc-900"
                         >
                           <motion.div
                             variants={{
@@ -639,7 +643,7 @@ export default function MobileOS() {
                             }}
                             initial="hidden"
                             animate="show"
-                            className="px-4 pb-6 pt-2 flex flex-wrap gap-1.5 ml-8 border-t border-black/[0.02] dark:border-white/[0.02]"
+                            className="px-4 py-4 flex flex-wrap gap-1.5 ml-8 border-t border-black/[0.02] dark:border-white/[0.02]"
                           >
                             {note.items.map((item) => (
                               <motion.span
@@ -649,7 +653,7 @@ export default function MobileOS() {
                                   show: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 350, damping: 22 } }
                                 }}
                                 whileHover={{ scale: 1.05, y: -1 }}
-                                className="text-[10px] font-extrabold bg-[#D08A00]/10 text-[#D08A00] dark:bg-[#EAA135]/15 dark:text-[#EAA135] px-2.5 py-o.5 rounded-md border border-[#D08A00]/10 shadow-sm transition-all hover:bg-[#D08A00]/15 dark:hover:bg-[#EAA135]/25 cursor-default"
+                                className="text-[10px] font-extrabold bg-[#D08A00]/10 text-[#D08A00] dark:bg-[#EAA135]/15 dark:text-[#EAA135] px-2.5 py-0.5 rounded-md border border-[#D08A00]/10 shadow-sm transition-all hover:bg-[#D08A00]/15 dark:hover:bg-[#EAA135]/25 cursor-default"
                               >
                                 {item}
                               </motion.span>
@@ -660,8 +664,11 @@ export default function MobileOS() {
                     </AnimatePresence>
                   </div>
                 );
-              })}
-          </div>
+                  })
+                )}
+              </div>
+            )
+          })()}
         </AnimatedSection>
       </div>
     ),
@@ -690,15 +697,7 @@ export default function MobileOS() {
                 {personalInfo.email}
               </p>
             </div>
-            <svg 
-              className="w-5 h-5 text-gray-400 dark:text-gray-500 flex-shrink-0" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor" 
-              strokeWidth="2.5"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
+            <ChevronRightSymbol className="w-5 h-5 text-gray-400 dark:text-gray-500 flex-shrink-0" />
           </div>
         </AnimatedSection>
 
@@ -706,21 +705,23 @@ export default function MobileOS() {
         <AnimatedSection delay={0.15}>
           <div className="flex flex-col gap-2">
             <span className="text-xs font-bold text-gray-500 uppercase tracking-wide ml-4">
-              General System Settings
+              {t('mobile.settings.sectionTitle')}
             </span>
             <div className="bg-white dark:bg-zinc-900 border border-black/[0.05] dark:border-white/[0.05] rounded-2xl overflow-hidden divide-y divide-black/[0.05] dark:divide-white/[0.05] shadow-sm">
               {/* Appearance Mode Switcher (iOS Switch) */}
               <div className="flex items-center justify-between p-4 text-sm font-medium">
                 <span className="flex items-center gap-3 text-gray-900 dark:text-white">
-                  <span className="text-base">🌙</span>
-                  Dark Mode
+                  <span className="w-7 h-7 rounded-lg bg-indigo-500 text-white flex items-center justify-center shrink-0">
+                    <MoonSymbol className="w-4 h-4" />
+                  </span>
+                  {t('mobile.settings.darkMode')}
                 </span>
                 <button
                   onClick={toggleTheme}
                   className={`w-[51px] h-[31px] rounded-full p-[2px] transition-colors duration-200 relative focus:outline-none ${
                     theme === 'dark' ? 'bg-[#34C759]' : 'bg-[#E9E9EA] dark:bg-zinc-700'
                   }`}
-                  aria-label={`Toggle dark mode: Currently ${theme} mode`}
+                  aria-label={t('mobile.settings.toggleDarkMode')}
                 >
                   <div
                     className={`w-[27px] h-[27px] rounded-full bg-white shadow-md transform transition-transform duration-200 ${
@@ -730,11 +731,13 @@ export default function MobileOS() {
                 </button>
               </div>
 
-              {/* Language Selector Selector (iOS Segmented Control) */}
+              {/* Language Selector (iOS Segmented Control) */}
               <div className="flex items-center justify-between p-4 text-sm font-medium">
                 <span className="flex items-center gap-3 text-gray-900 dark:text-white">
-                  <span className="text-base">🌐</span>
-                  System Language
+                  <span className="w-7 h-7 rounded-lg bg-blue-500 text-white flex items-center justify-center shrink-0">
+                    <GlobeSymbol className="w-4 h-4" />
+                  </span>
+                  {t('mobile.settings.systemLanguage')}
                 </span>
                 <div className="bg-gray-100 dark:bg-zinc-800 p-0.5 rounded-lg flex select-none max-w-[180px]">
                   {locales.map((loc) => (
@@ -744,7 +747,7 @@ export default function MobileOS() {
                       className={`px-3 py-1 rounded-md text-xs font-bold transition-all ${
                         locale === loc
                           ? 'bg-white dark:bg-zinc-700 text-gray-900 dark:text-white shadow-sm'
-                          : 'text-gray-500 dark:text-gray-400 hover:text-gray-900'
+                          : 'text-gray-500 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-200'
                       }`}
                     >
                       {localeNames[loc as Locale].split(' ')[0]}
@@ -765,28 +768,28 @@ export default function MobileOS() {
           {[
             { 
               sender: 'GitHub', 
-              subject: 'Portfolio & Code Repositories', 
-              body: 'Hi, check out my latest open source contributions and repositories. Let\'s build something together.', 
+              subject: t('mobile.contact.github.subject'), 
+              body: t('mobile.contact.github.body'), 
               href: process.env.NEXT_PUBLIC_GITHUB_URL || socialLinks.github, 
               external: true 
             },
             { 
               sender: 'LinkedIn', 
-              subject: 'Professional Connection Proposal', 
-              body: 'Let\'s connect professionally on LinkedIn to discuss freelance opportunities or full-time roles.', 
+              subject: t('mobile.contact.linkedin.subject'), 
+              body: t('mobile.contact.linkedin.body'), 
               href: process.env.NEXT_PUBLIC_LINKEDIN_URL || socialLinks.linkedin, 
               external: true 
             },
             { 
-              sender: 'Email Inbox', 
-              subject: 'New Project Collaboration Inquiry', 
-              body: 'Send me a direct email to initiate a conversation, request my resume, or get a quotation.', 
+              sender: t('mobile.contact.email.sender'), 
+              subject: t('mobile.contact.email.subject'), 
+              body: t('mobile.contact.email.body'), 
               href: `mailto:${personalInfo.email}` 
             },
             { 
-              sender: 'Phone Call', 
-              subject: 'Direct Inquiries & Call Scheduling', 
-              body: 'Dial my mobile number directly for immediate business enquiries or freelance requests.', 
+              sender: t('mobile.contact.phone.sender'), 
+              subject: t('mobile.contact.phone.subject'), 
+              body: t('mobile.contact.phone.body'), 
               href: `tel:${personalInfo.phone.replace(/\s+/g, '')}` 
             },
           ].map((mail, idx) => (
@@ -819,15 +822,7 @@ export default function MobileOS() {
                   </div>
 
                   {/* Gray Chevron Right */}
-                  <svg 
-                    className="w-4 h-4 text-gray-300 dark:text-gray-600 mt-1 flex-shrink-0" 
-                    fill="none" 
-                    viewBox="0 0 24 24" 
-                    stroke="currentColor" 
-                    strokeWidth="2.5"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                  </svg>
+                  <ChevronRightSymbol className="w-4 h-4 text-gray-300 dark:text-gray-600 mt-1 flex-shrink-0" />
                 </div>
               </motion.a>
             </AnimatedSection>
@@ -838,20 +833,20 @@ export default function MobileOS() {
   }
 
   // Authentic 4-column App Grid configuration mapping our sections
-  const gridApps = [
-    { id: 'about', label: 'About Me', onClick: () => openApp('about') },
-    { id: 'experience', label: 'Experiences', onClick: () => openApp('experience') },
-    { id: 'projects', label: 'Projects', onClick: () => openApp('projects') },
-    { id: 'skills', label: 'Skills', onClick: () => openApp('skills') },
-    { id: 'contact', label: 'Contact', onClick: () => openApp('contact') },
-    { id: 'settings', label: 'Settings', onClick: () => openApp('settings') },
+  const gridApps: Array<{ id: string; label: string; badge?: number; onClick: () => void }> = [
+    { id: 'about', label: t('common.about'), onClick: () => openApp('about') },
+    { id: 'experience', label: t('common.experience'), onClick: () => openApp('experience') },
+    { id: 'projects', label: t('common.projects'), onClick: () => openApp('projects') },
+    { id: 'skills', label: t('common.skills'), onClick: () => openApp('skills') },
+    { id: 'contact', label: t('common.contact'), badge: 4, onClick: () => openApp('contact') },
+    { id: 'settings', label: t('common.settings'), onClick: () => openApp('settings') },
   ]
 
-  // Dock applications exactly matching the user screenshot
+  // Dock applications
   const dockApps = [
-    { id: 'phone', label: 'Phone', onClick: () => { window.location.href = `tel:${personalInfo.phone.replace(/\s+/g, '')}` } },
-    { id: 'github', label: 'GitHub', onClick: () => window.open(process.env.NEXT_PUBLIC_GITHUB_URL || 'https://github.com/anas-en-naqadi-temp', '_blank') },
-    { id: 'linkedin', label: 'LinkedIn', onClick: () => window.open(process.env.NEXT_PUBLIC_LINKEDIN_URL || 'https://www.linkedin.com/in/anas-en-naqadi-temp', '_blank') },
+    { id: 'phone', label: t('common.phone'), onClick: () => { window.location.href = `tel:${personalInfo.phone.replace(/\s+/g, '')}` } },
+    { id: 'github', label: 'GitHub', onClick: () => window.open(process.env.NEXT_PUBLIC_GITHUB_URL || socialLinks.github, '_blank') },
+    { id: 'linkedin', label: 'LinkedIn', onClick: () => window.open(process.env.NEXT_PUBLIC_LINKEDIN_URL || socialLinks.linkedin, '_blank') },
     { id: 'whatsapp', label: 'WhatsApp', onClick: () => window.open(`https://wa.me/${personalInfo.phone.replace(/[^0-9]/g, '')}`, '_blank') },
   ]
 
@@ -859,9 +854,23 @@ export default function MobileOS() {
     <div 
       className="h-screen w-full overflow-hidden relative flex flex-col select-none"
       style={{
-        background: 'radial-gradient(circle at 100% 60%, rgba(255, 94, 98, 0.9) 0%, transparent 60%), radial-gradient(circle at 0% 100%, rgba(255, 153, 102, 0.9) 0%, transparent 60%), radial-gradient(circle at 50% 0%, rgba(79, 172, 254, 0.85) 0%, transparent 65%), #150f28',
+        backgroundColor: '#150f28',
+        backgroundImage:
+          "url('/images/mobile-bg.jpg'), radial-gradient(circle at 100% 60%, rgba(255, 94, 98, 0.9) 0%, transparent 60%), radial-gradient(circle at 0% 100%, rgba(255, 153, 102, 0.9) 0%, transparent 60%), radial-gradient(circle at 50% 0%, rgba(79, 172, 254, 0.85) 0%, transparent 65%)",
+        backgroundSize: 'cover',
+        backgroundPosition: '58% center',
+        backgroundRepeat: 'no-repeat',
       }}
     >
+      {/* Subtle blur + soft contrast scrim over wallpaper */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 z-0 pointer-events-none backdrop-blur-[1.5px]"
+        style={{
+          background:
+            'linear-gradient(to bottom, rgba(10, 12, 24, 0.14) 0%, rgba(10, 12, 24, 0.04) 45%, rgba(10, 12, 24, 0.25) 100%)',
+        }}
+      />
       {/* iOS Status Bar */}
       <IOSStatusBar theme={theme} isAppOpen={activeApp !== 'home'} />
 
@@ -883,7 +892,8 @@ export default function MobileOS() {
         >
           <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-white/60">
             <span className="flex items-center gap-1">
-              Marrakech ↗
+              Marrakech
+              <LocationArrowSymbol className="w-3 h-3" />
             </span>
           </div>
 
@@ -894,9 +904,11 @@ export default function MobileOS() {
             <div className="flex flex-col items-end gap-1 text-right">
               {getWeatherIcon(weather.code, 22)}
               <div className="text-[11px] font-medium leading-tight">
-                <p className="font-bold tracking-tight text-xs">{weather.condition}</p>
-                <p className="text-white/70 mt-0.5">
-                  H:{weather.high}° L:{weather.low}°
+                <p className="font-bold tracking-tight text-xs text-white mb-0">
+                  {t(`mobile.weather.conditions.${weather.conditionKey}`)}
+                </p>
+                <p className="text-white/70 mt-0.5 mb-0">
+                  {t('mobile.weather.high')}:{weather.high}° {t('mobile.weather.low')}:{weather.low}°
                 </p>
               </div>
             </div>
@@ -915,8 +927,8 @@ export default function MobileOS() {
         </motion.div>
 
         {/* Small weather label under widget */}
-        <p className="text-center text-white/40 text-[9px] font-bold uppercase tracking-widest -mt-3 select-none">
-          Weather
+        <p className="text-center text-white/40 text-[9px] font-bold uppercase tracking-widest -mt-3 mb-0 select-none">
+          {t('mobile.weather.label')}
         </p>
 
         {/* Home Screen Icons Grid (15 App Grid matching iOS) */}
@@ -945,8 +957,8 @@ export default function MobileOS() {
       <div
         className="fixed bottom-2 left-1/2 -translate-x-1/2 w-[134px] h-[5px] bg-white/60 dark:bg-white/40 rounded-full z-50 cursor-pointer pointer-events-auto hover:bg-white/80 active:bg-white transition-colors"
         onClick={closeApp}
-        aria-label="Home"
-        title="Go to Home Screen"
+        aria-label={t('mobile.home.homeLabel')}
+        title={t('mobile.home.goHome')}
       />
 
       {/* Slide-Up App Sheets */}
@@ -956,7 +968,7 @@ export default function MobileOS() {
             isOpen={activeApp !== 'home'}
             onClose={closeApp}
             title={activeApp !== 'home' ? appTitles[activeApp] : ''}
-            icon={activeApp !== 'home' ? getAppleIcon(activeApp, 20) : ''}
+            icon={activeApp !== 'home' ? getAppleIcon(activeApp, 20) : null}
             theme={theme}
           >
             {activeApp !== 'home' && appContent[activeApp]}

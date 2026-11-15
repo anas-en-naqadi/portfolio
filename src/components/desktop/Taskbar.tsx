@@ -6,7 +6,7 @@ import { getAppleIcon } from '../shared/AppleIcons'
 
 interface DockApp {
   id: string
-  icon: string
+  icon?: React.ReactNode
   label: string
   isOpen?: boolean
   isMinimized?: boolean
@@ -19,6 +19,7 @@ interface TaskbarProps {
   theme?: 'dark' | 'light'
   onDownloadCV?: () => void
   onGitHub?: () => void
+  onLinkedIn?: () => void
 }
 
 const ICON_SIZE = 52
@@ -75,37 +76,46 @@ function DockIcon({ app, mouseX, index, isDark }: DockIconProps) {
         {getAppleIcon(app.id, '100%')}
       </motion.button>
 
-      {/* Open indicator dot */}
-      <AnimatePresence>
-        {(app.isOpen || app.isMinimized) && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0 }}
-            style={{
-              width: 4,
-              height: 4,
-              borderRadius: '50%',
-              background: isDark ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.5)',
-              marginTop: 3,
-              flexShrink: 0,
-            }}
-          />
-        )}
-      </AnimatePresence>
+      {/* Open indicator slot (always reserved so flex-end dock baseline never shifts) */}
+      <div
+        style={{
+          height: 4,
+          marginTop: 3,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexShrink: 0,
+        }}
+      >
+        <AnimatePresence>
+          {(app.isOpen || app.isMinimized) && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0 }}
+              style={{
+                width: 4,
+                height: 4,
+                borderRadius: '50%',
+                background: isDark ? 'rgba(255,255,255,0.75)' : 'rgba(0,0,0,0.55)',
+              }}
+            />
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   )
 }
 
 const SECTION_APPS: Omit<DockApp, 'onClick' | 'isOpen' | 'isMinimized'>[] = [
-  { id: 'about', icon: '💼', label: 'About' },
-  { id: 'experience', icon: '🚀', label: 'Experience' },
-  { id: 'projects', icon: '📱', label: 'Projects' },
-  { id: 'skills', icon: '⚡', label: 'Skills' },
-  { id: 'contact', icon: '📧', label: 'Contact' },
+  { id: 'about', label: 'About' },
+  { id: 'experience', label: 'Experience' },
+  { id: 'projects', label: 'Projects' },
+  { id: 'skills', label: 'Skills' },
+  { id: 'contact', label: 'Contact' },
 ]
 
-export default function Taskbar({ apps, onStartClick, theme = 'dark', onDownloadCV, onGitHub }: TaskbarProps) {
+export default function Taskbar({ apps, onStartClick, theme = 'dark', onDownloadCV, onGitHub, onLinkedIn }: TaskbarProps) {
   const mouseX = useMotionValue(-1000)
   const isDark = theme === 'dark'
 
@@ -122,19 +132,21 @@ export default function Taskbar({ apps, onStartClick, theme = 'dark', onDownload
   const utilApps: DockApp[] = [
     {
       id: 'cv',
-      icon: '📥',
       label: 'Download CV',
       onClick: onDownloadCV ?? (() => {}),
     },
     {
       id: 'github',
-      icon: '🐙',
       label: 'GitHub',
       onClick: onGitHub ?? (() => {}),
     },
     {
+      id: 'linkedin',
+      label: 'LinkedIn',
+      onClick: onLinkedIn ?? (() => {}),
+    },
+    {
       id: 'launchpad',
-      icon: '🚀',
       label: 'Launchpad',
       onClick: onStartClick,
     },
