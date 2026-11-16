@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useLocale, useTranslations } from 'next-intl'
 import { useTheme } from '@/hooks/useTheme'
@@ -42,6 +42,55 @@ export default function TabletOS() {
   const { theme, toggleTheme } = useTheme()
   const [activeSheet, setActiveSheet] = useState<AppId | null>(null)
   const [controlCenterOpen, setControlCenterOpen] = useState(false)
+  const ccPinnedRef = useRef(false)
+  const ccTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const clearCcTimer = () => {
+    if (ccTimerRef.current) {
+      clearTimeout(ccTimerRef.current)
+      ccTimerRef.current = null
+    }
+  }
+
+  const closeControlCenter = () => {
+    clearCcTimer()
+    ccPinnedRef.current = false
+    setControlCenterOpen(false)
+  }
+
+  const handleToggleControlCenter = () => {
+    clearCcTimer()
+    if (controlCenterOpen) {
+      if (ccPinnedRef.current) {
+        ccPinnedRef.current = false
+        setControlCenterOpen(false)
+      } else {
+        ccPinnedRef.current = true
+      }
+      return
+    }
+    ccPinnedRef.current = true
+    setControlCenterOpen(true)
+  }
+
+  const handleControlCenterHoverEnter = (e: React.PointerEvent<HTMLElement>) => {
+    if (e.pointerType !== 'mouse') return
+    clearCcTimer()
+    if (!controlCenterOpen) {
+      ccPinnedRef.current = false
+      setControlCenterOpen(true)
+    }
+  }
+
+  const handleControlCenterHoverLeave = (e: React.PointerEvent<HTMLElement>) => {
+    if (e.pointerType !== 'mouse' || ccPinnedRef.current) return
+    clearCcTimer()
+    ccTimerRef.current = setTimeout(() => {
+      if (!ccPinnedRef.current) {
+        setControlCenterOpen(false)
+      }
+    }, 150)
+  }
   const [iconSizes, setIconSizes] = useState<{ grid: number; dock: number }>({
     grid: 74,
     dock: 62,
@@ -76,17 +125,21 @@ export default function TabletOS() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key !== 'Escape') return
       if (controlCenterOpen) {
-        setControlCenterOpen(false)
+        closeControlCenter()
       } else if (activeSheet !== null) {
         setActiveSheet(null)
       }
     }
     window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+      clearCcTimer()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeSheet, controlCenterOpen])
 
   const openApp = (appId: AppId) => {
-    setControlCenterOpen(false)
+    closeControlCenter()
     setActiveSheet(appId)
   }
 
@@ -94,7 +147,7 @@ export default function TabletOS() {
 
   const switchLocale = (newLocale: string) => {
     router.replace(pathname, { locale: newLocale })
-    setControlCenterOpen(false)
+    closeControlCenter()
   }
 
   const fallbackGradient = isDark
@@ -176,7 +229,9 @@ export default function TabletOS() {
           theme={theme}
           isAppOpen={activeSheet !== null}
           controlCenterOpen={controlCenterOpen}
-          onToggleControlCenter={() => setControlCenterOpen((prev) => !prev)}
+          onToggleControlCenter={handleToggleControlCenter}
+          onHoverControlCenterEnter={handleControlCenterHoverEnter}
+          onHoverControlCenterLeave={handleControlCenterHoverLeave}
         />
       </div>
 
@@ -186,7 +241,7 @@ export default function TabletOS() {
           <>
             <div
               className="fixed inset-0 z-40"
-              onClick={() => setControlCenterOpen(false)}
+              onClick={closeControlCenter}
               aria-hidden="true"
             />
             <motion.div
@@ -194,12 +249,14 @@ export default function TabletOS() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.96 }}
               transition={{ duration: 0.18, ease: 'easeOut' }}
+              onPointerEnter={handleControlCenterHoverEnter}
+              onPointerLeave={handleControlCenterHoverLeave}
               role="dialog"
               aria-label={t('controlCenter.title')}
               className={`fixed top-12 right-4 sm:right-6 rtl:right-auto rtl:left-4 sm:rtl:left-6 z-50 w-72 rounded-3xl p-4 shadow-2xl border backdrop-blur-2xl ${
                 isDark
-                  ? 'bg-zinc-900/85 border-white/15 text-white'
-                  : 'bg-white/85 border-black/10 text-zinc-900'
+                  ? 'bg-zinc-900/75 border-white/15 text-white'
+                  : 'bg-white/55 border-white/50 text-zinc-900'
               }`}
             >
               <div className="flex items-center justify-between mb-3">
@@ -269,7 +326,7 @@ export default function TabletOS() {
                     type="button"
                     onClick={() => {
                       closeSheet()
-                      setControlCenterOpen(false)
+                      closeControlCenter()
                     }}
                     className="w-full flex items-center justify-center gap-2 py-2.5 rounded-2xl text-xs font-semibold bg-blue-500 text-white hover:bg-blue-600 transition active:scale-[0.98]"
                   >

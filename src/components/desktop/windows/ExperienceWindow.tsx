@@ -7,7 +7,6 @@ import { WindowToolbar } from '@/components/shared/WindowToolbar'
 import {
   BriefcaseSymbol,
   GraduationCapSymbol,
-  PrinterSymbol,
   CalendarSymbol,
   MapPinSymbol,
 } from '@/components/shared/SFSymbols'
@@ -19,22 +18,15 @@ interface ExperienceWindowProps {
 
 type TimelineFilter = 'all' | 'work' | 'education'
 
-export function ExperienceWindow({ theme = 'dark', onNotify }: ExperienceWindowProps) {
+export function ExperienceWindow({ theme = 'dark' }: ExperienceWindowProps) {
   const t = useTranslations('experience')
   const tDesktop = useTranslations('desktop.windows.experience')
-  const tActions = useTranslations('desktop.windows.actions')
-  const tToast = useTranslations('desktop.toast')
   const locale = useLocale()
   const isDark = theme === 'dark'
 
   const [filter, setFilter] = useState<TimelineFilter>('all')
   const portfolio = useMemo(() => getLocalizedPortfolioData(locale), [locale])
   const { experiences, education } = portfolio
-
-  const handlePrint = () => {
-    onNotify?.(tToast('printTitle'), tToast('printBody'))
-    window.print()
-  }
 
   const toolbarButtons = [
     {
@@ -48,11 +40,6 @@ export function ExperienceWindow({ theme = 'dark', onNotify }: ExperienceWindowP
       label: tDesktop('education'),
       active: filter === 'education',
       onClick: () => setFilter('education'),
-    },
-    {
-      icon: <PrinterSymbol className="w-3.5 h-3.5" />,
-      label: tActions('print'),
-      onClick: handlePrint,
     },
   ]
 
@@ -198,7 +185,7 @@ export function ExperienceWindow({ theme = 'dark', onNotify }: ExperienceWindowP
           {(filter === 'all' || filter === 'education') && (
             <section className="space-y-3.5">
               <div className="flex items-center gap-2">
-                <GraduationCapSymbol className="w-4 h-4 text-purple-500" />
+                <GraduationCapSymbol className="w-4 h-4 text-red-500" />
                 <h3 className={`text-sm font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
                   {t('education.title')}
                 </h3>
@@ -216,7 +203,11 @@ export function ExperienceWindow({ theme = 'dark', onNotify }: ExperienceWindowP
                         {edu.degree}
                       </h4>
                     </div>
-                    <div className="text-xs font-semibold text-purple-400 mb-2">
+                    <div
+                      className={`text-xs font-semibold mb-2 ${
+                        isDark ? 'text-red-400' : 'text-red-600'
+                      }`}
+                    >
                       {edu.institution}
                     </div>
                     <div

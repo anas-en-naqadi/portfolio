@@ -7,7 +7,6 @@ import { WindowToolbar } from '@/components/shared/WindowToolbar'
 import {
   ShareSymbol,
   DownloadSymbol,
-  CopySymbol,
   PersonSymbol,
   LaptopCodeSymbol,
   SparklesAISymbol,
@@ -33,6 +32,7 @@ export function AboutWindow({ theme = 'dark', onNotify }: AboutWindowProps) {
   const isDark = theme === 'dark'
 
   const [section, setSection] = useState<AboutSection>('overview')
+  const [avatarFailed, setAvatarFailed] = useState(false)
   const portfolio = useMemo(() => getLocalizedPortfolioData(locale), [locale])
   const { personalInfo } = portfolio
 
@@ -45,6 +45,23 @@ export function AboutWindow({ theme = 'dark', onNotify }: AboutWindowProps) {
     }
   }
 
+  const handleShare = async () => {
+    const shareText = `${personalInfo.name} — ${tDesktop('about.role')} (${personalInfo.email})`
+    if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
+      try {
+        await navigator.share({
+          title: personalInfo.name,
+          text: shareText,
+          url: window.location.href,
+        })
+        return
+      } catch (err) {
+        if (err instanceof DOMException && err.name === 'AbortError') return
+      }
+    }
+    await handleCopy(shareText, tToast('copiedProfile'))
+  }
+
   const handleDownloadCV = () => {
     onNotify?.(tToast('downloadTitle'), tToast('downloadBody'))
     window.open(personalInfo.cvPath, '_blank', 'noopener,noreferrer')
@@ -54,17 +71,7 @@ export function AboutWindow({ theme = 'dark', onNotify }: AboutWindowProps) {
     {
       icon: <ShareSymbol className="w-3.5 h-3.5" />,
       label: tDesktop('actions.share'),
-      onClick: () =>
-        handleCopy(`${personalInfo.name} — ${tDesktop('about.role')} (${personalInfo.email})`, tToast('copiedProfile')),
-    },
-    {
-      icon: <CopySymbol className="w-3.5 h-3.5" />,
-      label: tDesktop('actions.copyVCard'),
-      onClick: () =>
-        handleCopy(
-          `BEGIN:VCARD\nFN:${personalInfo.name}\nEMAIL:${personalInfo.email}\nTEL:${personalInfo.phone}\nEND:VCARD`,
-          tToast('copiedVCard')
-        ),
+      onClick: handleShare,
     },
     {
       icon: <DownloadSymbol className="w-3.5 h-3.5" />,
@@ -146,8 +153,17 @@ export function AboutWindow({ theme = 'dark', onNotify }: AboutWindowProps) {
           {/* Profile Card */}
           <div className={cardClass}>
             <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#007AFF] to-indigo-600 text-white text-xl font-bold flex items-center justify-center shrink-0 shadow-lg">
-                YB
+              <div className="w-16 h-16 rounded-2xl overflow-hidden bg-gradient-to-br from-[#007AFF] to-indigo-600 text-white text-xl font-bold flex items-center justify-center shrink-0 shadow-lg ring-1 ring-white/20">
+                {personalInfo.profileImage && !avatarFailed ? (
+                  <img
+                    src={personalInfo.profileImage}
+                    alt={personalInfo.name}
+                    onError={() => setAvatarFailed(true)}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  'AE'
+                )}
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
@@ -163,7 +179,9 @@ export function AboutWindow({ theme = 'dark', onNotify }: AboutWindowProps) {
                     {tDesktop('about.status')}
                   </span>
                 </div>
-                <p className="text-xs font-medium text-[#007AFF] mt-1">{t('subtitle')}</p>
+                <p className={`text-xs font-medium mt-1 ${isDark ? 'text-[#D7BFA8]' : 'text-[#8C6F55]'}`}>
+                  {t('subtitle')}
+                </p>
 
                 <div className="flex flex-wrap gap-2 mt-3">
                   <button

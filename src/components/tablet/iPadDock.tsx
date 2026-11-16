@@ -35,15 +35,15 @@ export default function iPadDock({ apps, theme, iconSize = 62 }: iPadDockProps) 
         style={{
           background: isDark
             ? 'rgba(255, 255, 255, 0.15)'
-            : 'rgba(255, 255, 255, 0.55)',
-          backdropFilter: 'blur(25px)',
-          WebkitBackdropFilter: 'blur(25px)',
+            : 'rgba(255, 255, 255, 0.18)',
+          backdropFilter: 'blur(22px) saturate(165%)',
+          WebkitBackdropFilter: 'blur(22px) saturate(165%)',
           border: isDark
             ? '1px solid rgba(255, 255, 255, 0.2)'
-            : '1px solid rgba(255, 255, 255, 0.7)',
+            : '1px solid rgba(255, 255, 255, 0.32)',
           boxShadow: isDark
             ? '0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.2)'
-            : '0 8px 32px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.8)',
+            : '0 8px 32px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.45)',
         }}
       >
         {apps.map((app, index) => (

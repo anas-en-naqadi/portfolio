@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 import { getLocalizedPortfolioData } from '@/lib/data'
 import { WindowToolbar } from '@/components/shared/WindowToolbar'
@@ -19,6 +19,7 @@ import {
 
 interface SkillsWindowProps {
   theme?: 'dark' | 'light'
+  spotlightQuery?: { term: string; nonce: number } | null
 }
 
 type SkillCategoryKey =
@@ -35,7 +36,7 @@ type SkillTier = 'all' | 'core'
 
 const CORE_CATEGORIES = new Set<SkillCategoryKey>(['languages', 'frameworks', 'databases', 'tools'])
 
-export function SkillsWindow({ theme = 'dark' }: SkillsWindowProps) {
+export function SkillsWindow({ theme = 'dark', spotlightQuery }: SkillsWindowProps) {
   const t = useTranslations('skills')
   const tDesktop = useTranslations('desktop.windows.skills')
   const locale = useLocale()
@@ -44,6 +45,14 @@ export function SkillsWindow({ theme = 'dark' }: SkillsWindowProps) {
   const [category, setCategory] = useState<SkillCategoryKey>('all')
   const [tier, setTier] = useState<SkillTier>('all')
   const [search, setSearch] = useState('')
+
+  useEffect(() => {
+    if (spotlightQuery?.term) {
+      setCategory('all')
+      setTier('all')
+      setSearch(spotlightQuery.term)
+    }
+  }, [spotlightQuery])
 
   const portfolio = useMemo(() => getLocalizedPortfolioData(locale), [locale])
   const { skills } = portfolio
@@ -96,39 +105,57 @@ export function SkillsWindow({ theme = 'dark' }: SkillsWindowProps) {
     [skills, t]
   )
 
+  const tierGroups = useMemo(() => {
+    return allGroups
+      .filter((group) => tier === 'all' || CORE_CATEGORIES.has(group.id))
+      .map((group) => ({
+        ...group,
+        items: tier === 'all' ? group.items : group.items.slice(0, 6),
+      }))
+  }, [allGroups, tier])
+
   const visibleGroups = useMemo(() => {
     const q = search.trim().toLowerCase()
-    return allGroups
-      .filter((group) => {
-        if (category !== 'all' && group.id !== category) return false
-        if (tier === 'core' && !CORE_CATEGORIES.has(group.id)) return false
-        return true
-      })
+    return tierGroups
+      .filter((group) => category === 'all' || group.id === category)
       .map((group) => {
-        const filteredItems = group.items.filter((item, idx) => {
-          const matchesQuery = !q || item.toLowerCase().includes(q) || group.title.toLowerCase().includes(q)
-          const matchesTier = tier === 'all' || idx < 6
-          return matchesQuery && matchesTier
+        const filteredItems = group.items.filter((item) => {
+          return !q || item.toLowerCase().includes(q) || group.title.toLowerCase().includes(q)
         })
         return { ...group, items: filteredItems }
       })
       .filter((group) => group.items.length > 0)
-  }, [allGroups, category, tier, search])
+  }, [tierGroups, category, search])
 
   const totalVisible = visibleGroups.reduce((sum, g) => sum + g.items.length, 0)
+  const totalInTier = tierGroups.reduce((sum, g) => sum + g.items.length, 0)
+
+  const handleSelectTier = (nextTier: SkillTier) => {
+    setTier(nextTier)
+    if (nextTier === 'core' && category !== 'all' && !CORE_CATEGORIES.has(category)) {
+      setCategory('all')
+    }
+  }
+
+  const handleSelectCategory = (nextCategory: SkillCategoryKey) => {
+    setCategory(nextCategory)
+    if (tier === 'core' && nextCategory !== 'all' && !CORE_CATEGORIES.has(nextCategory)) {
+      setTier('all')
+    }
+  }
 
   const toolbarButtons = [
     {
       icon: <GridSymbol className="w-3.5 h-3.5" />,
       label: tDesktop('levelAll'),
       active: tier === 'all',
-      onClick: () => setTier('all'),
+      onClick: () => handleSelectTier('all'),
     },
     {
       icon: <CpuSymbol className="w-3.5 h-3.5" />,
       label: tDesktop('levelCore'),
       active: tier === 'core',
-      onClick: () => setTier('core'),
+      onClick: () => handleSelectTier('core'),
     },
   ]
 
@@ -190,7 +217,7 @@ export function SkillsWindow({ theme = 'dark' }: SkillsWindowProps) {
           <nav className="macos-sidebar-nav">
             <button
               type="button"
-              onClick={() => setCategory('all')}
+              onClick={() => handleSelectCategory('all')}
               className={`flex items-center justify-between gap-2 px-3 py-1.5 rounded-lg text-[12.5px] font-medium whitespace-nowrap transition-colors ${
                 category === 'all'
                   ? 'bg-[#007AFF] text-white'
@@ -209,23 +236,33 @@ export function SkillsWindow({ theme = 'dark' }: SkillsWindowProps) {
                       : 'bg-black/[0.06] text-gray-600'
                 }`}
               >
-                {allGroups.reduce((s, g) => s + g.items.length, 0)}
+                {totalInTier}
               </span>
             </button>
 
             {allGroups.map((group) => {
               const active = category === group.id
+              const isHiddenByCore = tier === 'core' && !CORE_CATEGORIES.has(group.id)
+              const countInTier = isHiddenByCore
+                ? 0
+                : tier === 'core'
+                  ? Math.min(group.items.length, 6)
+                  : group.items.length
               return (
                 <button
                   key={group.id}
                   type="button"
-                  onClick={() => setCategory(group.id)}
+                  onClick={() => handleSelectCategory(group.id)}
                   className={`flex items-center justify-between gap-2 px-3 py-1.5 rounded-lg text-[12.5px] font-medium whitespace-nowrap transition-colors ${
                     active
                       ? 'bg-[#007AFF] text-white'
-                      : isDark
-                        ? 'text-white/80 hover:bg-white/[0.07]'
-                        : 'text-gray-800 hover:bg-black/[0.05]'
+                      : isHiddenByCore
+                        ? isDark
+                          ? 'text-white/35 hover:bg-white/[0.05]'
+                          : 'text-gray-400 hover:bg-black/[0.04]'
+                        : isDark
+                          ? 'text-white/80 hover:bg-white/[0.07]'
+                          : 'text-gray-800 hover:bg-black/[0.05]'
                   }`}
                 >
                   <span className="flex items-center gap-2 truncate">
@@ -241,7 +278,7 @@ export function SkillsWindow({ theme = 'dark' }: SkillsWindowProps) {
                           : 'bg-black/[0.06] text-gray-600'
                     }`}
                   >
-                    {group.items.length}
+                    {countInTier}
                   </span>
                 </button>
               )

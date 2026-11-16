@@ -23,13 +23,40 @@ interface WindowProps {
   theme?: 'dark' | 'light'
 }
 
-type ResizeDirection = 'e' | 's' | 'w' | 'se' | 'sw' | null
+type ResizeDirection = 'n' | 'ne' | 'nw' | 'e' | 's' | 'w' | 'se' | 'sw' | null
 
 const MENU_BAR_HEIGHT = 28
 const DOCK_RESERVE = 92
 const MIN_WIDTH = 520
 const MIN_HEIGHT = 380
 const TITLEBAR_SAFE_VISIBLE = 180
+const RIGHT_ICONS_CLEARANCE = 124
+
+function getSafeInitialGeometry(
+  initialPosition: { x: number; y: number },
+  initialSize?: { width: number; height: number }
+): { position: { x: number; y: number }; size: { width: number; height: number } } {
+  if (typeof window === 'undefined') {
+    return {
+      position: initialPosition,
+      size: initialSize ?? { width: 800, height: 560 },
+    }
+  }
+  const maxAvailW = Math.max(MIN_WIDTH, window.innerWidth - RIGHT_ICONS_CLEARANCE - 24)
+  const maxAvailH = Math.max(MIN_HEIGHT, window.innerHeight - MENU_BAR_HEIGHT - DOCK_RESERVE - 24)
+  const width = Math.min(initialSize?.width ?? 820, maxAvailW)
+  const height = Math.min(initialSize?.height ?? 580, maxAvailH)
+
+  const maxX = Math.max(20, window.innerWidth - width - RIGHT_ICONS_CLEARANCE)
+  const maxY = Math.max(MENU_BAR_HEIGHT + 8, window.innerHeight - height - DOCK_RESERVE)
+  return {
+    size: { width, height },
+    position: {
+      x: Math.max(20, Math.min(initialPosition.x, maxX)),
+      y: Math.max(MENU_BAR_HEIGHT + 8, Math.min(initialPosition.y, maxY)),
+    },
+  }
+}
 
 export function Window({
   id,
@@ -49,17 +76,14 @@ export function Window({
   theme = 'dark',
 }: WindowProps) {
   const t = useTranslations('common')
-  const [position, setPosition] = useState(initialPosition)
-  const [size, setSize] = useState<{ width: number; height: number }>(() => {
-    if (initialSize) return initialSize
-    if (typeof window !== 'undefined') {
-      return {
-        width: Math.min(840, Math.max(MIN_WIDTH, window.innerWidth - 160)),
-        height: Math.min(600, Math.max(MIN_HEIGHT, window.innerHeight - 170)),
-      }
-    }
-    return { width: 800, height: 560 }
-  })
+  const [size, setSize] = useState<{ width: number; height: number }>(
+    () => getSafeInitialGeometry(initialPosition, initialSize).size
+  )
+  const [position, setPosition] = useState<{ x: number; y: number }>(
+    () => getSafeInitialGeometry(initialPosition, initialSize).position
+  )
+  const sizeRef = useRef(size)
+  sizeRef.current = size
   const [isDragging, setIsDragging] = useState(false)
   const [resizeDir, setResizeDir] = useState<ResizeDirection>(null)
   const [controlsHovered, setControlsHovered] = useState(false)
@@ -75,7 +99,7 @@ export function Window({
     height: 560,
   })
 
-  // Clamp initial window bounds when viewport resizes
+  // Clamp window bounds when viewport resizes
   useEffect(() => {
     const clampToViewport = () => {
       if (isMaximized) return
@@ -85,15 +109,18 @@ export function Window({
         width: Math.min(prev.width, maxWidth),
         height: Math.min(prev.height, maxHeight),
       }))
+      const currentW = Math.min(sizeRef.current.width, maxWidth)
       setPosition((prev) => ({
-        x: Math.max(-(size.width - TITLEBAR_SAFE_VISIBLE), Math.min(prev.x, window.innerWidth - TITLEBAR_SAFE_VISIBLE)),
+        x: Math.max(
+          -(currentW - TITLEBAR_SAFE_VISIBLE),
+          Math.min(prev.x, window.innerWidth - TITLEBAR_SAFE_VISIBLE)
+        ),
         y: Math.max(MENU_BAR_HEIGHT + 4, Math.min(prev.y, window.innerHeight - 90)),
       }))
     }
     clampToViewport()
     window.addEventListener('resize', clampToViewport)
     return () => window.removeEventListener('resize', clampToViewport)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMaximized])
 
   useEffect(() => {
@@ -137,6 +164,7 @@ export function Window({
       let nextWidth = start.width
       let nextHeight = start.height
       let nextX = start.winX
+      let nextY = start.winY
 
       if (resizeDir.includes('e')) {
         const maxW = window.innerWidth - start.winX - 16
@@ -144,7 +172,10 @@ export function Window({
       }
       if (resizeDir.includes('w')) {
         const proposedWidth = start.width - dx
-        const clampedWidth = Math.max(MIN_WIDTH, Math.min(proposedWidth, start.winX + start.width - 16))
+        const clampedWidth = Math.max(
+          MIN_WIDTH,
+          Math.min(proposedWidth, start.winX + start.width - 16)
+        )
         nextX = start.winX + (start.width - clampedWidth)
         nextWidth = clampedWidth
       }
@@ -152,9 +183,17 @@ export function Window({
         const maxH = window.innerHeight - start.winY - DOCK_RESERVE + 12
         nextHeight = Math.max(MIN_HEIGHT, Math.min(start.height + dy, Math.max(MIN_HEIGHT, maxH)))
       }
+      if (resizeDir.includes('n')) {
+        const bottomEdge = start.winY + start.height
+        const maxHFromTop = bottomEdge - MENU_BAR_HEIGHT
+        const proposedHeight = start.height - dy
+        const clampedHeight = Math.max(MIN_HEIGHT, Math.min(proposedHeight, maxHFromTop))
+        nextY = bottomEdge - clampedHeight
+        nextHeight = clampedHeight
+      }
 
       setSize({ width: nextWidth, height: nextHeight })
-      setPosition((prev) => ({ ...prev, x: nextX }))
+      setPosition({ x: nextX, y: nextY })
     }
 
     const handleMouseUp = () => setResizeDir(null)
@@ -387,9 +426,14 @@ export function Window({
             {children}
           </div>
 
-          {/* Edge & Corner Resize Handles */}
+          {/* Edge & Corner Resize Handles (All 8 Directions) */}
           {!isMaximized && (
             <>
+              <div
+                onMouseDown={startResize('n')}
+                aria-hidden="true"
+                className="absolute top-0 left-3 right-3 h-1.5 cursor-ns-resize z-20"
+              />
               <div
                 onMouseDown={startResize('e')}
                 aria-hidden="true"
@@ -404,6 +448,16 @@ export function Window({
                 onMouseDown={startResize('s')}
                 aria-hidden="true"
                 className="absolute bottom-0 left-3 right-3 h-1.5 cursor-ns-resize z-20"
+              />
+              <div
+                onMouseDown={startResize('nw')}
+                aria-hidden="true"
+                className="absolute top-0 left-0 w-3.5 h-3.5 cursor-nwse-resize z-30"
+              />
+              <div
+                onMouseDown={startResize('ne')}
+                aria-hidden="true"
+                className="absolute top-0 right-0 w-3.5 h-3.5 cursor-nesw-resize z-30"
               />
               <div
                 onMouseDown={startResize('se')}

@@ -26,8 +26,8 @@ interface TaskbarProps {
 }
 
 const ICON_BASE = 46
-const ICON_MAX = 66
-const MAG_DISTANCE = 140
+const ICON_MAX = 60
+const MAG_DISTANCE = 115
 
 function DockIcon({
   app,
@@ -48,76 +48,80 @@ function DockIcon({
     return val - (bounds.left + bounds.width / 2)
   })
 
-  const sizeSync = useTransform(distance, [-MAG_DISTANCE, 0, MAG_DISTANCE], [ICON_BASE, ICON_MAX, ICON_BASE])
+  const sizeSync = useTransform(
+    distance,
+    [-MAG_DISTANCE, 0, MAG_DISTANCE],
+    [ICON_BASE, ICON_MAX, ICON_BASE]
+  )
   const size = useSpring(sizeSync, {
-    mass: 0.12,
-    stiffness: 260,
-    damping: 20,
+    mass: 0.1,
+    stiffness: 320,
+    damping: 24,
   })
 
-  const iconContent = app.icon ?? getAppleIcon(app.id, 46)
+  const iconContent = app.icon ?? getAppleIcon(app.id, '100%')
 
   return (
     <div
       className="relative flex flex-col items-center justify-end"
-      style={{ height: ICON_BASE }}
+      style={{ height: ICON_BASE + 8 }}
     >
-      {/* Floating macOS Pill Tooltip */}
-      <AnimatePresence>
-        {hovered && (
-          <motion.div
-            initial={{ opacity: 0, y: 4, scale: 0.94 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 3, scale: 0.95 }}
-            transition={{ duration: 0.12 }}
-            className="pointer-events-none absolute -top-11 px-2.5 py-1 rounded-lg text-[11.5px] font-medium whitespace-nowrap z-50"
-            style={{
-              background: isDark ? 'rgba(38, 38, 42, 0.88)' : 'rgba(255, 255, 255, 0.9)',
-              color: isDark ? '#f5f5f7' : '#1d1d1f',
-              backdropFilter: 'blur(20px) saturate(180%)',
-              WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-              border: isDark
-                ? '1px solid rgba(255, 255, 255, 0.16)'
-                : '1px solid rgba(0, 0, 0, 0.1)',
-              boxShadow: '0 8px 22px rgba(0, 0, 0, 0.28)',
-            }}
-          >
-            {app.label}
-            <span
-              className="absolute left-1/2 -translate-x-1/2 -bottom-1 w-2 h-2 rotate-45"
+      <div className="relative flex items-end justify-center">
+        {/* Floating macOS Pill Tooltip anchored cleanly above the magnified icon */}
+        <AnimatePresence>
+          {hovered && (
+            <motion.div
+              initial={{ opacity: 0, y: 4, scale: 0.94 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 3, scale: 0.95 }}
+              transition={{ duration: 0.12 }}
+              className="pointer-events-none absolute px-2.5 py-1 rounded-lg text-[11.5px] font-medium whitespace-nowrap z-50"
               style={{
-                background: isDark ? 'rgba(38, 38, 42, 0.88)' : 'rgba(255, 255, 255, 0.9)',
-                borderRight: isDark
-                  ? '1px solid rgba(255, 255, 255, 0.14)'
-                  : '1px solid rgba(0, 0, 0, 0.08)',
-                borderBottom: isDark
-                  ? '1px solid rgba(255, 255, 255, 0.14)'
-                  : '1px solid rgba(0, 0, 0, 0.08)',
+                bottom: 'calc(100% + 10px)',
+                background: isDark ? 'rgba(38, 38, 44, 0.94)' : 'rgba(255, 255, 255, 0.95)',
+                color: isDark ? '#f5f5f7' : '#1d1d1f',
+                border: isDark
+                  ? '1px solid rgba(255, 255, 255, 0.16)'
+                  : '1px solid rgba(0, 0, 0, 0.1)',
+                boxShadow: '0 8px 22px rgba(0, 0, 0, 0.28)',
               }}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+            >
+              {app.label}
+              <span
+                className="absolute left-1/2 -translate-x-1/2 -bottom-[5px] w-2 h-2 rotate-45"
+                style={{
+                  background: isDark ? 'rgba(38, 38, 44, 0.94)' : 'rgba(255, 255, 255, 0.95)',
+                  borderRight: isDark
+                    ? '1px solid rgba(255, 255, 255, 0.16)'
+                    : '1px solid rgba(0, 0, 0, 0.1)',
+                  borderBottom: isDark
+                    ? '1px solid rgba(255, 255, 255, 0.16)'
+                    : '1px solid rgba(0, 0, 0, 0.1)',
+                }}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-      <motion.button
-        ref={ref}
-        type="button"
-        onClick={app.onClick}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        whileTap={{ scale: 0.9, y: 2 }}
-        aria-label={app.label}
-        className="flex items-center justify-center rounded-[12px] overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-[#007AFF] select-none cursor-pointer"
-        style={{
-          width: size,
-          height: size,
-          boxShadow: '0 6px 14px rgba(0, 0, 0, 0.28)',
-        }}
-      >
-        <div className="w-full h-full flex items-center justify-center [&>svg]:w-full [&>svg]:h-full">
-          {iconContent}
-        </div>
-      </motion.button>
+        <motion.button
+          ref={ref}
+          type="button"
+          onClick={app.onClick}
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+          whileTap={{ scale: 0.9, y: 2 }}
+          aria-label={app.label}
+          className="flex-shrink-0 flex items-center justify-center bg-transparent border-0 p-0 rounded-[22%] overflow-visible focus:outline-none select-none cursor-pointer"
+          style={{
+            width: size,
+            height: size,
+          }}
+        >
+          <div className="w-full h-full flex items-center justify-center [&>svg]:w-full [&>svg]:h-full [&>svg]:drop-shadow-[0_4px_10px_rgba(0,0,0,0.30)]">
+            {iconContent}
+          </div>
+        </motion.button>
+      </div>
 
       {/* Running indicator dot */}
       <span
@@ -126,10 +130,12 @@ function DockIcon({
         style={{
           background: app.isOpen
             ? app.isActive
-              ? '#ffffff'
+              ? isDark
+                ? '#ffffff'
+                : 'rgba(29, 29, 31, 0.85)'
               : isDark
-                ? 'rgba(255, 255, 255, 0.55)'
-                : 'rgba(0, 0, 0, 0.55)'
+                ? 'rgba(255, 255, 255, 0.48)'
+                : 'rgba(29, 29, 31, 0.42)'
             : 'transparent',
           transform: app.isOpen ? 'scale(1)' : 'scale(0)',
         }}
@@ -201,15 +207,15 @@ export function Taskbar({
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.15, type: 'spring', stiffness: 320, damping: 28 }}
         style={{
-          background: isDark ? 'rgba(26, 26, 30, 0.56)' : 'rgba(255, 255, 255, 0.44)',
-          backdropFilter: 'blur(30px) saturate(190%)',
-          WebkitBackdropFilter: 'blur(30px) saturate(190%)',
+          background: isDark ? 'rgba(26, 26, 30, 0.56)' : 'rgba(255, 255, 255, 0.18)',
+          backdropFilter: isDark ? 'blur(30px) saturate(190%)' : 'blur(22px) saturate(165%)',
+          WebkitBackdropFilter: isDark ? 'blur(30px) saturate(190%)' : 'blur(22px) saturate(165%)',
           border: isDark
             ? '1px solid rgba(255, 255, 255, 0.18)'
-            : '1px solid rgba(255, 255, 255, 0.62)',
+            : '1px solid rgba(255, 255, 255, 0.32)',
           boxShadow: isDark
             ? '0 14px 44px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.16)'
-            : '0 14px 44px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.85)',
+            : '0 8px 32px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.45)',
         }}
       >
         {coreApps.map((app) => (

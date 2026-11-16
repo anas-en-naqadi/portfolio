@@ -166,20 +166,26 @@ export default function iPadWidgets({ theme }: iPadWidgetsProps) {
   const hourDeg = hours * 30 + minutes * 0.5
 
   const widgetStyles: React.CSSProperties = {
-    backdropFilter: 'blur(20px)',
-    WebkitBackdropFilter: 'blur(20px)',
-    background: isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(255, 255, 255, 0.58)',
+    backdropFilter: 'blur(22px) saturate(170%)',
+    WebkitBackdropFilter: 'blur(22px) saturate(170%)',
+    background: isDark
+      ? 'rgba(255, 255, 255, 0.12)'
+      : 'linear-gradient(135deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.10) 100%)',
     borderRadius: 22,
-    border: isDark ? '1px solid rgba(255, 255, 255, 0.15)' : '1px solid rgba(0, 0, 0, 0.08)',
-    boxShadow: isDark ? '0 12px 40px rgba(0,0,0,0.3)' : '0 12px 40px rgba(0,0,0,0.08)',
+    border: isDark ? '1px solid rgba(255, 255, 255, 0.15)' : '1px solid rgba(255, 255, 255, 0.38)',
+    boxShadow: isDark
+      ? '0 12px 40px rgba(0,0,0,0.3)'
+      : '0 12px 36px rgba(0,0,0,0.20), inset 0 1px 0 rgba(255,255,255,0.48)',
     overflow: 'hidden',
   }
 
   const cardSizeClass =
     'w-full min-h-[168px] sm:min-h-[192px] short:min-h-[154px] h-full p-3.5 sm:p-4 flex flex-col justify-between gap-2.5'
-  const textColorClass = isDark ? 'text-white' : 'text-zinc-800'
-  const subTextColorClass = isDark ? 'text-white/70' : 'text-zinc-600'
-  const dividerClass = isDark ? 'border-white/15' : 'border-black/10'
+  const textColorClass = 'text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.45)]'
+  const subTextColorClass = isDark
+    ? 'text-white/75'
+    : 'text-white/90 drop-shadow-[0_1px_1px_rgba(0,0,0,0.35)]'
+  const dividerClass = isDark ? 'border-white/15' : 'border-white/25'
 
   return (
     <motion.div
@@ -200,14 +206,14 @@ export default function iPadWidgets({ theme }: iPadWidgetsProps) {
       >
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-1.5">
-            <ClockSymbol className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+            <ClockSymbol className="w-3.5 h-3.5 text-amber-400 shrink-0" />
             <span className={`${subTextColorClass} text-[10px] font-bold uppercase tracking-wider`}>
               {t('clock')}
             </span>
           </div>
           <span
             className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
-              isDark ? 'bg-white/10 text-white/80' : 'bg-black/5 text-zinc-700'
+              isDark ? 'bg-white/10 text-white/80' : 'bg-white/20 text-white'
             }`}
           >
             {personalInfo.timezone}
@@ -260,7 +266,7 @@ export default function iPadWidgets({ theme }: iPadWidgetsProps) {
                 x2="50"
                 y2="27"
                 stroke="currentColor"
-                className={textColorClass}
+                className={isDark ? 'text-white' : 'text-zinc-900'}
                 strokeWidth="4"
                 strokeLinecap="round"
                 transform={`rotate(${hourDeg} 50 50)`}
@@ -272,7 +278,7 @@ export default function iPadWidgets({ theme }: iPadWidgetsProps) {
                 x2="50"
                 y2="18"
                 stroke="currentColor"
-                className={textColorClass}
+                className={isDark ? 'text-white' : 'text-zinc-900'}
                 strokeWidth="2.8"
                 strokeLinecap="round"
                 transform={`rotate(${minuteDeg} 50 50)`}
@@ -365,13 +371,13 @@ export default function iPadWidgets({ theme }: iPadWidgetsProps) {
       >
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-1.5">
-            <PersonSymbol className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+            <PersonSymbol className="w-3.5 h-3.5 text-sky-300 shrink-0" />
             <span className={`${subTextColorClass} text-[10px] font-bold uppercase tracking-wider`}>
               {t('profile')}
             </span>
           </div>
-          <span className="hidden sm:inline-flex items-center gap-1 text-[9.5px] font-semibold text-emerald-500 truncate">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+          <span className="hidden sm:inline-flex items-center gap-1 text-[9.5px] font-semibold text-emerald-300 truncate">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
             {t('availability')}
           </span>
         </div>
@@ -428,13 +434,13 @@ export default function iPadWidgets({ theme }: iPadWidgetsProps) {
       >
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-1.5">
-            <DocumentTextSymbol className="w-3.5 h-3.5 text-red-500 shrink-0" />
+            <DocumentTextSymbol className="w-3.5 h-3.5 text-rose-400 shrink-0" />
             <span className={`${subTextColorClass} text-[10px] font-bold uppercase tracking-wider`}>
               {t('resumeTitle')}
             </span>
           </div>
           <div className="flex items-center gap-1.5 shrink-0">
-            <span className="text-[9px] px-1.5 py-0.5 bg-red-500/10 dark:bg-red-500/20 text-red-500 rounded font-bold uppercase tracking-wide">
+            <span className="text-[9px] px-1.5 py-0.5 bg-[#FF3B30]/90 text-white rounded font-bold uppercase tracking-wide shadow-sm">
               PDF
             </span>
             <span className={`${subTextColorClass} text-[9.5px] font-medium`}>1.2 MB</span>

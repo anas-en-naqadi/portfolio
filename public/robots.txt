@@ -1,14 +1,10 @@
+# Robots.txt for Anas En-Naqadi Portfolio
+# Note: Replace yourdomain.com with your production domain before launch,
+# or remove this file and add src/app/robots.ts for dynamic NEXT_PUBLIC_SITE_URL binding.
+
 User-agent: *
 Allow: /
+Allow: /api/og
+Disallow: /api/
 
-# Disallow admin or private paths if any
-# Disallow: /admin
-# Disallow: /api
-
-# Sitemap location (Next.js auto-generates this)
 Sitemap: https://yourdomain.com/sitemap.xml
-
-# Crawl-delay (optional, adjust if needed)
-# Crawl-delay: 1
-
-

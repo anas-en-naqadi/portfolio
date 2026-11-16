@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useRef } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 import { getLocalizedPortfolioData, socialLinks } from '@/lib/data'
 import { WindowToolbar } from '@/components/shared/WindowToolbar'
@@ -10,10 +10,10 @@ import {
   GitHubGlyphSymbol,
   LinkedInGlyphSymbol,
   CopySymbol,
-  VCardSymbol,
   MapPinSymbol,
   ClockSymbol,
   ArrowUpRightSymbol,
+  PaperPlaneSymbol,
 } from '@/components/shared/SFSymbols'
 
 interface ContactWindowProps {
@@ -33,8 +33,70 @@ export function ContactWindow({ theme = 'dark', onNotify }: ContactWindowProps) 
   const isDark = theme === 'dark'
 
   const [activeChannel, setActiveChannel] = useState<ChannelId>('email')
+  const [senderName, setSenderName] = useState('')
+  const [senderEmail, setSenderEmail] = useState('')
+  const [subject, setSubject] = useState('')
+  const [message, setMessage] = useState('')
+  const [isSending, setIsSending] = useState(false)
+  const [formFeedback, setFormFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const composeFormRef = useRef<HTMLFormElement>(null)
+  const nameInputRef = useRef<HTMLInputElement>(null)
   const portfolio = useMemo(() => getLocalizedPortfolioData(locale), [locale])
   const { personalInfo } = portfolio
+
+  const focusComposeForm = () => {
+    composeFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+    nameInputRef.current?.focus()
+  }
+
+  const handleComposeSend = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (isSending) return
+    setFormFeedback(null)
+
+    const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY?.trim()
+    if (!accessKey) {
+      const missingMsg = tDesktop('errorMissingKey')
+      setFormFeedback({ type: 'error', text: missingMsg })
+      onNotify?.(tDesktop('composeTitle'), missingMsg)
+      return
+    }
+
+    setIsSending(true)
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          access_key: accessKey,
+          name: senderName.trim() || 'Portfolio Visitor',
+          email: senderEmail.trim(),
+          subject: subject.trim() || 'Portfolio Inquiry',
+          message: message.trim(),
+        }),
+      })
+      const data = (await response.json()) as { success?: boolean; message?: string }
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || tDesktop('errorSend'))
+      }
+
+      setSenderName('')
+      setSenderEmail('')
+      setSubject('')
+      setMessage('')
+      setFormFeedback({ type: 'success', text: tDesktop('sentBody') })
+      onNotify?.(tDesktop('sentTitle'), tDesktop('sentBody'))
+    } catch (err) {
+      const errText = err instanceof Error && err.message ? err.message : tDesktop('errorSend')
+      setFormFeedback({ type: 'error', text: errText })
+      onNotify?.(tDesktop('composeTitle'), errText)
+    } finally {
+      setIsSending(false)
+    }
+  }
 
   const copyToClipboard = async (value: string, subtitle: string) => {
     try {
@@ -53,6 +115,9 @@ export function ContactWindow({ theme = 'dark', onNotify }: ContactWindowProps) 
         subject: tTabletContact('channels.email.subject'),
         body: tTabletContact('channels.email.body'),
         value: personalInfo.email,
+        copyValue: personalInfo.email,
+        copyLabel: tDesktop('copyEmail'),
+        copyToast: tToast('copiedEmail'),
         href: `mailto:${personalInfo.email}`,
         actionLabel: tActions('openMail'),
         icon: <EnvelopeSymbol className="w-4 h-4 text-[#007AFF]" />,
@@ -63,6 +128,9 @@ export function ContactWindow({ theme = 'dark', onNotify }: ContactWindowProps) 
         subject: tTabletContact('channels.github.subject'),
         body: tTabletContact('channels.github.body'),
         value: 'github.com/anas-en-naqadi',
+        copyValue: socialLinks.github,
+        copyLabel: tDesktop('copyGithub'),
+        copyToast: socialLinks.github,
         href: socialLinks.github,
         actionLabel: tActions('openGithub'),
         icon: <GitHubGlyphSymbol className="w-4 h-4" />,
@@ -73,6 +141,9 @@ export function ContactWindow({ theme = 'dark', onNotify }: ContactWindowProps) 
         subject: tTabletContact('channels.linkedin.subject'),
         body: tTabletContact('channels.linkedin.body'),
         value: 'linkedin.com/in/anas-en-naqadi',
+        copyValue: socialLinks.linkedin,
+        copyLabel: tDesktop('copyLinkedin'),
+        copyToast: socialLinks.linkedin,
         href: socialLinks.linkedin,
         actionLabel: tTabletContact('openLink'),
         icon: <LinkedInGlyphSymbol className="w-4 h-4 text-[#0A66C2]" />,
@@ -83,12 +154,15 @@ export function ContactWindow({ theme = 'dark', onNotify }: ContactWindowProps) 
         subject: tTabletContact('channels.phone.subject'),
         body: tTabletContact('channels.phone.body'),
         value: personalInfo.phone,
+        copyValue: personalInfo.phone,
+        copyLabel: tDesktop('copyPhone'),
+        copyToast: tToast('copiedPhone'),
         href: `tel:${personalInfo.phone.replace(/\s+/g, '')}`,
         actionLabel: tActions('callNow'),
         icon: <PhoneDeviceSymbol className="w-4 h-4 text-emerald-500" />,
       },
     ],
-    [personalInfo.email, personalInfo.phone, tTabletContact, tActions]
+    [personalInfo.email, personalInfo.phone, tTabletContact, tActions, tDesktop, tToast]
   )
 
   const currentChannel = channels.find((c) => c.id === activeChannel) ?? channels[0]
@@ -96,17 +170,8 @@ export function ContactWindow({ theme = 'dark', onNotify }: ContactWindowProps) 
   const toolbarButtons = [
     {
       icon: <CopySymbol className="w-3.5 h-3.5" />,
-      label: tTabletContact('copyInfo'),
-      onClick: () => copyToClipboard(personalInfo.email, tToast('copiedEmail')),
-    },
-    {
-      icon: <VCardSymbol className="w-3.5 h-3.5" />,
-      label: tActions('copyVCard'),
-      onClick: () =>
-        copyToClipboard(
-          `BEGIN:VCARD\nFN:${personalInfo.name}\nEMAIL:${personalInfo.email}\nTEL:${personalInfo.phone}\nEND:VCARD`,
-          tToast('copiedVCard')
-        ),
+      label: currentChannel.copyLabel,
+      onClick: () => copyToClipboard(currentChannel.copyValue, currentChannel.copyToast),
     },
   ]
 
@@ -180,7 +245,7 @@ export function ContactWindow({ theme = 'dark', onNotify }: ContactWindowProps) 
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  onClick={() => copyToClipboard(currentChannel.value, currentChannel.value)}
+                  onClick={() => copyToClipboard(currentChannel.copyValue, currentChannel.copyToast)}
                   className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                     isDark
                       ? 'bg-white/[0.08] hover:bg-white/[0.14] text-white'
@@ -188,22 +253,33 @@ export function ContactWindow({ theme = 'dark', onNotify }: ContactWindowProps) 
                   }`}
                 >
                   <CopySymbol className="w-3.5 h-3.5" />
-                  <span>{tTabletContact('copyInfo')}</span>
+                  <span>{currentChannel.copyLabel}</span>
                 </button>
 
-                <a
-                  href={currentChannel.href}
-                  target={currentChannel.id === 'github' || currentChannel.id === 'linkedin' ? '_blank' : undefined}
-                  rel={
-                    currentChannel.id === 'github' || currentChannel.id === 'linkedin'
-                      ? 'noopener noreferrer'
-                      : undefined
-                  }
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#007AFF] hover:bg-blue-600 text-white text-xs font-semibold transition-colors"
-                >
-                  <span>{currentChannel.actionLabel}</span>
-                  <ArrowUpRightSymbol className="w-3.5 h-3.5" />
-                </a>
+                {currentChannel.id === 'email' ? (
+                  <button
+                    type="button"
+                    onClick={focusComposeForm}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#007AFF] hover:bg-blue-600 text-white text-xs font-semibold transition-colors"
+                  >
+                    <span>{currentChannel.actionLabel}</span>
+                    <PaperPlaneSymbol className="w-3.5 h-3.5" />
+                  </button>
+                ) : (
+                  <a
+                    href={currentChannel.href}
+                    target={currentChannel.id === 'github' || currentChannel.id === 'linkedin' ? '_blank' : undefined}
+                    rel={
+                      currentChannel.id === 'github' || currentChannel.id === 'linkedin'
+                        ? 'noopener noreferrer'
+                        : undefined
+                    }
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#007AFF] hover:bg-blue-600 text-white text-xs font-semibold transition-colors"
+                  >
+                    <span>{currentChannel.actionLabel}</span>
+                    <ArrowUpRightSymbol className="w-3.5 h-3.5" />
+                  </a>
+                )}
               </div>
             </div>
 
@@ -246,6 +322,94 @@ export function ContactWindow({ theme = 'dark', onNotify }: ContactWindowProps) 
               </div>
             </div>
           </div>
+
+          {/* Inline Quick Compose (Web3Forms) */}
+          <form ref={composeFormRef} onSubmit={handleComposeSend} className={`${cardClass} space-y-3`}>
+            <div className="flex items-center gap-2">
+              <PaperPlaneSymbol className="w-4 h-4 text-[#007AFF]" />
+              <h4 className={`text-xs font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                {tDesktop('composeTitle')}
+              </h4>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <input
+                ref={nameInputRef}
+                type="text"
+                value={senderName}
+                onChange={(e) => setSenderName(e.target.value)}
+                placeholder={tDesktop('namePlaceholder')}
+                aria-label={tDesktop('nameLabel')}
+                className={`w-full px-3 py-1.5 rounded-lg border text-xs outline-none transition-colors ${
+                  isDark
+                    ? 'bg-white/[0.06] border-white/10 focus:border-[#007AFF] text-white placeholder:text-white/40'
+                    : 'bg-black/[0.03] border-black/10 focus:border-[#007AFF] text-gray-900 placeholder:text-gray-400'
+                }`}
+              />
+              <input
+                type="email"
+                required
+                value={senderEmail}
+                onChange={(e) => setSenderEmail(e.target.value)}
+                placeholder={tDesktop('emailPlaceholder')}
+                aria-label={tDesktop('emailLabel')}
+                className={`w-full px-3 py-1.5 rounded-lg border text-xs outline-none transition-colors ${
+                  isDark
+                    ? 'bg-white/[0.06] border-white/10 focus:border-[#007AFF] text-white placeholder:text-white/40'
+                    : 'bg-black/[0.03] border-black/10 focus:border-[#007AFF] text-gray-900 placeholder:text-gray-400'
+                }`}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 gap-2.5">
+              <input
+                type="text"
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+                placeholder={tDesktop('subjectPlaceholder')}
+                aria-label={tDesktop('subjectLabel')}
+                className={`w-full px-3 py-1.5 rounded-lg border text-xs outline-none transition-colors ${
+                  isDark
+                    ? 'bg-white/[0.06] border-white/10 focus:border-[#007AFF] text-white placeholder:text-white/40'
+                    : 'bg-black/[0.03] border-black/10 focus:border-[#007AFF] text-gray-900 placeholder:text-gray-400'
+                }`}
+              />
+              <textarea
+                rows={3}
+                required
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder={tDesktop('messagePlaceholder')}
+                aria-label={tDesktop('messageLabel')}
+                className={`w-full px-3 py-2 rounded-lg border text-xs outline-none resize-none transition-colors ${
+                  isDark
+                    ? 'bg-white/[0.06] border-white/10 focus:border-[#007AFF] text-white placeholder:text-white/40'
+                    : 'bg-black/[0.03] border-black/10 focus:border-[#007AFF] text-gray-900 placeholder:text-gray-400'
+                }`}
+              />
+            </div>
+
+            {formFeedback && (
+              <p
+                className={`text-[11.5px] font-medium ${
+                  formFeedback.type === 'success' ? 'text-emerald-500' : 'text-rose-500'
+                }`}
+              >
+                {formFeedback.text}
+              </p>
+            )}
+
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                disabled={isSending}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#007AFF] hover:bg-blue-600 disabled:opacity-60 disabled:cursor-not-allowed text-white text-xs font-semibold transition-colors"
+              >
+                <PaperPlaneSymbol className="w-3.5 h-3.5" />
+                <span>{isSending ? tDesktop('sendingBtn') : tDesktop('sendBtn')}</span>
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>

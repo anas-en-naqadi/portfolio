@@ -9,6 +9,8 @@ interface iPadStatusBarProps {
   theme: 'dark' | 'light'
   isAppOpen?: boolean
   onToggleControlCenter?: () => void
+  onHoverControlCenterEnter?: (e: React.PointerEvent<HTMLButtonElement>) => void
+  onHoverControlCenterLeave?: (e: React.PointerEvent<HTMLButtonElement>) => void
   controlCenterOpen?: boolean
 }
 
@@ -16,6 +18,8 @@ export default function iPadStatusBar({
   theme,
   isAppOpen = false,
   onToggleControlCenter,
+  onHoverControlCenterEnter,
+  onHoverControlCenterLeave,
   controlCenterOpen = false,
 }: iPadStatusBarProps) {
   const locale = useLocale()
@@ -47,6 +51,8 @@ export default function iPadStatusBar({
       <button
         type="button"
         onClick={onToggleControlCenter}
+        onPointerEnter={onHoverControlCenterEnter}
+        onPointerLeave={onHoverControlCenterLeave}
         aria-expanded={controlCenterOpen}
         aria-label={t('openControlCenter')}
         className={`flex items-center gap-2 sm:gap-2.5 px-2.5 py-1 -mr-1.5 rounded-full transition hover:bg-black/10 dark:hover:bg-white/10 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${textColor} select-none`}

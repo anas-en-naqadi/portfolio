@@ -44,21 +44,9 @@ const WALLPAPER_BACKDROPS: Record<WallpaperPresetId, React.CSSProperties> = {
     backgroundSize: 'cover',
     backgroundPosition: 'center',
   },
-  aurora: {
-    background:
-      'radial-gradient(circle at 20% 25%, rgba(16, 185, 129, 0.45) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(37, 99, 235, 0.5) 0%, transparent 55%), linear-gradient(135deg, #04131c 0%, #091e2c 100%)',
-  },
-  midnight: {
-    background:
-      'radial-gradient(circle at 75% 20%, rgba(79, 70, 229, 0.4) 0%, transparent 48%), radial-gradient(circle at 25% 80%, rgba(30, 27, 75, 0.65) 0%, transparent 55%), linear-gradient(145deg, #05070e 0%, #0d1224 100%)',
-  },
-  horizon: {
-    background:
-      'radial-gradient(circle at 22% 28%, rgba(234, 88, 12, 0.42) 0%, transparent 48%), radial-gradient(circle at 78% 72%, rgba(79, 70, 229, 0.48) 0%, transparent 52%), linear-gradient(135deg, #160c1f 0%, #0c1026 100%)',
-  },
 }
 
-const WALLPAPER_ORDER: WallpaperPresetId[] = ['default', 'aurora', 'midnight', 'horizon']
+const WALLPAPER_ORDER: WallpaperPresetId[] = ['default']
 
 const WINDOW_IDS: DesktopWindowId[] = [
   'about',
@@ -101,8 +89,14 @@ export function DesktopOS() {
     contact: false,
     settings: false,
   })
-  const [nextZIndex, setNextZIndex] = useState(105)
+  const zCounterRef = useRef(105)
   const [selectedDesktopIcon, setSelectedDesktopIcon] = useState<DesktopWindowId | null>(null)
+  const [projectsSpotlight, setProjectsSpotlight] = useState<{ term: string; nonce: number } | null>(
+    null
+  )
+  const [skillsSpotlight, setSkillsSpotlight] = useState<{ term: string; nonce: number } | null>(
+    null
+  )
   const [isStartMenuOpen, setIsStartMenuOpen] = useState(false)
   const [isSpotlightOpen, setIsSpotlightOpen] = useState(false)
   const [wallpaper, setWallpaper] = useState<WallpaperPresetId>('default')
@@ -152,12 +146,6 @@ export function DesktopOS() {
     [showToast, tToast, tWp]
   )
 
-  const cycleWallpaper = useCallback(() => {
-    const idx = WALLPAPER_ORDER.indexOf(wallpaper)
-    const next = WALLPAPER_ORDER[(idx + 1) % WALLPAPER_ORDER.length]
-    handleSelectWallpaper(next)
-  }, [wallpaper, handleSelectWallpaper])
-
   const switchLanguage = useCallback(() => {
     const nextLocale = locale === 'fr' ? 'en' : 'fr'
     router.replace(pathname, { locale: nextLocale })
@@ -177,22 +165,26 @@ export function DesktopOS() {
     return topId
   }, [openWindows])
 
-  const bringToFront = useCallback(
-    (id: DesktopWindowId) => {
-      setOpenWindows((prev) => ({
-        ...prev,
-        [id]: { isOpen: true, isMinimized: false, zIndex: nextZIndex },
-      }))
-      setNextZIndex((z) => z + 1)
-    },
-    [nextZIndex]
-  )
+  const bringToFront = useCallback((id: DesktopWindowId) => {
+    const nextZ = (zCounterRef.current += 1)
+    setOpenWindows((prev) => ({
+      ...prev,
+      [id]: { isOpen: true, isMinimized: false, zIndex: nextZ },
+    }))
+  }, [])
 
   const openWindow = useCallback(
-    (id: DesktopWindowId) => {
+    (id: DesktopWindowId, searchTerm?: string) => {
       setContextMenu(null)
       setIsStartMenuOpen(false)
       setIsSpotlightOpen(false)
+      if (searchTerm) {
+        if (id === 'projects') {
+          setProjectsSpotlight({ term: searchTerm, nonce: Date.now() })
+        } else if (id === 'skills') {
+          setSkillsSpotlight({ term: searchTerm, nonce: Date.now() })
+        }
+      }
       bringToFront(id)
     },
     [bringToFront]
@@ -274,7 +266,7 @@ export function DesktopOS() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Keyboard shortcuts (Spotlight ⌘K / ⌘Space, Close ⌘W, Escape)
+  // Keyboard shortcuts (Spotlight ⌘K / ⌘Space, Close ⌘W, Minimize ⌘M, Settings ⌘,, Escape)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && (e.key.toLowerCase() === 'k' || e.code === 'Space')) {
@@ -289,6 +281,16 @@ export function DesktopOS() {
         closeWindow(activeWindowId)
         return
       }
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'm' && activeWindowId) {
+        e.preventDefault()
+        minimizeWindow(activeWindowId)
+        return
+      }
+      if ((e.metaKey || e.ctrlKey) && e.key === ',') {
+        e.preventDefault()
+        openWindow('settings')
+        return
+      }
       if (e.key === 'Escape') {
         setContextMenu(null)
         setIsSpotlightOpen(false)
@@ -297,7 +299,7 @@ export function DesktopOS() {
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [activeWindowId, closeWindow])
+  }, [activeWindowId, closeWindow, minimizeWindow, openWindow])
 
   const windowTitles: Record<DesktopWindowId, string> = useMemo(
     () => ({
@@ -480,7 +482,7 @@ export function DesktopOS() {
         zIndex={openWindows.projects.zIndex}
         theme={theme}
       >
-        <ProjectsWindow theme={theme} />
+        <ProjectsWindow theme={theme} spotlightQuery={projectsSpotlight} />
       </Window>
 
       <Window
@@ -498,7 +500,7 @@ export function DesktopOS() {
         zIndex={openWindows.skills.zIndex}
         theme={theme}
       >
-        <SkillsWindow theme={theme} />
+        <SkillsWindow theme={theme} spotlightQuery={skillsSpotlight} />
       </Window>
 
       <Window
@@ -585,17 +587,6 @@ export function DesktopOS() {
               <span>{tCtx('openSpotlight')}</span>
             </button>
             <div className={`my-1 h-px ${isDark ? 'bg-white/10' : 'bg-black/10'}`} />
-            <button
-              type="button"
-              onClick={() => {
-                setContextMenu(null)
-                cycleWallpaper()
-              }}
-              className="w-full px-3 py-1.5 rounded-lg text-left text-[12.5px] font-medium flex items-center gap-2.5 hover:bg-[#007AFF] hover:text-white transition-colors"
-            >
-              <PhotoSymbol className="w-3.5 h-3.5 opacity-80" />
-              <span>{tCtx('changeWallpaper')}</span>
-            </button>
             <button
               type="button"
               onClick={() => {

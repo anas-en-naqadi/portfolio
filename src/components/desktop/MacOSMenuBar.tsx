@@ -17,7 +17,7 @@ import {
 } from '@/components/shared/SFSymbols'
 import type { DesktopWindowId } from './SpotlightSearch'
 
-export type WallpaperPresetId = 'default' | 'aurora' | 'midnight' | 'horizon'
+export type WallpaperPresetId = 'default'
 
 export interface OpenWindowEntry {
   id: DesktopWindowId
@@ -60,10 +60,7 @@ type OpenMenuKey =
   | null
 
 const WALLPAPER_SWATCHES: { id: WallpaperPresetId; preview: string }[] = [
-  { id: 'default', preview: 'linear-gradient(135deg, #1e293b, #4c1d95)' },
-  { id: 'aurora', preview: 'linear-gradient(135deg, #065f46, #1d4ed8)' },
-  { id: 'midnight', preview: 'linear-gradient(135deg, #090d16, #312e81)' },
-  { id: 'horizon', preview: 'linear-gradient(135deg, #7c2d12, #4338ca)' },
+  { id: 'default', preview: 'url(/images/desktop-bg.png) center/cover' },
 ]
 
 export function MacOSMenuBar({
@@ -97,6 +94,21 @@ export function MacOSMenuBar({
   const [dateString, setDateString] = useState('')
   const [openMenu, setOpenMenu] = useState<OpenMenuKey>(null)
   const barRef = useRef<HTMLElement>(null)
+  const pinnedRef = useRef(false)
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const clearCloseTimer = () => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current)
+      closeTimerRef.current = null
+    }
+  }
+
+  const closeAllMenus = () => {
+    clearCloseTimer()
+    pinnedRef.current = false
+    setOpenMenu(null)
+  }
 
   useEffect(() => {
     const updateClock = () => {
@@ -125,31 +137,73 @@ export function MacOSMenuBar({
   useEffect(() => {
     const handleOutside = (e: MouseEvent) => {
       if (barRef.current && !barRef.current.contains(e.target as Node)) {
-        setOpenMenu(null)
+        closeAllMenus()
       }
     }
     const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpenMenu(null)
+      if (e.key === 'Escape') closeAllMenus()
     }
     window.addEventListener('mousedown', handleOutside)
     window.addEventListener('keydown', handleEsc)
     return () => {
       window.removeEventListener('mousedown', handleOutside)
       window.removeEventListener('keydown', handleEsc)
+      clearCloseTimer()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const toggleMenu = (key: Exclude<OpenMenuKey, null>) => {
-    setOpenMenu((prev) => (prev === key ? null : key))
+  const handleTriggerClick = (key: Exclude<OpenMenuKey, null>) => {
+    clearCloseTimer()
+    if (openMenu === key) {
+      if (pinnedRef.current) {
+        pinnedRef.current = false
+        setOpenMenu(null)
+      } else {
+        pinnedRef.current = true
+      }
+      return
+    }
+    pinnedRef.current = true
+    setOpenMenu(key)
+  }
+
+  const handleHoverOpen = (
+    key: Exclude<OpenMenuKey, null>,
+    e: React.PointerEvent<HTMLElement>
+  ) => {
+    if (e.pointerType !== 'mouse') return
+    clearCloseTimer()
+    if (openMenu !== key) {
+      pinnedRef.current = false
+      setOpenMenu(key)
+    }
+  }
+
+  const handleHoverLeave = (e: React.PointerEvent<HTMLElement>) => {
+    if (e.pointerType !== 'mouse' || pinnedRef.current) return
+    clearCloseTimer()
+    closeTimerRef.current = setTimeout(() => {
+      if (!pinnedRef.current) {
+        setOpenMenu(null)
+      }
+    }, 140)
+  }
+
+  const handleDropdownEnter = (e: React.PointerEvent<HTMLElement>) => {
+    if (e.pointerType === 'mouse') {
+      clearCloseTimer()
+    }
   }
 
   const runAction = (fn: () => void) => {
-    setOpenMenu(null)
+    closeAllMenus()
     fn()
   }
 
   const dropdownStyle: React.CSSProperties = {
-    background: isDark ? 'rgba(34, 34, 38, 0.88)' : 'rgba(255, 255, 255, 0.9)',
+    background: isDark ? 'rgba(34, 34, 38, 0.88)' : 'rgba(255, 255, 255, 0.92)',
+    color: isDark ? '#f5f5f7' : '#1d1d1f',
     backdropFilter: 'blur(32px) saturate(190%)',
     WebkitBackdropFilter: 'blur(32px) saturate(190%)',
     border: isDark ? '1px solid rgba(255,255,255,0.16)' : '1px solid rgba(0,0,0,0.1)',
@@ -194,11 +248,17 @@ export function MacOSMenuBar({
       {/* Left: Apple Icon, Active App & Interactive Menus */}
       <div className="flex items-center gap-0.5 relative">
         {/* Apple Menu */}
-        <div className="relative">
+        <div
+          className="relative"
+          onPointerEnter={(e) => handleHoverOpen('apple', e)}
+          onPointerLeave={handleHoverLeave}
+        >
           <button
             type="button"
-            onClick={() => toggleMenu('apple')}
+            onClick={() => handleTriggerClick('apple')}
             aria-label="Apple Menu"
+            aria-haspopup="menu"
+            aria-expanded={openMenu === 'apple'}
             className={`px-2.5 h-[22px] rounded-[5px] flex items-center justify-center transition-colors ${
               openMenu === 'apple'
                 ? 'bg-[#007AFF] text-white'
@@ -211,7 +271,9 @@ export function MacOSMenuBar({
           </button>
           {openMenu === 'apple' && (
             <div
-              className="absolute top-[26px] left-0 min-w-[215px] rounded-xl p-1.5 z-[9999]"
+              role="menu"
+              onPointerEnter={handleDropdownEnter}
+              className="absolute top-[25px] left-0 min-w-[215px] rounded-xl p-1.5 z-[9999]"
               style={dropdownStyle}
             >
               <button
@@ -251,13 +313,25 @@ export function MacOSMenuBar({
         </span>
 
         {/* File Menu */}
-        <div className="relative hidden sm:block">
-          <button type="button" onClick={() => toggleMenu('file')} className={menuTriggerClass('file')}>
+        <div
+          className="relative hidden sm:block"
+          onPointerEnter={(e) => handleHoverOpen('file', e)}
+          onPointerLeave={handleHoverLeave}
+        >
+          <button
+            type="button"
+            onClick={() => handleTriggerClick('file')}
+            aria-haspopup="menu"
+            aria-expanded={openMenu === 'file'}
+            className={menuTriggerClass('file')}
+          >
             {tMenu('file')}
           </button>
           {openMenu === 'file' && (
             <div
-              className="absolute top-[26px] left-0 min-w-[205px] rounded-xl p-1.5 z-[9999]"
+              role="menu"
+              onPointerEnter={handleDropdownEnter}
+              className="absolute top-[25px] left-0 min-w-[205px] rounded-xl p-1.5 z-[9999]"
               style={dropdownStyle}
             >
               <button type="button" className={itemClass} onClick={() => runAction(() => onOpenApp('about'))}>
@@ -287,13 +361,25 @@ export function MacOSMenuBar({
         </div>
 
         {/* Edit Menu */}
-        <div className="relative hidden sm:block">
-          <button type="button" onClick={() => toggleMenu('edit')} className={menuTriggerClass('edit')}>
+        <div
+          className="relative hidden sm:block"
+          onPointerEnter={(e) => handleHoverOpen('edit', e)}
+          onPointerLeave={handleHoverLeave}
+        >
+          <button
+            type="button"
+            onClick={() => handleTriggerClick('edit')}
+            aria-haspopup="menu"
+            aria-expanded={openMenu === 'edit'}
+            className={menuTriggerClass('edit')}
+          >
             {tMenu('edit')}
           </button>
           {openMenu === 'edit' && (
             <div
-              className="absolute top-[26px] left-0 min-w-[215px] rounded-xl p-1.5 z-[9999]"
+              role="menu"
+              onPointerEnter={handleDropdownEnter}
+              className="absolute top-[25px] left-0 min-w-[215px] rounded-xl p-1.5 z-[9999]"
               style={dropdownStyle}
             >
               <button type="button" className={itemClass} onClick={() => runAction(onCopyEmail)}>
@@ -312,13 +398,25 @@ export function MacOSMenuBar({
         </div>
 
         {/* View Menu */}
-        <div className="relative hidden md:block">
-          <button type="button" onClick={() => toggleMenu('view')} className={menuTriggerClass('view')}>
+        <div
+          className="relative hidden md:block"
+          onPointerEnter={(e) => handleHoverOpen('view', e)}
+          onPointerLeave={handleHoverLeave}
+        >
+          <button
+            type="button"
+            onClick={() => handleTriggerClick('view')}
+            aria-haspopup="menu"
+            aria-expanded={openMenu === 'view'}
+            className={menuTriggerClass('view')}
+          >
             {tMenu('view')}
           </button>
           {openMenu === 'view' && (
             <div
-              className="absolute top-[26px] left-0 min-w-[205px] rounded-xl p-1.5 z-[9999]"
+              role="menu"
+              onPointerEnter={handleDropdownEnter}
+              className="absolute top-[25px] left-0 min-w-[205px] rounded-xl p-1.5 z-[9999]"
               style={dropdownStyle}
             >
               <button type="button" className={itemClass} onClick={() => runAction(onToggleTheme)}>
@@ -341,13 +439,25 @@ export function MacOSMenuBar({
         </div>
 
         {/* Go Menu */}
-        <div className="relative hidden md:block">
-          <button type="button" onClick={() => toggleMenu('go')} className={menuTriggerClass('go')}>
+        <div
+          className="relative hidden md:block"
+          onPointerEnter={(e) => handleHoverOpen('go', e)}
+          onPointerLeave={handleHoverLeave}
+        >
+          <button
+            type="button"
+            onClick={() => handleTriggerClick('go')}
+            aria-haspopup="menu"
+            aria-expanded={openMenu === 'go'}
+            className={menuTriggerClass('go')}
+          >
             {tMenu('go')}
           </button>
           {openMenu === 'go' && (
             <div
-              className="absolute top-[26px] left-0 min-w-[185px] rounded-xl p-1.5 z-[9999]"
+              role="menu"
+              onPointerEnter={handleDropdownEnter}
+              className="absolute top-[25px] left-0 min-w-[185px] rounded-xl p-1.5 z-[9999]"
               style={dropdownStyle}
             >
               {(['about', 'experience', 'projects', 'skills', 'contact', 'settings'] as const).map(
@@ -367,13 +477,25 @@ export function MacOSMenuBar({
         </div>
 
         {/* Window Menu */}
-        <div className="relative hidden lg:block">
-          <button type="button" onClick={() => toggleMenu('window')} className={menuTriggerClass('window')}>
+        <div
+          className="relative hidden lg:block"
+          onPointerEnter={(e) => handleHoverOpen('window', e)}
+          onPointerLeave={handleHoverLeave}
+        >
+          <button
+            type="button"
+            onClick={() => handleTriggerClick('window')}
+            aria-haspopup="menu"
+            aria-expanded={openMenu === 'window'}
+            className={menuTriggerClass('window')}
+          >
             {tMenu('window')}
           </button>
           {openMenu === 'window' && (
             <div
-              className="absolute top-[26px] left-0 min-w-[205px] rounded-xl p-1.5 z-[9999]"
+              role="menu"
+              onPointerEnter={handleDropdownEnter}
+              className="absolute top-[25px] left-0 min-w-[205px] rounded-xl p-1.5 z-[9999]"
               style={dropdownStyle}
             >
               <button
@@ -423,13 +545,25 @@ export function MacOSMenuBar({
         </div>
 
         {/* Help Menu */}
-        <div className="relative hidden lg:block">
-          <button type="button" onClick={() => toggleMenu('help')} className={menuTriggerClass('help')}>
+        <div
+          className="relative hidden lg:block"
+          onPointerEnter={(e) => handleHoverOpen('help', e)}
+          onPointerLeave={handleHoverLeave}
+        >
+          <button
+            type="button"
+            onClick={() => handleTriggerClick('help')}
+            aria-haspopup="menu"
+            aria-expanded={openMenu === 'help'}
+            className={menuTriggerClass('help')}
+          >
             {tMenu('help')}
           </button>
           {openMenu === 'help' && (
             <div
-              className="absolute top-[26px] left-0 min-w-[245px] rounded-xl p-1.5 z-[9999]"
+              role="menu"
+              onPointerEnter={handleDropdownEnter}
+              className="absolute top-[25px] left-0 min-w-[245px] rounded-xl p-1.5 z-[9999]"
               style={dropdownStyle}
             >
               <button type="button" className={itemClass} onClick={() => runAction(onOpenSpotlight)}>
@@ -458,8 +592,12 @@ export function MacOSMenuBar({
       <div className="flex items-center gap-1.5 relative">
         <button
           type="button"
-          onClick={() => toggleMenu('controlCenter')}
+          onClick={() => handleTriggerClick('controlCenter')}
+          onPointerEnter={(e) => handleHoverOpen('controlCenter', e)}
+          onPointerLeave={handleHoverLeave}
           aria-label="Wi-Fi"
+          aria-haspopup="dialog"
+          aria-expanded={openMenu === 'controlCenter'}
           className={`px-1.5 h-[22px] rounded-[5px] flex items-center justify-center transition-colors ${
             isDark ? 'hover:bg-white/15' : 'hover:bg-black/10'
           }`}
@@ -488,8 +626,12 @@ export function MacOSMenuBar({
 
         <button
           type="button"
-          onClick={() => toggleMenu('controlCenter')}
+          onClick={() => handleTriggerClick('controlCenter')}
+          onPointerEnter={(e) => handleHoverOpen('controlCenter', e)}
+          onPointerLeave={handleHoverLeave}
           aria-label={tMenu('controlCenter.title')}
+          aria-haspopup="dialog"
+          aria-expanded={openMenu === 'controlCenter'}
           className={`px-1.5 h-[22px] rounded-[5px] flex items-center justify-center transition-colors ${
             openMenu === 'controlCenter'
               ? 'bg-[#007AFF] text-white'
@@ -504,7 +646,11 @@ export function MacOSMenuBar({
         {/* Right-Aligned Date & Time (Real macOS Style) */}
         <button
           type="button"
-          onClick={() => toggleMenu('controlCenter')}
+          onClick={() => handleTriggerClick('controlCenter')}
+          onPointerEnter={(e) => handleHoverOpen('controlCenter', e)}
+          onPointerLeave={handleHoverLeave}
+          aria-haspopup="dialog"
+          aria-expanded={openMenu === 'controlCenter'}
           className={`px-2 h-[22px] rounded-[5px] flex items-center gap-1.5 text-[12.5px] font-medium tabular-nums transition-colors ${
             isDark ? 'hover:bg-white/15' : 'hover:bg-black/10'
           }`}
@@ -516,7 +662,11 @@ export function MacOSMenuBar({
         {/* Liquid Glass Control Center Popover */}
         {openMenu === 'controlCenter' && (
           <div
-            className="absolute top-[30px] right-0 w-[308px] rounded-2xl p-3 space-y-2.5 z-[9999]"
+            role="dialog"
+            aria-label={tMenu('controlCenter.title')}
+            onPointerEnter={handleDropdownEnter}
+            onPointerLeave={handleHoverLeave}
+            className="absolute top-[28px] right-0 w-[308px] rounded-2xl p-3 space-y-2.5 z-[9999]"
             style={dropdownStyle}
           >
             {/* Row 1: Wi-Fi & Theme */}
@@ -607,7 +757,7 @@ export function MacOSMenuBar({
                   {tMenu('controlCenter.wallpaper')}
                 </span>
               </div>
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-1 gap-2">
                 {WALLPAPER_SWATCHES.map((wp) => {
                   const selected = wallpaper === wp.id
                   return (
@@ -617,13 +767,19 @@ export function MacOSMenuBar({
                       onClick={() => onSelectWallpaper(wp.id)}
                       title={tWp(wp.id)}
                       aria-label={tWp(wp.id)}
-                      className={`h-8 rounded-lg border transition-transform ${
+                      className={`h-14 rounded-lg border transition-transform relative overflow-hidden ${
                         selected
-                          ? 'ring-2 ring-[#007AFF] scale-[1.03] border-white/60'
-                          : 'border-white/20 opacity-80 hover:opacity-100'
+                          ? 'ring-2 ring-[#007AFF] border-white/60'
+                          : isDark
+                            ? 'border-white/20 opacity-80 hover:opacity-100'
+                            : 'border-black/15 opacity-85 hover:opacity-100'
                       }`}
                       style={{ background: wp.preview }}
-                    />
+                    >
+                      <span className="absolute bottom-1.5 left-2 px-1.5 py-0.5 rounded bg-black/50 text-white text-[10px] font-medium backdrop-blur-sm">
+                        {tWp(wp.id)}
+                      </span>
+                    </button>
                   )
                 })}
               </div>

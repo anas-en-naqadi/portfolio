@@ -7,7 +7,7 @@ export const personalInfo = {
   location: 'Marrakech, Maroc',
   email: 'anas.ennaqadi0@gmail.com',
   phone: '+212 628540272',
-  timezone: 'GMT+1',
+  timezone: 'GMT+0',
   profileImage: '/images/me.png',
   cvPath: '/CV-PRO.pdf',
 }
@@ -45,6 +45,18 @@ export const education = [
 ]
 
 export const experiences = [
+  {
+    title: 'AI Engineer | Freelance',
+    company: 'Melodia AI',
+    location: 'Canada (Remote)',
+    period: 'Juin 2026 - Septembre 2026',
+    description: [
+      'Conception et construction de l\'IA de matching : architecture conçue de zéro du moteur central de recommandation multi-critères (scoring audio, métadonnées, popularité) évaluant l\'affinité Titre/Station avec génération dynamique de justifications.',
+      'Pipeline automatisé d\'extraction audio et profilage : analyse asynchrone de plus de 35 features acoustiques, spectrales et émotionnelles (MFCCs, valence, instruments) via l\'intégration de Librosa et Essentia-TensorFlow.',
+      'Scores et Batch : génération de centroïdes audio et calcul de distributions statistiques sur l\'historique de diffusion, incluant une gestion algorithmique des démarrages à froid.',
+    ],
+    technologies: ['Microsoft Azure', 'Python', 'Matching', 'Testing and Debugging', 'Docker', 'Microservices', 'GitHub Actions (CI/CD)'],
+  },
   {
     title: 'FullStack Developer | Freelance',
     company: 'Melodia',
@@ -182,11 +194,11 @@ export const projects = [
 
 export const skills = {
   languages: ['HTML', 'CSS', 'PHP', 'JavaScript', 'TypeScript', 'Java', 'C#', 'Python'],
-  frameworks: ['Vue.js', 'React.js', 'Laravel', 'Express.js', 'Next.js', 'React-Native', 'TensorFlow', 'PyTorch'],
-  libraries: ['Vuex', 'Redux Toolkit', 'PrimeVue', 'Material UI', 'Chart.js'],
+  frameworks: ['Vue.js', 'React.js', 'Next.js', 'React-Native', 'Laravel', 'Node.js', 'Express.js', 'FastAPI', '.NET', 'TensorFlow', 'PyTorch'],
+  libraries: ['Vuex', 'Redux Toolkit', 'PrimeVue', 'Material UI', 'Chart.js', 'Scikit-learn', 'OpenCV', 'CrewAI', 'Librosa', 'Essentia-TensorFlow'],
   databases: ['MySQL', 'PostgreSQL', 'MongoDB', 'Redis', 'Firebase', 'Supabase'],
   methodologies: ['Agile Scrum', 'Modèle MVC2', 'UML'],
-  tools: ['Git (GitHub, GitLab)', 'Expo', 'Jira', 'Figma', 'Docker', 'Networking', 'Azure Cloud', 'Github Actions'],
+  tools: ['Git (GitHub, GitLab)', 'GitHub Actions (CI/CD)', 'Docker', 'Microsoft Azure', 'Expo', 'Jira', 'Figma', 'Networking'],
   languages_spoken: [
     { language: 'Arabic', level: 'Native' },
     { language: 'French', level: 'Current' },
@@ -227,6 +239,18 @@ const englishData = {
     },
   ],
   experiences: [
+    {
+      title: 'AI Engineer | Freelance',
+      company: 'Melodia AI',
+      location: 'Canada (Remote)',
+      period: 'June 2026 - September 2026',
+      description: [
+        'Designed and built the matching AI: architected from scratch the core multi-criteria recommendation engine (audio scoring, metadata, popularity) evaluating Track/Station affinity with dynamic justification generation.',
+        'Automated audio extraction & profiling pipeline: asynchronous analysis of 35+ acoustic, spectral, and emotional features (MFCCs, valence, instruments) via Librosa and Essentia-TensorFlow integration.',
+        'Scoring & Batch processing: generated audio centroids and statistical distributions over broadcast history, including algorithmic cold-start handling.',
+      ],
+      technologies: ['Microsoft Azure', 'Python', 'Matching', 'Testing and Debugging', 'Docker', 'Microservices', 'GitHub Actions (CI/CD)'],
+    },
     {
       title: 'FullStack Developer | Freelance',
       company: 'Melodia',

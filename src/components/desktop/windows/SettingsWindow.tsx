@@ -9,13 +9,12 @@ import {
   SunSymbol,
   PhotoSymbol,
   GlobeSymbol,
-  LaptopCodeSymbol,
   CheckmarkSymbol,
   ArrowUpRightSymbol,
 } from '@/components/shared/SFSymbols'
 import type { WallpaperPresetId } from '../MacOSMenuBar'
 
-type SettingsSection = 'profile' | 'appearance' | 'wallpaper' | 'language' | 'about'
+type SettingsSection = 'profile' | 'appearance' | 'wallpaper' | 'language'
 
 interface SettingsWindowProps {
   theme: 'dark' | 'light'
@@ -27,21 +26,6 @@ interface SettingsWindowProps {
 
 const WALLPAPERS: { id: WallpaperPresetId; gradient: string }[] = [
   { id: 'default', gradient: 'url(/images/desktop-bg.png) center/cover' },
-  {
-    id: 'aurora',
-    gradient:
-      'radial-gradient(circle at 20% 25%, #059669 0%, transparent 50%), radial-gradient(circle at 80% 70%, #2563eb 0%, transparent 55%), #07131f',
-  },
-  {
-    id: 'midnight',
-    gradient:
-      'radial-gradient(circle at 75% 20%, #4338ca 0%, transparent 48%), radial-gradient(circle at 25% 80%, #1e1b4b 0%, transparent 55%), #06080f',
-  },
-  {
-    id: 'horizon',
-    gradient:
-      'radial-gradient(circle at 25% 30%, #ea580c 0%, transparent 45%), radial-gradient(circle at 80% 75%, #4f46e5 0%, transparent 52%), #110c1c',
-  },
 ]
 
 export function SettingsWindow({
@@ -58,6 +42,7 @@ export function SettingsWindow({
   const isDark = theme === 'dark'
 
   const [section, setSection] = useState<SettingsSection>('appearance')
+  const [avatarFailed, setAvatarFailed] = useState(false)
   const portfolio = useMemo(() => getLocalizedPortfolioData(locale), [locale])
 
   const navItems: { id: SettingsSection; label: string; icon: React.ReactNode; color: string }[] = [
@@ -89,12 +74,6 @@ export function SettingsWindow({
       icon: <GlobeSymbol className="w-3.5 h-3.5 text-white" />,
       color: 'bg-sky-500',
     },
-    {
-      id: 'about',
-      label: tSettings('sections.about'),
-      icon: <LaptopCodeSymbol className="w-3.5 h-3.5 text-white" />,
-      color: 'bg-slate-500',
-    },
   ]
 
   const cardClass = `rounded-xl border p-4 ${
@@ -110,8 +89,17 @@ export function SettingsWindow({
         }`}
       >
         <div className="macos-desktop-only px-2 pt-1 pb-2 items-center gap-2.5">
-          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#007AFF] to-indigo-600 text-white font-bold text-sm flex items-center justify-center shrink-0">
-            YB
+          <div className="w-9 h-9 rounded-full overflow-hidden bg-gradient-to-br from-[#007AFF] to-indigo-600 text-white font-bold text-xs flex items-center justify-center shrink-0 ring-1 ring-white/20">
+            {portfolio.personalInfo.profileImage && !avatarFailed ? (
+              <img
+                src={portfolio.personalInfo.profileImage}
+                alt={portfolio.personalInfo.name}
+                onError={() => setAvatarFailed(true)}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              'AE'
+            )}
           </div>
           <div className="min-w-0">
             <div className={`text-xs font-bold truncate ${isDark ? 'text-white' : 'text-gray-900'}`}>
@@ -162,10 +150,19 @@ export function SettingsWindow({
         </div>
 
         {section === 'profile' && (
-          <div className={cardClass}>
+          <div className={`${cardClass} space-y-4`}>
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#007AFF] to-purple-600 text-white text-xl font-bold flex items-center justify-center shrink-0 shadow-lg">
-                YB
+              <div className="w-16 h-16 rounded-full overflow-hidden bg-gradient-to-br from-[#007AFF] to-purple-600 text-white text-xl font-bold flex items-center justify-center shrink-0 shadow-lg ring-1 ring-white/20">
+                {portfolio.personalInfo.profileImage && !avatarFailed ? (
+                  <img
+                    src={portfolio.personalInfo.profileImage}
+                    alt={portfolio.personalInfo.name}
+                    onError={() => setAvatarFailed(true)}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  'AE'
+                )}
               </div>
               <div className="min-w-0">
                 <div className={`text-base font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
@@ -175,9 +172,70 @@ export function SettingsWindow({
                   {portfolio.personalInfo.title}
                 </div>
                 <div className={`text-xs mt-1 ${isDark ? 'text-white/55' : 'text-gray-500'}`}>
-                  {portfolio.personalInfo.email} • {portfolio.personalInfo.location}
+                  {portfolio.personalInfo.email}
                 </div>
               </div>
+            </div>
+
+            <div className="space-y-2 text-xs pt-2">
+              <div
+                className={`flex justify-between py-2 border-t ${
+                  isDark ? 'border-white/10' : 'border-black/10'
+                }`}
+              >
+                <span className={isDark ? 'text-white/55' : 'text-gray-500'}>
+                  {tSettings('phoneLabel')}
+                </span>
+                <span className="font-semibold">{portfolio.personalInfo.phone}</span>
+              </div>
+              <div
+                className={`flex justify-between py-2 border-t ${
+                  isDark ? 'border-white/10' : 'border-black/10'
+                }`}
+              >
+                <span className={isDark ? 'text-white/55' : 'text-gray-500'}>
+                  {tSettings('locationLabel')}
+                </span>
+                <span className="font-semibold">{portfolio.personalInfo.location}</span>
+              </div>
+              <div
+                className={`flex justify-between py-2 border-t ${
+                  isDark ? 'border-white/10' : 'border-black/10'
+                }`}
+              >
+                <span className={isDark ? 'text-white/55' : 'text-gray-500'}>
+                  {tSettings('timezoneLabel')}
+                </span>
+                <span className="font-semibold">{portfolio.personalInfo.timezone}</span>
+              </div>
+            </div>
+
+            <div
+              className={`pt-3 border-t flex flex-wrap justify-end gap-2 ${
+                isDark ? 'border-white/10' : 'border-black/10'
+              }`}
+            >
+              <a
+                href={portfolio.personalInfo.cvPath}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                  isDark
+                    ? 'bg-white/10 hover:bg-white/20 text-white'
+                    : 'bg-black/5 hover:bg-black/10 text-gray-900'
+                }`}
+              >
+                {tSettings('downloadCV')}
+              </a>
+              <a
+                href={socialLinks.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#007AFF] text-white text-xs font-semibold hover:bg-blue-600 transition-colors"
+              >
+                <span>GitHub</span>
+                <ArrowUpRightSymbol className="w-3.5 h-3.5" />
+              </a>
             </div>
           </div>
         )}
@@ -246,7 +304,7 @@ export function SettingsWindow({
             <p className={`text-xs mb-4 ${isDark ? 'text-white/60' : 'text-gray-600'}`}>
               {tSettings('wallpaperDesc')}
             </p>
-            <div className="grid grid-cols-2 gap-3.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               {WALLPAPERS.map((wp) => {
                 const selected = wallpaper === wp.id
                 return (
@@ -262,7 +320,7 @@ export function SettingsWindow({
                           : 'border-black/10 hover:border-black/30'
                     }`}
                   >
-                    <div className="h-24 w-full" style={{ background: wp.gradient }} />
+                    <div className="h-32 w-full" style={{ background: wp.gradient }} />
                     <div
                       className={`px-3 py-2 text-xs font-semibold flex items-center justify-between ${
                         isDark ? 'bg-white/[0.04]' : 'bg-black/[0.02]'
@@ -310,47 +368,6 @@ export function SettingsWindow({
           </div>
         )}
 
-        {section === 'about' && (
-          <div className={cardClass}>
-            <div className="space-y-3 text-xs">
-              <div className="flex justify-between py-1.5 border-b border-white/10">
-                <span className={isDark ? 'text-white/55' : 'text-gray-500'}>
-                  {tSettings('osLabel')}
-                </span>
-                <span className="font-semibold">{tSettings('osValue')}</span>
-              </div>
-              <div className="flex justify-between py-1.5 border-b border-white/10">
-                <span className={isDark ? 'text-white/55' : 'text-gray-500'}>
-                  {tSettings('chipLabel')}
-                </span>
-                <span className="font-semibold">{tSettings('chipValue')}</span>
-              </div>
-              <div className="flex justify-between py-1.5 border-b border-white/10">
-                <span className={isDark ? 'text-white/55' : 'text-gray-500'}>
-                  {tSettings('frameworkLabel')}
-                </span>
-                <span className="font-semibold">Next.js 14 • TypeScript • Tailwind</span>
-              </div>
-              <div className="flex justify-between py-1.5">
-                <span className={isDark ? 'text-white/55' : 'text-gray-500'}>
-                  {tSettings('motionLabel')}
-                </span>
-                <span className="font-semibold">Framer Motion 10 + Container Queries</span>
-              </div>
-            </div>
-            <div className="mt-4 pt-3 border-t border-white/10 flex justify-end">
-              <a
-                href={socialLinks.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#007AFF] text-white text-xs font-semibold hover:bg-blue-600 transition-colors"
-              >
-                <span>GitHub</span>
-                <ArrowUpRightSymbol className="w-3.5 h-3.5" />
-              </a>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   )

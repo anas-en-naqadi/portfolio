@@ -35,7 +35,7 @@ interface SpotlightSearchProps {
   isOpen: boolean
   onClose: () => void
   theme?: 'dark' | 'light'
-  onOpenWindow: (id: DesktopWindowId) => void
+  onOpenWindow: (id: DesktopWindowId, searchTerm?: string) => void
   onDownloadCV: () => void
   onToggleTheme: () => void
   onSwitchLanguage: () => void
@@ -226,7 +226,7 @@ export function SpotlightSearch({
       subtitle: p.technologies.slice(0, 4).join(' • '),
       icon: getAppleIcon('projects', 24),
       onSelect: () => {
-        onOpenWindow('projects')
+        onOpenWindow('projects', p.title)
         onClose()
       },
     }))
@@ -260,7 +260,7 @@ export function SpotlightSearch({
         subtitle: group.label,
         icon: <CpuSymbol className="w-4 h-4 text-cyan-400" />,
         onSelect: () => {
-          onOpenWindow('skills')
+          onOpenWindow('skills', item)
           onClose()
         },
       }))
