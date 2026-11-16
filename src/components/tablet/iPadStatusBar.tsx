@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import { useLocale, useTranslations } from 'next-intl'
 import { BatterySymbol, WifiSymbol } from '@/components/shared/SFSymbols'
 
-interface iPadStatusBarProps {
+interface IPadStatusBarProps {
   theme: 'dark' | 'light'
   isAppOpen?: boolean
   onToggleControlCenter?: () => void
@@ -14,14 +14,14 @@ interface iPadStatusBarProps {
   controlCenterOpen?: boolean
 }
 
-export default function iPadStatusBar({
+export default function IPadStatusBar({
   theme,
   isAppOpen = false,
   onToggleControlCenter,
   onHoverControlCenterEnter,
   onHoverControlCenterLeave,
   controlCenterOpen = false,
-}: iPadStatusBarProps) {
+}: IPadStatusBarProps) {
   const locale = useLocale()
   const t = useTranslations('tablet.statusBar')
   const { timeShort, shortDateString } = useTime(locale)

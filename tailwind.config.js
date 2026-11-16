@@ -9,7 +9,7 @@ module.exports = {
   theme: {
     extend: {
       screens: {
-        short: { raw: '(max-height: 760px)' },
+        short: { raw: '(max-height: 820px)' },
         tall: { raw: '(min-height: 920px)' },
       },
       colors: {

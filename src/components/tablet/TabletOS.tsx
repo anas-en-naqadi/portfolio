@@ -19,7 +19,8 @@ import IPadSkills from './IPadSkills'
 import IPadContact from './IPadContact'
 import IPadSettings from './IPadSettings'
 import { getAppleIcon } from '../shared/AppleIcons'
-import { GlobeSymbol, HouseSymbol, MoonSymbol, SunSymbol } from '../shared/SFSymbols'
+import { CheckmarkSymbol, GlobeSymbol, HouseSymbol, MoonSymbol, SunSymbol } from '../shared/SFSymbols'
+import { CVDownloadModal, triggerCVDownload, type CVLanguage } from '../shared/CVDownloadModal'
 
 type AppId = 'about' | 'calendar' | 'appstore' | 'notes' | 'mail' | 'settings'
 
@@ -42,8 +43,21 @@ export default function TabletOS() {
   const { theme, toggleTheme } = useTheme()
   const [activeSheet, setActiveSheet] = useState<AppId | null>(null)
   const [controlCenterOpen, setControlCenterOpen] = useState(false)
+  const [cvModalOpen, setCvModalOpen] = useState(false)
+  const [cvPill, setCvPill] = useState<{ id: number; lang: CVLanguage } | null>(null)
+  const cvPillTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const ccPinnedRef = useRef(false)
   const ccTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const tCommonCV = useTranslations('common.cvModal')
+
+  const handleSelectCVLanguage = (lang: CVLanguage) => {
+    triggerCVDownload(lang)
+    setCvModalOpen(false)
+    setCvPill({ id: Date.now(), lang })
+    if (cvPillTimerRef.current) clearTimeout(cvPillTimerRef.current)
+    cvPillTimerRef.current = setTimeout(() => setCvPill(null), 2600)
+  }
 
   const clearCcTimer = () => {
     if (ccTimerRef.current) {
@@ -95,6 +109,7 @@ export default function TabletOS() {
     grid: 74,
     dock: 62,
   })
+  const [isShortViewport, setIsShortViewport] = useState(false)
   const isDark = theme === 'dark'
   const router = useRouter()
   const pathname = usePathname()
@@ -106,7 +121,8 @@ export default function TabletOS() {
     const updateIconSizes = () => {
       const w = window.innerWidth
       const h = window.innerHeight
-      const isShort = h <= 760
+      const isShort = h <= 820
+      setIsShortViewport(isShort)
       if (w < 640) {
         setIconSizes({ grid: isShort ? 56 : 60, dock: 52 })
       } else if (w < 768) {
@@ -118,7 +134,11 @@ export default function TabletOS() {
 
     updateIconSizes()
     window.addEventListener('resize', updateIconSizes)
-    return () => window.removeEventListener('resize', updateIconSizes)
+    window.addEventListener('orientationchange', updateIconSizes)
+    return () => {
+      window.removeEventListener('resize', updateIconSizes)
+      window.removeEventListener('orientationchange', updateIconSizes)
+    }
   }, [])
 
   useEffect(() => {
@@ -204,7 +224,7 @@ export default function TabletOS() {
 
   return (
     <div
-      className="ipad-os h-screen w-full overflow-hidden relative flex flex-col select-none"
+      className="ipad-os h-screen h-[100dvh] w-full overflow-hidden relative flex flex-col select-none"
       style={{
         backgroundColor: '#150f28',
         backgroundImage: `url('/images/tablet-bg.png'), ${fallbackGradient}`,
@@ -345,10 +365,10 @@ export default function TabletOS() {
         className="relative z-10 flex-1 overflow-y-auto overflow-x-hidden w-full"
         aria-label={t('home.homeScreenLabel')}
       >
-        <div className="min-h-full w-full max-w-5xl mx-auto px-4 sm:px-8 pt-4 sm:pt-8 pb-28 sm:pb-36 short:pt-3 short:pb-24 flex flex-col items-center justify-start sm:justify-center short:justify-start gap-6 sm:gap-10 md:gap-12 short:gap-5">
+        <div className={`min-h-full w-full max-w-5xl mx-auto px-4 sm:px-8 pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] pt-4 sm:pt-8 pb-28 sm:pb-36 short:pt-3 short:pb-24 flex flex-col items-center ${isShortViewport ? 'justify-start' : 'justify-start sm:justify-center short:justify-start'} gap-6 sm:gap-10 md:gap-12 short:gap-5`}>
           {/* TOP: Weather/Clock/Profile/CV widgets */}
           <div className="w-full flex justify-center flex-shrink-0">
-            <IPadWidgets theme={theme} />
+            <IPadWidgets theme={theme} onDownloadCV={() => setCvModalOpen(true)} />
           </div>
 
           {/* BOTTOM: Responsive Home App Grid */}
@@ -383,6 +403,46 @@ export default function TabletOS() {
       >
         {activeSheet && windowComponents[activeSheet]}
       </IPadSheet>
+
+      {/* iPadOS CV Language Picker Alert */}
+      <CVDownloadModal
+        isOpen={cvModalOpen}
+        onClose={() => setCvModalOpen(false)}
+        onDownload={handleSelectCVLanguage}
+        theme={theme}
+        variant="ipados"
+      />
+
+      {/* iPadOS AirDrop/Files-style Top-Center Pill Feedback */}
+      <AnimatePresence>
+        {cvPill && (
+          <motion.div
+            key={cvPill.id}
+            role="status"
+            aria-live="polite"
+            initial={{ opacity: 0, y: -18, scale: 0.92 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -14, scale: 0.92 }}
+            transition={{ type: 'spring', stiffness: 420, damping: 28 }}
+            className="fixed top-9 left-1/2 -translate-x-1/2 z-[100060] pointer-events-none max-w-[calc(100vw-2rem)]"
+          >
+            <div
+              className={`flex items-center gap-2.5 px-4 py-2 rounded-full border backdrop-blur-2xl shadow-xl ${
+                isDark
+                  ? 'bg-zinc-900/88 border-white/15 text-white'
+                  : 'bg-white/88 border-black/10 text-gray-900'
+              }`}
+            >
+              <span className="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0">
+                <CheckmarkSymbol className="w-3 h-3" />
+              </span>
+              <span className="text-xs font-semibold truncate">
+                {tCommonCV('downloadedTitle')} ({cvPill.lang.toUpperCase()})
+              </span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

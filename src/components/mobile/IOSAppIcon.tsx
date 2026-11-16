@@ -11,6 +11,7 @@ interface IOSAppIconProps {
   index?: number
   size?: number
   badge?: number
+  showLabel?: boolean
 }
 
 export default function IOSAppIcon({
@@ -20,6 +21,7 @@ export default function IOSAppIcon({
   index = 0,
   size = 60,
   badge,
+  showLabel = true,
 }: IOSAppIconProps) {
   const t = useTranslations()
   return (
@@ -73,12 +75,14 @@ export default function IOSAppIcon({
       </div>
 
       {/* Label */}
-      <span
-        className="text-[11px] text-white font-medium text-center tracking-wide leading-tight drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]"
-        style={{ maxWidth: size + 10 }}
-      >
-        {label}
-      </span>
+      {showLabel && (
+        <span
+          className="text-[11px] text-white font-medium text-center tracking-wide leading-tight drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] line-clamp-2"
+          style={{ maxWidth: size + 20 }}
+        >
+          {label}
+        </span>
+      )}
     </motion.div>
   )
 }

@@ -103,13 +103,16 @@ export function Window({
   useEffect(() => {
     const clampToViewport = () => {
       if (isMaximized) return
-      const maxWidth = Math.max(MIN_WIDTH, window.innerWidth - 40)
-      const maxHeight = Math.max(MIN_HEIGHT, window.innerHeight - MENU_BAR_HEIGHT - DOCK_RESERVE)
+      const availWidth = Math.max(320, window.innerWidth - 40)
+      const availHeight = Math.max(280, window.innerHeight - MENU_BAR_HEIGHT - DOCK_RESERVE)
+      const effectiveMinW = Math.min(MIN_WIDTH, availWidth)
+      const effectiveMinH = Math.min(MIN_HEIGHT, availHeight)
+
       setSize((prev) => ({
-        width: Math.min(prev.width, maxWidth),
-        height: Math.min(prev.height, maxHeight),
+        width: Math.max(effectiveMinW, Math.min(prev.width, availWidth)),
+        height: Math.max(effectiveMinH, Math.min(prev.height, availHeight)),
       }))
-      const currentW = Math.min(sizeRef.current.width, maxWidth)
+      const currentW = Math.max(effectiveMinW, Math.min(sizeRef.current.width, availWidth))
       setPosition((prev) => ({
         x: Math.max(
           -(currentW - TITLEBAR_SAFE_VISIBLE),
@@ -120,7 +123,11 @@ export function Window({
     }
     clampToViewport()
     window.addEventListener('resize', clampToViewport)
-    return () => window.removeEventListener('resize', clampToViewport)
+    window.addEventListener('orientationchange', clampToViewport)
+    return () => {
+      window.removeEventListener('resize', clampToViewport)
+      window.removeEventListener('orientationchange', clampToViewport)
+    }
   }, [isMaximized])
 
   useEffect(() => {

@@ -16,7 +16,22 @@
     "fullscreen": "Plein écran",
     "close": "Fermer",
     "minimize": "Réduire",
-    "maximize": "Agrandir"
+    "maximize": "Agrandir",
+    "cvModal": {
+      "title": "Télécharger le CV",
+      "subtitle": "Choisissez la version linguistique (PDF)",
+      "englishTitle": "Version Anglaise",
+      "englishSubtitle": "CV en anglais (PDF)",
+      "frenchTitle": "Version Française",
+      "frenchSubtitle": "CV en français (PDF)",
+      "cancel": "Annuler",
+      "downloadedTitle": "CV téléchargé",
+      "downloadedEn": "Téléchargement du CV anglais (PDF) lancé",
+      "downloadedFr": "Téléchargement du CV français (PDF) lancé",
+      "badgeEn": "EN",
+      "badgeFr": "FR",
+      "savedLabel": "Téléchargé"
+    }
   },
   "about": {
     "title": "À Propos de Moi",

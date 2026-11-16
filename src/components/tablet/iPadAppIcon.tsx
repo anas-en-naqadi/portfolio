@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { useTranslations } from 'next-intl'
 import { getAppleIcon } from '../shared/AppleIcons'
 
-interface iPadAppIconProps {
+interface IPadAppIconProps {
   id: string
   label: string
   onClick: () => void
@@ -14,7 +14,7 @@ interface iPadAppIconProps {
   badge?: number
 }
 
-export default function iPadAppIcon({
+export default function IPadAppIcon({
   id,
   label,
   onClick,
@@ -22,7 +22,7 @@ export default function iPadAppIcon({
   size = 76,
   showLabel = true,
   badge,
-}: iPadAppIconProps) {
+}: IPadAppIconProps) {
   const t = useTranslations('tablet.home')
   const textColorClass = 'text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)]'
 

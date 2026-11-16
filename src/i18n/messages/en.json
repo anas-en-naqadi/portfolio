@@ -16,7 +16,22 @@
     "fullscreen": "Fullscreen",
     "close": "Close",
     "minimize": "Minimize",
-    "maximize": "Maximize"
+    "maximize": "Maximize",
+    "cvModal": {
+      "title": "Download CV / Resume",
+      "subtitle": "Choose your preferred language version (PDF)",
+      "englishTitle": "English Version",
+      "englishSubtitle": "International Resume (PDF)",
+      "frenchTitle": "French Version",
+      "frenchSubtitle": "Curriculum Vitae Français (PDF)",
+      "cancel": "Cancel",
+      "downloadedTitle": "CV Downloaded",
+      "downloadedEn": "English CV (PDF) started downloading",
+      "downloadedFr": "French CV (PDF) started downloading",
+      "badgeEn": "EN",
+      "badgeFr": "FR",
+      "savedLabel": "Downloaded"
+    }
   },
   "about": {
     "title": "About Me",

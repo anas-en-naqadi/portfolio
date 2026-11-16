@@ -86,7 +86,7 @@ export default function IPadSkills({ theme }: IPadSkillsProps) {
           <span className="text-xs font-bold text-gray-900 dark:text-white whitespace-nowrap">
             {note.title}
           </span>
-          <span className="ipad-desktop-only text-[10px] text-zinc-500 dark:text-zinc-400 font-medium truncate w-full">
+          <span className="ipad-desktop-block text-[10px] text-zinc-500 dark:text-zinc-400 font-medium truncate w-full">
             {note.excerpt}
           </span>
         </button>

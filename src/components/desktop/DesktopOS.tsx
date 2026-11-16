@@ -17,7 +17,9 @@ import {
   DownloadSymbol,
   TrashSymbol,
   CopySymbol,
+  CheckmarkSymbol,
 } from '@/components/shared/SFSymbols'
+import { CVDownloadModal, triggerCVDownload, type CVLanguage } from '@/components/shared/CVDownloadModal'
 import { Window } from './Window'
 import { Taskbar, type DockApp } from './Taskbar'
 import { DesktopIcon } from './DesktopIcon'
@@ -99,6 +101,7 @@ export function DesktopOS() {
   )
   const [isStartMenuOpen, setIsStartMenuOpen] = useState(false)
   const [isSpotlightOpen, setIsSpotlightOpen] = useState(false)
+  const [isCVModalOpen, setIsCVModalOpen] = useState(false)
   const [wallpaper, setWallpaper] = useState<WallpaperPresetId>('default')
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null)
   const [toast, setToast] = useState<MacToastData | null>(null)
@@ -244,9 +247,24 @@ export function DesktopOS() {
   )
 
   const handleDownloadCV = useCallback(() => {
-    showToast(tToast('downloadTitle'), tToast('downloadBody'), <DownloadSymbol className="w-4 h-4" />)
-    window.open(portfolio.personalInfo.cvPath, '_blank', 'noopener,noreferrer')
-  }, [portfolio.personalInfo.cvPath, showToast, tToast])
+    setContextMenu(null)
+    setIsStartMenuOpen(false)
+    setIsSpotlightOpen(false)
+    setIsCVModalOpen(true)
+  }, [])
+
+  const handleSelectCVLanguage = useCallback(
+    (lang: CVLanguage) => {
+      triggerCVDownload(lang)
+      setIsCVModalOpen(false)
+      showToast(
+        tCommon('cvModal.downloadedTitle'),
+        lang === 'en' ? tCommon('cvModal.downloadedEn') : tCommon('cvModal.downloadedFr'),
+        <CheckmarkSymbol className="w-4 h-4 text-emerald-500" />
+      )
+    },
+    [showToast, tCommon]
+  )
 
   const copyContactValue = useCallback(
     async (value: string, subtitle: string) => {
@@ -446,7 +464,7 @@ export function DesktopOS() {
         zIndex={openWindows.about.zIndex}
         theme={theme}
       >
-        <AboutWindow theme={theme} onNotify={(t, s) => showToast(t, s)} />
+        <AboutWindow theme={theme} onNotify={(t, s) => showToast(t, s)} onDownloadCV={handleDownloadCV} />
       </Window>
 
       <Window
@@ -542,6 +560,7 @@ export function DesktopOS() {
           onToggleTheme={toggleTheme}
           onSelectWallpaper={handleSelectWallpaper}
           onSwitchLanguage={switchLanguage}
+          onDownloadCV={handleDownloadCV}
         />
       </Window>
 
@@ -644,6 +663,15 @@ export function DesktopOS() {
         onAppClick={(appId) => openWindow(appId as DesktopWindowId)}
         theme={theme}
         onDownloadCV={handleDownloadCV}
+      />
+
+      {/* CV Language Picker Modal */}
+      <CVDownloadModal
+        isOpen={isCVModalOpen}
+        onClose={() => setIsCVModalOpen(false)}
+        onDownload={handleSelectCVLanguage}
+        theme={theme}
+        variant="macos"
       />
 
       {/* macOS Notification Toast */}

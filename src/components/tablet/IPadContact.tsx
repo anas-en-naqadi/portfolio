@@ -113,10 +113,10 @@ export default function IPadContact({ theme }: IPadContactProps) {
             <h3 className="text-xs font-bold text-gray-900 dark:text-white whitespace-nowrap sm:truncate">
               {mail.sender}
             </h3>
-            <h4 className="ipad-desktop-only text-[11px] font-bold text-gray-700 dark:text-gray-300 truncate">
+            <h4 className="ipad-desktop-block text-[11px] font-bold text-gray-700 dark:text-gray-300 truncate">
               {mail.subject}
             </h4>
-            <p className="ipad-desktop-only text-[10.5px] text-zinc-400 dark:text-zinc-500 font-medium line-clamp-2 mt-0.5 leading-snug">
+            <p className="ipad-desktop-clamp-2 text-[10.5px] text-zinc-400 dark:text-zinc-500 font-medium mt-0.5 leading-snug">
               {mail.body}
             </p>
           </div>

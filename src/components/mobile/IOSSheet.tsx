@@ -74,20 +74,21 @@ export default function IOSSheet({
           <motion.div
             className={`fixed bottom-0 left-0 right-0 z-50 flex flex-col overflow-hidden border-t ${borderColor}`}
             style={{
-              height: "92vh",
+              height: "min(92dvh, calc(100dvh - 16px))",
               background: sheetBg,
               borderRadius: "24px 24px 0 0",
               boxShadow: "0 -8px 40px rgba(0, 0, 0, 0.3)",
               fontFamily:
                 '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
             }}
-            initial={{ y: "100%", scale: 1 }}
+            initial={{ y: "100%", opacity: 0.7, scale: 0.98 }}
             animate={{
-              y: -swipeProgress * 18,
-              scale: 1 - swipeProgress * 0.04,
+              y: -swipeProgress * 28,
+              opacity: 1 - swipeProgress * 0.2,
+              scale: 1 - swipeProgress * 0.05,
             }}
-            exit={{ y: "100%", scale: 0.96 }}
-            transition={{ type: "spring", stiffness: 380, damping: 38 }}
+            exit={{ y: -56, opacity: 0, scale: 0.92 }}
+            transition={{ type: "spring", stiffness: 360, damping: 34 }}
             role="dialog"
             aria-modal="true"
             aria-label={title}
@@ -133,13 +134,12 @@ export default function IOSSheet({
               {children}
             </div>
 
-            {/* Bottom iPhone Swipe-Up Home Bar */}
+            {/* Bottom iPhone Swipe-Up Home Bar (pan-up or keyboard activation; leaves upper scroll area clear) */}
             <motion.div
-              className="absolute bottom-0 left-0 right-0 h-10 flex items-end justify-center pb-2.5 z-30 cursor-grab active:cursor-grabbing touch-none select-none"
-              style={{ background: bottomFadeBg }}
+              className="absolute bottom-0 left-1/2 -translate-x-1/2 w-48 h-7 pb-[max(0.5rem,env(safe-area-inset-bottom))] flex items-end justify-center z-30 cursor-grab active:cursor-grabbing touch-none select-none"
+              style={{ background: bottomFadeBg, borderRadius: "9999px 9999px 0 0" }}
               onPan={handleHomeBarPan}
               onPanEnd={handleHomeBarPanEnd}
-              onClick={onClose}
               role="button"
               tabIndex={0}
               aria-label={t("mobile.home.goHome")}

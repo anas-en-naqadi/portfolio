@@ -8,6 +8,7 @@ import { useTheme } from '@/hooks/useTheme'
 import { useRouter, usePathname } from '@/i18n/routing'
 import { locales, localeNames, type Locale } from '@/i18n/config'
 import { personalInfo, socialLinks, getLocalizedPortfolioData } from '@/lib/data'
+import { fetchMarrakechWeather, type WeatherState } from '@/lib/weather'
 import { getAppleIcon } from '../shared/AppleIcons'
 import {
   AppCubeSymbol,
@@ -32,46 +33,9 @@ import IOSSheet from './IOSSheet'
 import IOSDock from './IOSDock'
 
 import AnimatedSection from '../shared/AnimatedSection'
+import { CVDownloadModal, triggerCVDownload, type CVLanguage } from '../shared/CVDownloadModal'
 
 type AppId = 'home' | 'about' | 'experience' | 'projects' | 'skills' | 'contact' | 'settings'
-
-interface HourlyForecast {
-  hour: string
-  temp: number
-  code: number
-}
-
-type WeatherConditionKey =
-  | 'clearSky'
-  | 'partlyCloudy'
-  | 'foggy'
-  | 'drizzle'
-  | 'rainy'
-  | 'snowy'
-  | 'showers'
-  | 'thunderstorm'
-  | 'clear'
-
-interface WeatherState {
-  temp: number
-  conditionKey: WeatherConditionKey
-  high: number
-  low: number
-  code: number
-  hourly: HourlyForecast[]
-}
-
-function getWeatherConditionKey(code: number): WeatherConditionKey {
-  if (code === 0) return 'clearSky'
-  if ([1, 2, 3].includes(code)) return 'partlyCloudy'
-  if ([45, 48].includes(code)) return 'foggy'
-  if ([51, 53, 55].includes(code)) return 'drizzle'
-  if ([61, 63, 65].includes(code)) return 'rainy'
-  if ([71, 73, 75].includes(code)) return 'snowy'
-  if ([80, 81, 82].includes(code)) return 'showers'
-  if ([95, 96, 99].includes(code)) return 'thunderstorm'
-  return 'clear'
-}
 
 function getWeatherIcon(code: number, size = 20) {
   if (code === 0) {
@@ -123,9 +87,12 @@ export default function MobileOS() {
   const pathname = usePathname()
   const { theme, toggleTheme } = useTheme()
   const [activeApp, setActiveApp] = useState<AppId>('home')
+  const [sheetApp, setSheetApp] = useState<Exclude<AppId, 'home'>>('about')
   const [projectFilter, setProjectFilter] = useState<'all' | 'ai' | 'web' | 'mobile'>('all')
-  const [expandedSkillFolder, setExpandedSkillFolder] = useState<number | null>(null)
+  const [expandedSkillFolder, setExpandedSkillFolder] = useState<string | null>(null)
   const [skillSearchQuery, setSkillSearchQuery] = useState('')
+  const [cvModalOpen, setCvModalOpen] = useState(false)
+  const [cvDownloadEvent, setCvDownloadEvent] = useState<{ lang: CVLanguage; nonce: number } | null>(null)
   const {
     personalInfo: localizedPersonalInfo,
     education: localizedEducation,
@@ -152,50 +119,42 @@ export default function MobileOS() {
   })
 
   useEffect(() => {
-    async function getWeather() {
+    const controller = new AbortController()
+    async function loadWeather() {
       try {
-        const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=31.6295&longitude=-7.9811&current=temperature_2m,weather_code&hourly=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&timezone=auto')
-        const data = await res.json()
-        
-        const temp = Math.round(data.current.temperature_2m)
-        const code = data.current.weather_code
-        const high = Math.round(data.daily.temperature_2m_max[0])
-        const low = Math.round(data.daily.temperature_2m_min[0])
-        const conditionKey = getWeatherConditionKey(code)
-        
-        // Next 6 hours starting from current hour
-        const currentHour = new Date().getHours()
-        const hourlyForecast: HourlyForecast[] = []
-        for (let i = 0; i < 6; i++) {
-          const targetIndex = (currentHour + i) % 24
-          hourlyForecast.push({
-            hour: String((currentHour + i) % 24).padStart(2, '0'),
-            temp: Math.round(data.hourly.temperature_2m[targetIndex]),
-            code: data.hourly.weather_code[targetIndex]
-          })
+        const nextWeather = await fetchMarrakechWeather(controller.signal)
+        if (nextWeather) {
+          setWeather(nextWeather)
         }
-        
-        setWeather({
-          temp,
-          conditionKey,
-          high,
-          low,
-          code,
-          hourly: hourlyForecast
-        })
       } catch (e) {
-        console.error('Error fetching Marrakech weather:', e)
+        if ((e as Error).name !== 'AbortError') {
+          console.error('Error fetching Marrakech weather:', e)
+        }
       }
     }
-    getWeather()
+    loadWeather()
+    return () => controller.abort()
   }, [])
 
   const openApp = (appId: AppId) => {
+    if (appId !== 'home') {
+      setSheetApp(appId)
+    }
     setActiveApp(appId)
   }
 
   const closeApp = () => {
     setActiveApp('home')
+  }
+
+  const handleDownloadCV = () => {
+    setCvModalOpen(true)
+  }
+
+  const handleSelectCVLanguage = (lang: CVLanguage) => {
+    triggerCVDownload(lang)
+    setCvModalOpen(false)
+    setCvDownloadEvent({ lang, nonce: Date.now() })
   }
 
   const switchLocale = (newLocale: string) => {
@@ -311,6 +270,25 @@ export default function MobileOS() {
                 <span className="text-sm font-semibold text-gray-800 dark:text-zinc-200">
                   {localizedPersonalInfo.location}
                 </span>
+              </div>
+
+              {/* Resume / CV Cell */}
+              <div className="p-4 flex items-center justify-between gap-3">
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-zinc-400">
+                    CV / PDF
+                  </span>
+                  <span className="text-sm font-semibold text-gray-800 dark:text-zinc-200">
+                    {t('common.downloadCV')}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleDownloadCV}
+                  className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#7E634B]/15 text-[#7E634B] dark:bg-[#D7BFA8]/15 dark:text-[#D7BFA8] active:scale-95 transition"
+                >
+                  PDF
+                </button>
               </div>
             </div>
 
@@ -521,7 +499,7 @@ export default function MobileOS() {
                       </p>
 
                       {/* Stack Tags */}
-                      <div className="flex flex-wrap gap-1 pt-2 border-t border-black/[0.03] dark:border-white/[0.03] -mt-4">
+                      <div className="flex flex-wrap gap-1 pt-2 border-t border-black/[0.03] dark:border-white/[0.03]">
                         {project.technologies.slice(0, 4).map((tech) => (
                           <span
                             key={tech}
@@ -557,7 +535,7 @@ export default function MobileOS() {
             {skillSearchQuery && (
               <button
                 onClick={() => setSkillSearchQuery('')}
-                aria-label="Clear search"
+                aria-label={locale === 'fr' ? 'Effacer la recherche' : 'Clear search'}
                 className="flex items-center justify-center shrink-0 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
               >
                 <XMarkCircleSymbol className="w-3.5 h-3.5" />
@@ -570,12 +548,12 @@ export default function MobileOS() {
         <AnimatedSection delay={0.1}>
           {(() => {
             const filteredSkillNotes = [
-              { title: t('skills.languages'), items: localizedSkills.languages, excerpt: localizedSkills.languages.join(', ') },
-              { title: t('skills.frameworks'), items: localizedSkills.frameworks, excerpt: localizedSkills.frameworks.join(', ') },
-              { title: t('skills.databases'), items: localizedSkills.databases, excerpt: localizedSkills.databases.join(', ') },
-              { title: t('skills.libraries'), items: localizedSkills.libraries, excerpt: localizedSkills.libraries.join(', ') },
-              { title: t('skills.tools'), items: localizedSkills.tools, excerpt: localizedSkills.tools.join(', ') },
-              { title: t('skills.methodologies'), items: localizedSkills.methodologies, excerpt: localizedSkills.methodologies.join(', ') },
+              { id: 'languages', title: t('skills.languages'), items: localizedSkills.languages, excerpt: localizedSkills.languages.join(', ') },
+              { id: 'frameworks', title: t('skills.frameworks'), items: localizedSkills.frameworks, excerpt: localizedSkills.frameworks.join(', ') },
+              { id: 'databases', title: t('skills.databases'), items: localizedSkills.databases, excerpt: localizedSkills.databases.join(', ') },
+              { id: 'libraries', title: t('skills.libraries'), items: localizedSkills.libraries, excerpt: localizedSkills.libraries.join(', ') },
+              { id: 'tools', title: t('skills.tools'), items: localizedSkills.tools, excerpt: localizedSkills.tools.join(', ') },
+              { id: 'methodologies', title: t('skills.methodologies'), items: localizedSkills.methodologies, excerpt: localizedSkills.methodologies.join(', ') },
             ].filter(
               (note) =>
                 note.title.toLowerCase().includes(skillSearchQuery.toLowerCase()) ||
@@ -589,13 +567,13 @@ export default function MobileOS() {
                     {t('mobile.skills.empty')}
                   </div>
                 ) : (
-                  filteredSkillNotes.map((note, idx) => {
-                const isExpanded = expandedSkillFolder === idx;
+                  filteredSkillNotes.map((note) => {
+                const isExpanded = expandedSkillFolder === note.id;
                 return (
-                  <div key={idx} className="flex flex-col">
+                  <div key={note.id} className="flex flex-col">
                     {/* Row Trigger */}
                     <button
-                      onClick={() => setExpandedSkillFolder(isExpanded ? null : idx)}
+                      onClick={() => setExpandedSkillFolder(isExpanded ? null : note.id)}
                       className="w-full text-left p-4 hover:bg-gray-50 dark:hover:bg-zinc-800/50 transition-colors flex items-center justify-between gap-4"
                     >
                       <div className="flex items-center gap-3 min-w-0">
@@ -643,7 +621,7 @@ export default function MobileOS() {
                             }}
                             initial="hidden"
                             animate="show"
-                            className="px-4 py-4 flex flex-wrap gap-1.5 ml-8 border-t border-black/[0.02] dark:border-white/[0.02]"
+                            className="pl-4 min-[380px]:pl-10 pr-4 py-3.5 flex flex-wrap gap-1.5 border-t border-black/[0.02] dark:border-white/[0.02]"
                           >
                             {note.items.map((item) => (
                               <motion.span
@@ -832,13 +810,14 @@ export default function MobileOS() {
     ),
   }
 
-  // Authentic 4-column App Grid configuration mapping our sections
+  // Authentic 4-column App Grid configuration mapping our sections + Download CV app
   const gridApps: Array<{ id: string; label: string; badge?: number; onClick: () => void }> = [
     { id: 'about', label: t('common.about'), onClick: () => openApp('about') },
     { id: 'experience', label: t('common.experience'), onClick: () => openApp('experience') },
     { id: 'projects', label: t('common.projects'), onClick: () => openApp('projects') },
     { id: 'skills', label: t('common.skills'), onClick: () => openApp('skills') },
     { id: 'contact', label: t('common.contact'), badge: 4, onClick: () => openApp('contact') },
+    { id: 'cv', label: t('common.downloadCV'), onClick: handleDownloadCV },
     { id: 'settings', label: t('common.settings'), onClick: () => openApp('settings') },
   ]
 
@@ -852,7 +831,7 @@ export default function MobileOS() {
 
   return (
     <div 
-      className="h-screen w-full overflow-hidden relative flex flex-col select-none"
+      className="h-screen h-[100dvh] w-full overflow-hidden relative flex flex-col select-none"
       style={{
         backgroundColor: '#150f28',
         backgroundImage:
@@ -875,14 +854,14 @@ export default function MobileOS() {
       <IOSStatusBar theme={theme} isAppOpen={activeApp !== 'home'} />
 
       {/* Dynamic Island */}
-      <DynamicIsland activeApp={activeApp} activeLang={locale} />
+      <DynamicIsland activeApp={activeApp} activeLang={locale} cvDownloadEvent={cvDownloadEvent} />
 
       {/* Main Home Screen Area */}
-      <div className="flex-1 pt-12 px-6 flex flex-col justify-start pb-28 overflow-y-auto relative z-10 gap-5">
-        
+      <div className="flex-1 pt-12 short:pt-10 px-6 pl-[max(1.5rem,env(safe-area-inset-left))] pr-[max(1.5rem,env(safe-area-inset-right))] flex flex-col justify-start pb-28 short:pb-24 overflow-y-auto relative z-10 gap-5 short:gap-4">
+        <div className="w-full max-w-2xl mx-auto flex flex-col gap-5 short:gap-4">
         {/* Authentic Marrakech Weather Widget */}
         <motion.div
-          className="w-full bg-gradient-to-b from-[#0A1931] to-[#15305B] backdrop-blur-xl border border-white/10 text-white rounded-3xl p-5 shadow-xl mt-4 flex flex-col gap-4 select-none"
+          className="w-full bg-gradient-to-b from-[#0A1931] to-[#15305B] backdrop-blur-xl border border-white/10 text-white rounded-3xl p-5 short:p-4 shadow-xl mt-4 short:mt-2 flex flex-col gap-4 short:gap-2.5 select-none"
           style={{
             fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Rounded", "SF Pro Text", "Segoe UI", sans-serif',
           }}
@@ -931,8 +910,8 @@ export default function MobileOS() {
           {t('mobile.weather.label')}
         </p>
 
-        {/* Home Screen Icons Grid (15 App Grid matching iOS) */}
-        <div className="grid grid-cols-4 gap-x-5 gap-y-4 px-0.5 pb-4">
+        {/* Home Screen Icons Grid (adapts 4 cols portrait -> 6 cols landscape) */}
+        <div className="grid grid-cols-4 min-[540px]:grid-cols-6 gap-x-4 min-[540px]:gap-x-5 gap-y-4 px-0.5 pb-4 justify-items-center">
           {gridApps.map((app, index) => (
             <IOSAppIcon
               key={app.id}
@@ -945,9 +924,7 @@ export default function MobileOS() {
             />
           ))}
         </div>
-
-
-
+        </div>
       </div>
 
       {/* iOS Dock */}
@@ -956,25 +933,30 @@ export default function MobileOS() {
       {/* iOS Home Indicator (shown on Home Screen; open apps use IOSSheet swipe-up bar) */}
       {activeApp === 'home' && (
         <div
-          className="fixed bottom-2 left-1/2 -translate-x-1/2 w-[134px] h-[5px] bg-white/60 dark:bg-white/40 rounded-full z-40 pointer-events-none"
+          className="fixed bottom-[max(0.5rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 w-[134px] h-[5px] bg-white/60 dark:bg-white/40 rounded-full z-40 pointer-events-none"
           aria-hidden="true"
         />
       )}
 
-      {/* Slide-Up App Sheets */}
-      <AnimatePresence>
-        {activeApp !== 'home' && (
-          <IOSSheet
-            isOpen={activeApp !== 'home'}
-            onClose={closeApp}
-            title={activeApp !== 'home' ? appTitles[activeApp] : ''}
-            icon={activeApp !== 'home' ? getAppleIcon(activeApp, 20) : null}
-            theme={theme}
-          >
-            {activeApp !== 'home' && appContent[activeApp]}
-          </IOSSheet>
-        )}
-      </AnimatePresence>
+      {/* Slide-Up App Sheets (always mounted so AnimatePresence runs exit animation smoothly) */}
+      <IOSSheet
+        isOpen={activeApp !== 'home'}
+        onClose={closeApp}
+        title={appTitles[sheetApp]}
+        icon={getAppleIcon(sheetApp, 20)}
+        theme={theme}
+      >
+        {appContent[sheetApp]}
+      </IOSSheet>
+
+      {/* iOS CV Language Action Sheet */}
+      <CVDownloadModal
+        isOpen={cvModalOpen}
+        onClose={() => setCvModalOpen(false)}
+        onDownload={handleSelectCVLanguage}
+        theme={theme}
+        variant="ios"
+      />
     </div>
   )
 }

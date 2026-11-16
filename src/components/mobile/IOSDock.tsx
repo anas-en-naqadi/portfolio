@@ -19,7 +19,7 @@ interface IOSDockProps {
   apps?: DockApp[]
 }
 
-export default function IOSDock({ onOpenApp, theme: _theme = 'dark', apps }: IOSDockProps) {
+export default function IOSDock({ onOpenApp, apps }: IOSDockProps) {
   const t = useTranslations()
   const defaultDockApps: DockApp[] = [
     { id: 'about', label: t('common.about') },
@@ -31,7 +31,7 @@ export default function IOSDock({ onOpenApp, theme: _theme = 'dark', apps }: IOS
 
   return (
     <motion.div
-      className="fixed bottom-6 z-40 pointer-events-auto w-[90%]"
+      className="fixed bottom-[max(1.25rem,calc(env(safe-area-inset-bottom)+0.75rem))] z-40 pointer-events-auto w-fit max-w-[92vw]"
       initial={{ y: 50, opacity: 0, x: '-50%' }}
       animate={{ y: 0, opacity: 1, x: '-50%' }}
       style={{ left: '50%' }}
@@ -40,7 +40,7 @@ export default function IOSDock({ onOpenApp, theme: _theme = 'dark', apps }: IOS
       aria-label={t('mobile.home.dockLabel')}
     >
       <div
-        className="flex items-center gap-4 px-6 py-3 rounded-[28px]"
+        className="flex items-center justify-center gap-3 min-[380px]:gap-4 min-[540px]:gap-6 px-4 min-[380px]:px-6 py-2.5 sm:py-3 rounded-[28px]"
         style={{
           background: 'rgba(255, 255, 255, 0.15)',
           backdropFilter: 'blur(22px) saturate(160%)',
@@ -57,8 +57,9 @@ export default function IOSDock({ onOpenApp, theme: _theme = 'dark', apps }: IOS
             label={app.label}
             onClick={app.onClick || (() => onOpenApp(app.id as AppId))}
             index={index}
-            size={54}
+            size={52}
             badge={app.badge}
+            showLabel={false}
           />
         ))}
       </div>

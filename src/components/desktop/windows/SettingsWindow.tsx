@@ -22,6 +22,7 @@ interface SettingsWindowProps {
   onToggleTheme: () => void
   onSelectWallpaper: (wp: WallpaperPresetId) => void
   onSwitchLanguage: () => void
+  onDownloadCV?: () => void
 }
 
 const WALLPAPERS: { id: WallpaperPresetId; gradient: string }[] = [
@@ -34,6 +35,7 @@ export function SettingsWindow({
   onToggleTheme,
   onSelectWallpaper,
   onSwitchLanguage,
+  onDownloadCV,
 }: SettingsWindowProps) {
   const tSettings = useTranslations('desktop.windows.settings')
   const tWp = useTranslations('desktop.wallpapers')
@@ -215,18 +217,32 @@ export function SettingsWindow({
                 isDark ? 'border-white/10' : 'border-black/10'
               }`}
             >
-              <a
-                href={portfolio.personalInfo.cvPath}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                  isDark
-                    ? 'bg-white/10 hover:bg-white/20 text-white'
-                    : 'bg-black/5 hover:bg-black/10 text-gray-900'
-                }`}
-              >
-                {tSettings('downloadCV')}
-              </a>
+              {onDownloadCV ? (
+                <button
+                  type="button"
+                  onClick={onDownloadCV}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                    isDark
+                      ? 'bg-white/10 hover:bg-white/20 text-white'
+                      : 'bg-black/5 hover:bg-black/10 text-gray-900'
+                  }`}
+                >
+                  {tSettings('downloadCV')}
+                </button>
+              ) : (
+                <a
+                  href={portfolio.personalInfo.cvPath}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                    isDark
+                      ? 'bg-white/10 hover:bg-white/20 text-white'
+                      : 'bg-black/5 hover:bg-black/10 text-gray-900'
+                  }`}
+                >
+                  {tSettings('downloadCV')}
+                </a>
+              )}
               <a
                 href={socialLinks.github}
                 target="_blank"

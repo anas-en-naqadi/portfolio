@@ -9,7 +9,11 @@ export const personalInfo = {
   phone: '+212 628540272',
   timezone: 'GMT+0',
   profileImage: '/images/me.png',
-  cvPath: '/CV-PRO.pdf',
+  cvPath: '/Anas-En-Naqadi-CV-FR.pdf',
+  cvPaths: {
+    en: '/ANAS-EN-NAQADI-CV-EN.pdf',
+    fr: '/Anas-En-Naqadi-CV-FR.pdf',
+  },
 }
 
 export const socialLinks = {

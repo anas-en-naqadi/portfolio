@@ -19,11 +19,12 @@ import {
 interface AboutWindowProps {
   theme?: 'dark' | 'light'
   onNotify?: (title: string, subtitle?: string) => void
+  onDownloadCV?: () => void
 }
 
 type AboutSection = 'overview' | 'bio' | 'expertise'
 
-export function AboutWindow({ theme = 'dark', onNotify }: AboutWindowProps) {
+export function AboutWindow({ theme = 'dark', onNotify, onDownloadCV }: AboutWindowProps) {
   const t = useTranslations('about')
   const tCommon = useTranslations('common')
   const tDesktop = useTranslations('desktop.windows')
@@ -63,6 +64,10 @@ export function AboutWindow({ theme = 'dark', onNotify }: AboutWindowProps) {
   }
 
   const handleDownloadCV = () => {
+    if (onDownloadCV) {
+      onDownloadCV()
+      return
+    }
     onNotify?.(tToast('downloadTitle'), tToast('downloadBody'))
     window.open(personalInfo.cvPath, '_blank', 'noopener,noreferrer')
   }

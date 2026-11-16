@@ -5,7 +5,9 @@ import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { useLocale, useTranslations } from 'next-intl'
 import { getLocalizedPortfolioData } from '@/lib/data'
+import { fetchMarrakechWeather, type WeatherState } from '@/lib/weather'
 import { useTime } from '@/hooks/useTime'
+import { triggerCVDownload } from '../shared/CVDownloadModal'
 import {
   ClockSymbol,
   DocumentTextSymbol,
@@ -15,46 +17,9 @@ import {
   PersonSymbol,
 } from '../shared/SFSymbols'
 
-interface iPadWidgetsProps {
+interface IPadWidgetsProps {
   theme: 'dark' | 'light'
-}
-
-type WeatherConditionKey =
-  | 'clearSky'
-  | 'partlyCloudy'
-  | 'foggy'
-  | 'drizzle'
-  | 'rainy'
-  | 'snowy'
-  | 'showers'
-  | 'thunderstorm'
-  | 'clear'
-
-interface HourlyForecast {
-  hour: string
-  temp: number
-  code: number
-}
-
-interface WeatherState {
-  temp: number
-  conditionKey: WeatherConditionKey
-  high: number
-  low: number
-  code: number
-  hourly: HourlyForecast[]
-}
-
-function getWeatherConditionKey(code: number): WeatherConditionKey {
-  if (code === 0) return 'clearSky'
-  if ([1, 2, 3].includes(code)) return 'partlyCloudy'
-  if ([45, 48].includes(code)) return 'foggy'
-  if ([51, 53, 55].includes(code)) return 'drizzle'
-  if ([61, 63, 65].includes(code)) return 'rainy'
-  if ([71, 73, 75].includes(code)) return 'snowy'
-  if ([80, 81, 82].includes(code)) return 'showers'
-  if ([95, 96, 99].includes(code)) return 'thunderstorm'
-  return 'clear'
+  onDownloadCV?: () => void
 }
 
 function getWeatherIcon(code: number, size = 20) {
@@ -95,7 +60,7 @@ function getWeatherIcon(code: number, size = 20) {
   }
 }
 
-export default function iPadWidgets({ theme }: iPadWidgetsProps) {
+export default function IPadWidgets({ theme, onDownloadCV }: IPadWidgetsProps) {
   const locale = useLocale()
   const tRoot = useTranslations()
   const t = useTranslations('tablet.widgets')
@@ -120,41 +85,21 @@ export default function iPadWidgets({ theme }: iPadWidgetsProps) {
   })
 
   useEffect(() => {
-    async function getWeather() {
+    const controller = new AbortController()
+    async function loadWeather() {
       try {
-        const res = await fetch(
-          'https://api.open-meteo.com/v1/forecast?latitude=31.6295&longitude=-7.9811&current=temperature_2m,weather_code&hourly=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&timezone=auto'
-        )
-        const data = await res.json()
-        const temp = Math.round(data.current.temperature_2m)
-        const code = data.current.weather_code
-        const high = Math.round(data.daily.temperature_2m_max[0])
-        const low = Math.round(data.daily.temperature_2m_min[0])
-
-        const currentHour = new Date().getHours()
-        const hourlyForecast: HourlyForecast[] = []
-        for (let i = 0; i < 6; i++) {
-          const targetIndex = (currentHour + i) % 24
-          hourlyForecast.push({
-            hour: String(targetIndex).padStart(2, '0'),
-            temp: Math.round(data.hourly.temperature_2m[targetIndex]),
-            code: data.hourly.weather_code[targetIndex],
-          })
+        const nextWeather = await fetchMarrakechWeather(controller.signal)
+        if (nextWeather) {
+          setWeather(nextWeather)
         }
-
-        setWeather({
-          temp,
-          conditionKey: getWeatherConditionKey(code),
-          high,
-          low,
-          code,
-          hourly: hourlyForecast,
-        })
       } catch (e) {
-        console.error('Error fetching Marrakech weather for iPad:', e)
+        if ((e as Error).name !== 'AbortError') {
+          console.error('Error fetching Marrakech weather for iPad:', e)
+        }
       }
     }
-    getWeather()
+    loadWeather()
+    return () => controller.abort()
   }, [])
 
   // Analog clock angles
@@ -459,12 +404,11 @@ export default function iPadWidgets({ theme }: iPadWidgetsProps) {
         <button
           type="button"
           onClick={() => {
-            const link = document.createElement('a')
-            link.href = personalInfo.cvPath
-            link.download = 'Anas_En-Naqadi_CV.pdf'
-            document.body.appendChild(link)
-            link.click()
-            document.body.removeChild(link)
+            if (onDownloadCV) {
+              onDownloadCV()
+              return
+            }
+            triggerCVDownload(locale === 'fr' ? 'fr' : 'en')
           }}
           className="w-full py-2 rounded-xl text-[11px] font-bold text-white bg-blue-500 hover:bg-blue-600 active:scale-[0.98] transition shadow-sm flex items-center justify-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
         >

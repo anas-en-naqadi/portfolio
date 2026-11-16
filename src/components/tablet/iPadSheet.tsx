@@ -19,7 +19,7 @@ export function useIPadSheet() {
   return useContext(IPadSheetContext)
 }
 
-interface iPadSheetProps {
+interface IPadSheetProps {
   isOpen: boolean
   onClose: () => void
   title: string
@@ -28,14 +28,14 @@ interface iPadSheetProps {
   theme: 'dark' | 'light'
 }
 
-export default function iPadSheet({
+export default function IPadSheet({
   isOpen,
   onClose,
   title,
   icon,
   children,
   theme,
-}: iPadSheetProps) {
+}: IPadSheetProps) {
   const t = useTranslations('tablet.sheet')
   const isDark = theme === 'dark'
   const [multitaskingOpen, setMultitaskingOpen] = useState(false)

@@ -1708,7 +1708,9 @@ body {
   display: none;
 }
 
-.ipad-desktop-only {
+.ipad-desktop-only,
+.ipad-desktop-block,
+.ipad-desktop-clamp-2 {
   display: none;
 }
 
@@ -1745,6 +1747,17 @@ body {
 
   .ipad-desktop-only {
     display: flex;
+  }
+
+  .ipad-desktop-block {
+    display: block;
+  }
+
+  .ipad-desktop-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .ipad-mobile-only {

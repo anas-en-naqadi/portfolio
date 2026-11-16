@@ -12,7 +12,7 @@ export default async function Home() {
   const isFr = locale === 'fr'
 
   return (
-    <main className="h-screen overflow-hidden">
+    <main className="h-screen h-[100dvh] overflow-hidden">
       <ResponsiveOSClient />
 
       {/* Server-rendered semantic outline so search engines and screen readers index full portfolio content */}
@@ -45,7 +45,7 @@ export default async function Home() {
                 </a>
               </li>
               <li>
-                <a href={portfolio.personalInfo.cvPath}>
+                <a href={portfolio.personalInfo.cvPaths[locale]}>
                   {isFr ? 'Télécharger le CV (PDF)' : 'Download Resume (PDF)'}
                 </a>
               </li>

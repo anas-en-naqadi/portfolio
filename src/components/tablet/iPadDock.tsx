@@ -10,19 +10,19 @@ interface DockApp {
   onClick: () => void
 }
 
-interface iPadDockProps {
+interface IPadDockProps {
   apps: DockApp[]
   theme: 'dark' | 'light'
   iconSize?: number
 }
 
-export default function iPadDock({ apps, theme, iconSize = 62 }: iPadDockProps) {
+export default function IPadDock({ apps, theme, iconSize = 62 }: IPadDockProps) {
   const t = useTranslations('tablet.home')
   const isDark = theme === 'dark'
 
   return (
     <motion.nav
-      className="fixed bottom-4 sm:bottom-6 z-40 max-w-[calc(100vw-2rem)]"
+      className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] sm:bottom-[max(1.5rem,env(safe-area-inset-bottom))] z-40 max-w-[calc(100vw-2rem)]"
       initial={{ y: 40, opacity: 0, x: '-50%' }}
       animate={{ y: 0, opacity: 1, x: '-50%' }}
       style={{ left: '50%' }}

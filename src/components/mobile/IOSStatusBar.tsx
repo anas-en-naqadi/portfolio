@@ -20,7 +20,7 @@ export default function IOSStatusBar({ theme = 'dark', isAppOpen = false }: IOSS
 
   return (
     <div
-      className={`h-11 w-full fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 select-none pointer-events-none text-xs font-semibold ${textColorClass}`}
+      className={`min-h-11 pt-[env(safe-area-inset-top)] w-full fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 pl-[max(1.5rem,env(safe-area-inset-left))] pr-[max(1.5rem,env(safe-area-inset-right))] select-none pointer-events-none text-xs font-semibold ${textColorClass}`}
       style={{
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
       }}
