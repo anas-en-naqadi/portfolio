@@ -13,7 +13,6 @@ import {
   resolveSeoLocale,
   type SupportedSeoLocale,
 } from '@/lib/seo'
-import '../../styles/globals.css'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -106,10 +105,10 @@ export async function generateMetadata({
     manifest: '/manifest.json',
     icons: {
       icon: [
-        { url: personalInfo.profileImage, sizes: '192x192', type: 'image/png' },
-        { url: personalInfo.profileImage, sizes: '512x512', type: 'image/png' },
+        { url: '/images/me.png', sizes: '192x192', type: 'image/png' },
+        { url: '/images/me.png', sizes: '512x512', type: 'image/png' },
       ],
-      apple: [{ url: personalInfo.profileImage, sizes: '180x180', type: 'image/png' }],
+      apple: [{ url: '/images/me.png', sizes: '180x180', type: 'image/png' }],
     },
     other: {
       'geo.region': 'MA',

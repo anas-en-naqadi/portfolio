@@ -31,6 +31,11 @@
       "badgeEn": "EN",
       "badgeFr": "FR",
       "savedLabel": "Downloaded"
+    },
+    "helloSplash": {
+      "headline": "Welcome to my world, where code meets intelligence.",
+      "subline": "ANAS EN-NAQADI • Full-Stack Developer & AI Engineer",
+      "hint": "Click anywhere to enter"
     }
   },
   "about": {
@@ -165,7 +170,13 @@
       "sectionTitle": "General System Settings",
       "darkMode": "Dark Mode",
       "systemLanguage": "System Language",
-      "toggleDarkMode": "Toggle dark mode"
+      "toggleDarkMode": "Toggle dark mode",
+      "wallpaperTitle": "Wallpaper",
+      "wallpaperDesc": "Choose home screen backdrop",
+      "wallpapers": {
+        "default": "Argon Workspace",
+        "alt": "Astra Workspace"
+      }
     },
     "contact": {
       "github": {
@@ -219,6 +230,7 @@
       "dark": "Dark",
       "light": "Light",
       "language": "Language",
+      "wallpaper": "Wallpaper",
       "returnHome": "Home Screen"
     },
     "sheet": {
@@ -352,15 +364,21 @@
     },
     "settings": {
       "sidebarTitle": "Settings",
-      "appleId": "Apple ID",
+      "appleId": "Profile",
       "sections": {
         "profile": "Personal Info",
         "general": "General",
         "appearance": "Display & Brightness",
+        "wallpaper": "Wallpaper",
         "about": "About"
       },
       "darkMode": "Dark Appearance",
       "darkModeDesc": "Switch between light and dark iPadOS surfaces",
+      "wallpaperDesc": "Choose a home screen wallpaper for iPadOS.",
+      "wallpapers": {
+        "default": "Argon Workspace",
+        "alt": "Astra Workspace"
+      },
       "systemLanguage": "Language & Region",
       "systemLanguageDesc": "Change the active portfolio interface language",
       "roleLabel": "Role",
@@ -383,7 +401,7 @@
       "window": "Window",
       "help": "Help",
       "appleMenu": {
-        "aboutThisMac": "About This Mac",
+        "aboutThisMac": "About Me",
         "systemSettings": "System Settings...",
         "downloadCV": "Download CV",
         "closeAllWindows": "Close All Windows"
@@ -430,7 +448,8 @@
       }
     },
     "wallpapers": {
-      "default": "Sequoia Dusk",
+      "default": "Argon Workspace",
+      "workspace": "Astra Workspace",
       "aurora": "Aurora Borealis",
       "midnight": "Midnight Studio",
       "horizon": "Liquid Horizon"
@@ -560,12 +579,15 @@
         "sentTitle": "Message Sent",
         "sentBody": "Your message has been delivered directly to my inbox.",
         "errorMissingKey": "Web3Forms key is not configured. Add NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY to .env.local.",
-        "errorSend": "Failed to send message. Please try again."
+        "errorSend": "Failed to send message. Please try again.",
+        "errorEmailRequired": "Please enter your email address.",
+        "errorEmailInvalid": "Please enter a valid email address.",
+        "errorMessageRequired": "Please enter your message."
       },
       "settings": {
         "sidebarTitle": "System Settings",
         "sections": {
-          "profile": "Apple ID & Profile",
+          "profile": "Profile",
           "appearance": "Appearance",
           "wallpaper": "Wallpaper",
           "language": "Language & Region",

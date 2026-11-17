@@ -38,9 +38,12 @@ export function ContactWindow({ theme = 'dark', onNotify }: ContactWindowProps) 
   const [subject, setSubject] = useState('')
   const [message, setMessage] = useState('')
   const [isSending, setIsSending] = useState(false)
+  const [fieldErrors, setFieldErrors] = useState<{ email?: string; message?: string }>({})
   const [formFeedback, setFormFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const composeFormRef = useRef<HTMLFormElement>(null)
   const nameInputRef = useRef<HTMLInputElement>(null)
+  const emailInputRef = useRef<HTMLInputElement>(null)
+  const messageInputRef = useRef<HTMLTextAreaElement>(null)
   const portfolio = useMemo(() => getLocalizedPortfolioData(locale), [locale])
   const { personalInfo } = portfolio
 
@@ -53,6 +56,32 @@ export function ContactWindow({ theme = 'dark', onNotify }: ContactWindowProps) 
     e.preventDefault()
     if (isSending) return
     setFormFeedback(null)
+
+    const trimmedEmail = senderEmail.trim()
+    const trimmedMessage = message.trim()
+    const nextErrors: { email?: string; message?: string } = {}
+
+    if (!trimmedEmail) {
+      nextErrors.email = tDesktop('errorEmailRequired')
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+      nextErrors.email = tDesktop('errorEmailInvalid')
+    }
+
+    if (!trimmedMessage) {
+      nextErrors.message = tDesktop('errorMessageRequired')
+    }
+
+    if (nextErrors.email || nextErrors.message) {
+      setFieldErrors(nextErrors)
+      if (nextErrors.email) {
+        emailInputRef.current?.focus()
+      } else if (nextErrors.message) {
+        messageInputRef.current?.focus()
+      }
+      return
+    }
+
+    setFieldErrors({})
 
     const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY?.trim()
     if (!accessKey) {
@@ -324,7 +353,12 @@ export function ContactWindow({ theme = 'dark', onNotify }: ContactWindowProps) 
           </div>
 
           {/* Inline Quick Compose (Web3Forms) */}
-          <form ref={composeFormRef} onSubmit={handleComposeSend} className={`${cardClass} space-y-3`}>
+          <form
+            ref={composeFormRef}
+            onSubmit={handleComposeSend}
+            noValidate
+            className={`${cardClass} space-y-3`}
+          >
             <div className="flex items-center gap-2">
               <PaperPlaneSymbol className="w-4 h-4 text-[#007AFF]" />
               <h4 className={`text-xs font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
@@ -332,7 +366,7 @@ export function ContactWindow({ theme = 'dark', onNotify }: ContactWindowProps) 
               </h4>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 items-start">
               <input
                 ref={nameInputRef}
                 type="text"
@@ -340,25 +374,53 @@ export function ContactWindow({ theme = 'dark', onNotify }: ContactWindowProps) 
                 onChange={(e) => setSenderName(e.target.value)}
                 placeholder={tDesktop('namePlaceholder')}
                 aria-label={tDesktop('nameLabel')}
-                className={`w-full px-3 py-1.5 rounded-lg border text-xs outline-none transition-colors ${
+                className={`w-full px-3 py-1.5 rounded-lg border text-xs outline-none transition-all ${
                   isDark
                     ? 'bg-white/[0.06] border-white/10 focus:border-[#007AFF] text-white placeholder:text-white/40'
                     : 'bg-black/[0.03] border-black/10 focus:border-[#007AFF] text-gray-900 placeholder:text-gray-400'
                 }`}
               />
-              <input
-                type="email"
-                required
-                value={senderEmail}
-                onChange={(e) => setSenderEmail(e.target.value)}
-                placeholder={tDesktop('emailPlaceholder')}
-                aria-label={tDesktop('emailLabel')}
-                className={`w-full px-3 py-1.5 rounded-lg border text-xs outline-none transition-colors ${
-                  isDark
-                    ? 'bg-white/[0.06] border-white/10 focus:border-[#007AFF] text-white placeholder:text-white/40'
-                    : 'bg-black/[0.03] border-black/10 focus:border-[#007AFF] text-gray-900 placeholder:text-gray-400'
-                }`}
-              />
+              <div className="space-y-1">
+                <input
+                  ref={emailInputRef}
+                  type="email"
+                  value={senderEmail}
+                  onChange={(e) => {
+                    setSenderEmail(e.target.value)
+                    if (fieldErrors.email) setFieldErrors((prev) => ({ ...prev, email: undefined }))
+                  }}
+                  placeholder={tDesktop('emailPlaceholder')}
+                  aria-label={tDesktop('emailLabel')}
+                  aria-invalid={Boolean(fieldErrors.email)}
+                  className={`w-full px-3 py-1.5 rounded-lg border text-xs outline-none transition-all ${
+                    fieldErrors.email
+                      ? isDark
+                        ? 'bg-[#FF453A]/[0.08] border-[#FF453A] ring-2 ring-[#FF453A]/20 text-white placeholder:text-white/40'
+                        : 'bg-[#FF3B30]/[0.04] border-[#FF3B30] ring-2 ring-[#FF3B30]/15 text-gray-900 placeholder:text-gray-400'
+                      : isDark
+                        ? 'bg-white/[0.06] border-white/10 focus:border-[#007AFF] text-white placeholder:text-white/40'
+                        : 'bg-black/[0.03] border-black/10 focus:border-[#007AFF] text-gray-900 placeholder:text-gray-400'
+                  }`}
+                />
+                {fieldErrors.email && (
+                  <div
+                    role="alert"
+                    className={`flex items-center gap-1.5 text-[11px] font-medium ${
+                      isDark ? 'text-[#FF453A]' : 'text-[#FF3B30]'
+                    }`}
+                  >
+                    <span
+                      aria-hidden="true"
+                      className={`w-3.5 h-3.5 rounded-full text-[9px] font-bold text-white flex items-center justify-center shrink-0 ${
+                        isDark ? 'bg-[#FF453A]' : 'bg-[#FF3B30]'
+                      }`}
+                    >
+                      !
+                    </span>
+                    <span>{fieldErrors.email}</span>
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="grid grid-cols-1 gap-2.5">
@@ -368,25 +430,55 @@ export function ContactWindow({ theme = 'dark', onNotify }: ContactWindowProps) 
                 onChange={(e) => setSubject(e.target.value)}
                 placeholder={tDesktop('subjectPlaceholder')}
                 aria-label={tDesktop('subjectLabel')}
-                className={`w-full px-3 py-1.5 rounded-lg border text-xs outline-none transition-colors ${
+                className={`w-full px-3 py-1.5 rounded-lg border text-xs outline-none transition-all ${
                   isDark
                     ? 'bg-white/[0.06] border-white/10 focus:border-[#007AFF] text-white placeholder:text-white/40'
                     : 'bg-black/[0.03] border-black/10 focus:border-[#007AFF] text-gray-900 placeholder:text-gray-400'
                 }`}
               />
-              <textarea
-                rows={3}
-                required
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder={tDesktop('messagePlaceholder')}
-                aria-label={tDesktop('messageLabel')}
-                className={`w-full px-3 py-2 rounded-lg border text-xs outline-none resize-none transition-colors ${
-                  isDark
-                    ? 'bg-white/[0.06] border-white/10 focus:border-[#007AFF] text-white placeholder:text-white/40'
-                    : 'bg-black/[0.03] border-black/10 focus:border-[#007AFF] text-gray-900 placeholder:text-gray-400'
-                }`}
-              />
+              <div className="space-y-1">
+                <textarea
+                  ref={messageInputRef}
+                  rows={3}
+                  value={message}
+                  onChange={(e) => {
+                    setMessage(e.target.value)
+                    if (fieldErrors.message) {
+                      setFieldErrors((prev) => ({ ...prev, message: undefined }))
+                    }
+                  }}
+                  placeholder={tDesktop('messagePlaceholder')}
+                  aria-label={tDesktop('messageLabel')}
+                  aria-invalid={Boolean(fieldErrors.message)}
+                  className={`w-full px-3 py-2 rounded-lg border text-xs outline-none resize-none transition-all ${
+                    fieldErrors.message
+                      ? isDark
+                        ? 'bg-[#FF453A]/[0.08] border-[#FF453A] ring-2 ring-[#FF453A]/20 text-white placeholder:text-white/40'
+                        : 'bg-[#FF3B30]/[0.04] border-[#FF3B30] ring-2 ring-[#FF3B30]/15 text-gray-900 placeholder:text-gray-400'
+                      : isDark
+                        ? 'bg-white/[0.06] border-white/10 focus:border-[#007AFF] text-white placeholder:text-white/40'
+                        : 'bg-black/[0.03] border-black/10 focus:border-[#007AFF] text-gray-900 placeholder:text-gray-400'
+                  }`}
+                />
+                {fieldErrors.message && (
+                  <div
+                    role="alert"
+                    className={`flex items-center gap-1.5 text-[11px] font-medium ${
+                      isDark ? 'text-[#FF453A]' : 'text-[#FF3B30]'
+                    }`}
+                  >
+                    <span
+                      aria-hidden="true"
+                      className={`w-3.5 h-3.5 rounded-full text-[9px] font-bold text-white flex items-center justify-center shrink-0 ${
+                        isDark ? 'bg-[#FF453A]' : 'bg-[#FF3B30]'
+                      }`}
+                    >
+                      !
+                    </span>
+                    <span>{fieldErrors.message}</span>
+                  </div>
+                )}
+              </div>
             </div>
 
             {formFeedback && (

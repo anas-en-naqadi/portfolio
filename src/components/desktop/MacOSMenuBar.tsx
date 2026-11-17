@@ -17,7 +17,7 @@ import {
 } from '@/components/shared/SFSymbols'
 import type { DesktopWindowId } from './SpotlightSearch'
 
-export type WallpaperPresetId = 'default'
+export type WallpaperPresetId = 'default' | 'workspace'
 
 export interface OpenWindowEntry {
   id: DesktopWindowId
@@ -60,7 +60,8 @@ type OpenMenuKey =
   | null
 
 const WALLPAPER_SWATCHES: { id: WallpaperPresetId; preview: string }[] = [
-  { id: 'default', preview: 'url(/images/desktop-bg.png) center/cover' },
+  { id: 'default', preview: 'url(/images/desktop-bg.webp) center/cover' },
+  { id: 'workspace', preview: 'url(/images/desktop-bg-2.webp) center/cover' },
 ]
 
 export function MacOSMenuBar({
@@ -644,20 +645,12 @@ export function MacOSMenuBar({
         </button>
 
         {/* Right-Aligned Date & Time (Real macOS Style) */}
-        <button
-          type="button"
-          onClick={() => handleTriggerClick('controlCenter')}
-          onPointerEnter={(e) => handleHoverOpen('controlCenter', e)}
-          onPointerLeave={handleHoverLeave}
-          aria-haspopup="dialog"
-          aria-expanded={openMenu === 'controlCenter'}
-          className={`px-2 h-[22px] rounded-[5px] flex items-center gap-1.5 text-[12.5px] font-medium tabular-nums transition-colors ${
-            isDark ? 'hover:bg-white/15' : 'hover:bg-black/10'
-          }`}
+        <div
+          className="px-2 h-[22px] rounded-[5px] flex items-center gap-1.5 text-[12.5px] font-medium tabular-nums select-none cursor-default"
         >
           <span className="capitalize">{dateString}</span>
           <span>{timeString}</span>
-        </button>
+        </div>
 
         {/* Liquid Glass Control Center Popover */}
         {openMenu === 'controlCenter' && (
@@ -757,7 +750,7 @@ export function MacOSMenuBar({
                   {tMenu('controlCenter.wallpaper')}
                 </span>
               </div>
-              <div className="grid grid-cols-1 gap-2">
+              <div className="grid grid-cols-2 gap-2">
                 {WALLPAPER_SWATCHES.map((wp) => {
                   const selected = wallpaper === wp.id
                   return (

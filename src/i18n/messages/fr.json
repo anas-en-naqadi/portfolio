@@ -31,6 +31,11 @@
       "badgeEn": "EN",
       "badgeFr": "FR",
       "savedLabel": "Téléchargé"
+    },
+    "helloSplash": {
+      "headline": "Bienvenue dans mon univers, là où le code rencontre l'intelligence.",
+      "subline": "ANAS EN-NAQADI • Développeur Full-Stack & AI Engineer",
+      "hint": "Cliquez ou touchez pour entrer"
     }
   },
   "about": {
@@ -165,7 +170,13 @@
       "sectionTitle": "Paramètres généraux du système",
       "darkMode": "Mode sombre",
       "systemLanguage": "Langue du système",
-      "toggleDarkMode": "Basculer le mode sombre"
+      "toggleDarkMode": "Basculer le mode sombre",
+      "wallpaperTitle": "Fond d'écran",
+      "wallpaperDesc": "Choisissez l'arrière-plan de l'écran d'accueil",
+      "wallpapers": {
+        "default": "Argon Workspace",
+        "alt": "Astra Workspace"
+      }
     },
     "contact": {
       "github": {
@@ -219,6 +230,7 @@
       "dark": "Sombre",
       "light": "Clair",
       "language": "Langue",
+      "wallpaper": "Fond d'écran",
       "returnHome": "Écran d'accueil"
     },
     "sheet": {
@@ -352,15 +364,21 @@
     },
     "settings": {
       "sidebarTitle": "Réglages",
-      "appleId": "Identifiant Apple",
+      "appleId": "Profil",
       "sections": {
         "profile": "Informations personnelles",
         "general": "Général",
         "appearance": "Luminosité et affichage",
+        "wallpaper": "Fond d'écran",
         "about": "Informations"
       },
       "darkMode": "Apparence sombre",
       "darkModeDesc": "Basculer entre les thèmes clair et sombre d'iPadOS",
+      "wallpaperDesc": "Choisissez un fond d'écran pour l'écran d'accueil d'iPadOS.",
+      "wallpapers": {
+        "default": "Argon Workspace",
+        "alt": "Astra Workspace"
+      },
       "systemLanguage": "Langue et région",
       "systemLanguageDesc": "Changer la langue active du portfolio",
       "roleLabel": "Poste",
@@ -383,7 +401,7 @@
       "window": "Fenêtre",
       "help": "Aide",
       "appleMenu": {
-        "aboutThisMac": "À propos de ce Mac",
+        "aboutThisMac": "À propos de moi",
         "systemSettings": "Réglages Système...",
         "downloadCV": "Télécharger le CV",
         "closeAllWindows": "Fermer toutes les fenêtres"
@@ -430,7 +448,8 @@
       }
     },
     "wallpapers": {
-      "default": "Crépuscule Sequoia",
+      "default": "Argon Workspace",
+      "workspace": "Astra Workspace",
       "aurora": "Aurore Boréale",
       "midnight": "Studio Minuit",
       "horizon": "Horizon Liquide"
@@ -560,12 +579,15 @@
         "sentTitle": "Message envoyé",
         "sentBody": "Votre message a bien été envoyé dans ma boîte de réception.",
         "errorMissingKey": "Clé Web3Forms manquante. Ajoutez NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY dans .env.local.",
-        "errorSend": "Échec de l'envoi. Veuillez réessayer."
+        "errorSend": "Échec de l'envoi. Veuillez réessayer.",
+        "errorEmailRequired": "Veuillez saisir votre adresse e-mail.",
+        "errorEmailInvalid": "Veuillez saisir une adresse e-mail valide.",
+        "errorMessageRequired": "Veuillez saisir votre message."
       },
       "settings": {
         "sidebarTitle": "Réglages Système",
         "sections": {
-          "profile": "Identifiant Apple & Profil",
+          "profile": "Profil",
           "appearance": "Apparence",
           "wallpaper": "Fond d'écran",
           "language": "Langue et région",

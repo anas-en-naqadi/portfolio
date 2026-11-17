@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import dynamic from 'next/dynamic'
+import { AppleHelloSplash } from './AppleHelloSplash'
 
 const DesktopOS = dynamic(() => import('../desktop/DesktopOS'), { ssr: false })
 const MobileOS = dynamic(() => import('../mobile/MobileOS'), { ssr: false })
@@ -35,8 +36,34 @@ function detectDeviceType(): DeviceType {
   return 'desktop'
 }
 
+function hasFreshLocaleSwitchState(): boolean {
+  try {
+    const keys = [
+      'macos-preserved-windows',
+      'ipados-preserved-sheet',
+      'ios-preserved-state',
+    ]
+    for (const key of keys) {
+      const raw = window.sessionStorage.getItem(key)
+      if (!raw) continue
+      const parsed = JSON.parse(raw) as { ts?: number }
+      if (parsed.ts && Date.now() - parsed.ts < 10000) {
+        return true
+      }
+    }
+  } catch {
+    // Ignore storage read errors
+  }
+  return false
+}
+
 export default function ResponsiveOS() {
   const [deviceType, setDeviceType] = useState<DeviceType>('desktop')
+  const [showHello, setShowHello] = useState<boolean>(() => !hasFreshLocaleSwitchState())
+
+  const handleHelloComplete = useCallback(() => {
+    setShowHello(false)
+  }, [])
 
   useEffect(() => {
     let settleTimer: ReturnType<typeof setTimeout> | null = null
@@ -65,13 +92,16 @@ export default function ResponsiveOS() {
     }
   }, [])
 
-  if (deviceType === 'mobile') {
-    return <MobileOS />
-  }
-
-  if (deviceType === 'tablet') {
-    return <TabletOS />
-  }
-
-  return <DesktopOS />
+  return (
+    <>
+      <AppleHelloSplash visible={showHello} onComplete={handleHelloComplete} />
+      {deviceType === 'mobile' ? (
+        <MobileOS />
+      ) : deviceType === 'tablet' ? (
+        <TabletOS />
+      ) : (
+        <DesktopOS />
+      )}
+    </>
+  )
 }

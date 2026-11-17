@@ -8,7 +8,7 @@ export const personalInfo = {
   email: 'anas.ennaqadi0@gmail.com',
   phone: '+212 628540272',
   timezone: 'GMT+0',
-  profileImage: '/images/me.png',
+  profileImage: '/images/me.webp',
   cvPath: '/Anas-En-Naqadi-CV-FR.pdf',
   cvPaths: {
     en: '/ANAS-EN-NAQADI-CV-EN.pdf',
@@ -129,70 +129,70 @@ export const projects = [
     description: "Système de diagnostic et d'analyse automatique d'images radiographiques thoraciques utilisant l'architecture EfficientNet et PyTorch.",
     technologies: ["Python", "FastAPI", "PyTorch", "EfficientNet", "Deep Learning"],
     type: "ai",
-    image: "/images/projects/radiography_ai.png"
+    image: "/images/projects/radiography_ai.webp"
   },
   {
     title: "Prédiction du Cancer du Côlon",
     description: "Modèle de prédiction médicale basé sur l'apprentissage automatique (Scikit-Learn) pour la détection précoce du cancer du côlon.",
     technologies: ["Python", "FastAPI", "React", "Scikit-Learn", "Machine Learning"],
     type: "ai",
-    image: "/images/projects/colon_cancer_prediction.png"
+    image: "/images/projects/colon_cancer_prediction.webp"
   },
   {
     title: "Code Review Automatisé par IA",
     description: "Application d'audit et de révision de code automatique s'appuyant sur des LLMs via Groq pour détecter des vulnérabilités de sécurité.",
     technologies: ["Next.js", "TypeScript", "Groq", "LlamaIndex", "AI"],
     type: "ai",
-    image: "/images/projects/code_review_ai.png"
+    image: "/images/projects/code_review_ai.webp"
   },
   {
     title: "Assistant de Recherche Doctorale",
     description: "Outil d'intelligence artificielle pour la recherche bibliographique automatisée et la synthèse documentaire structurée.",
     technologies: ["Python", "Streamlit", "CrewAI", "Groq", "LLMs"],
     type: "ai",
-    image: "/images/projects/phd_research_assistant.png"
+    image: "/images/projects/phd_research_assistant.webp"
   },
   {
     title: "Orchestrateur d'Agents IA",
     description: "Plateforme complète d'orchestration d'agents autonomes à rôles multiples avec CrewAI pour l'automatisation de tâches complexes.",
     technologies: ["Next.js", "FastAPI", "CrewAI", "Groq", "Python"],
     type: "ai",
-    image: "/images/projects/agents_orchestrator.png"
+    image: "/images/projects/agents_orchestrator.webp"
   },
   {
     title: "Générateur d'APIs REST par IA",
     description: "Générateur d'interfaces d'API documentées et sécurisées à la volée à l'aide de modèles d'IA générative.",
     technologies: ["React", "Fastify", "TypeScript", "Groq", "FastAPI"],
     type: "ai",
-    image: "/images/projects/rest_api_generator.png"
+    image: "/images/projects/rest_api_generator.webp"
   },
   {
     title: "Application Mobile pour les Animes",
     description: "Application mobile de streaming et d'informations animées cross-platform avec gestion hors ligne et favoris.",
     technologies: ["React Native", "Expo", "Firebase", "Mobile"],
     type: "mobile",
-    image: "/images/projects/anime_mobile_app.png"
+    image: "/images/projects/anime_mobile_app.webp"
   },
   {
     title: "Flux Optique: LK vs HS",
     description: "Comparateur de flux optique de vision par ordinateur comparant les approches de Lucas-Kanade et Horn-Schunck.",
     technologies: ["Python", "OpenCV", "Streamlit", "Computer Vision"],
     type: "ai",
-    image: "/images/projects/optical_flow_comparison.png"
+    image: "/images/projects/optical_flow_comparison.webp"
   },
   {
     title: "Plateforme E-Learning",
     description: "Solution complète d'e-learning sécurisée par JWT, avec gestion robuste de rôles/permissions et suivi des logs.",
     technologies: ["Node.js", "Express.js", "Next.js", "React.js", "PostgreSQL"],
     type: "web",
-    image: "/images/projects/elearning_platform.png"
+    image: "/images/projects/elearning_platform.webp"
   },
   {
     title: "Application de Gestion des Accès",
     description: "Système de contrôle et de suivi d'accès physique et numérique intégrant des logs et des tableaux de bord.",
     technologies: ["Laravel", "Vue.js", "SQL", "Bootstrap", "Git"],
     type: "web",
-    image: "/images/projects/access_management.png"
+    image: "/images/projects/access_management.webp"
   }
 ]
 
@@ -322,70 +322,70 @@ const englishData = {
       description: 'Automated chest X-ray diagnostic and analysis system powered by EfficientNet and PyTorch.',
       technologies: ['Python', 'FastAPI', 'PyTorch', 'EfficientNet', 'Deep Learning'],
       type: 'ai',
-      image: '/images/projects/radiography_ai.png',
+      image: '/images/projects/radiography_ai.webp',
     },
     {
       title: 'Colon Cancer Prediction',
       description: 'Medical prediction model built with machine learning (Scikit-Learn) for early colon cancer detection.',
       technologies: ['Python', 'FastAPI', 'React', 'Scikit-Learn', 'Machine Learning'],
       type: 'ai',
-      image: '/images/projects/colon_cancer_prediction.png',
+      image: '/images/projects/colon_cancer_prediction.webp',
     },
     {
       title: 'AI Automated Code Review',
       description: 'Automated code audit and review application leveraging LLMs via Groq to detect security vulnerabilities.',
       technologies: ['Next.js', 'TypeScript', 'Groq', 'LlamaIndex', 'AI'],
       type: 'ai',
-      image: '/images/projects/code_review_ai.png',
+      image: '/images/projects/code_review_ai.webp',
     },
     {
       title: 'PhD Research Assistant',
       description: 'AI tool for automated bibliographic search and structured literature synthesis.',
       technologies: ['Python', 'Streamlit', 'CrewAI', 'Groq', 'LLMs'],
       type: 'ai',
-      image: '/images/projects/phd_research_assistant.png',
+      image: '/images/projects/phd_research_assistant.webp',
     },
     {
       title: 'AI Agents Orchestrator',
       description: 'Complete multi-role autonomous agent orchestration platform using CrewAI to automate complex workflows.',
       technologies: ['Next.js', 'FastAPI', 'CrewAI', 'Groq', 'Python'],
       type: 'ai',
-      image: '/images/projects/agents_orchestrator.png',
+      image: '/images/projects/agents_orchestrator.webp',
     },
     {
       title: 'AI REST API Generator',
       description: 'On-the-fly generator for documented and secured REST API interfaces powered by generative AI models.',
       technologies: ['React', 'Fastify', 'TypeScript', 'Groq', 'FastAPI'],
       type: 'ai',
-      image: '/images/projects/rest_api_generator.png',
+      image: '/images/projects/rest_api_generator.webp',
     },
     {
       title: 'Anime Mobile App',
       description: 'Cross-platform anime streaming and info mobile application featuring offline management and favorites.',
       technologies: ['React Native', 'Expo', 'Firebase', 'Mobile'],
       type: 'mobile',
-      image: '/images/projects/anime_mobile_app.png',
+      image: '/images/projects/anime_mobile_app.webp',
     },
     {
       title: 'Optical Flow: LK vs HS',
       description: 'Computer vision optical flow comparator contrasting Lucas-Kanade and Horn-Schunck methods.',
       technologies: ['Python', 'OpenCV', 'Streamlit', 'Computer Vision'],
       type: 'ai',
-      image: '/images/projects/optical_flow_comparison.png',
+      image: '/images/projects/optical_flow_comparison.webp',
     },
     {
       title: 'E-Learning Platform',
       description: 'Full-featured JWT-secured e-learning platform with granular role/permission management and activity logging.',
       technologies: ['Node.js', 'Express.js', 'Next.js', 'React.js', 'PostgreSQL'],
       type: 'web',
-      image: '/images/projects/elearning_platform.png',
+      image: '/images/projects/elearning_platform.webp',
     },
     {
       title: 'Access Management App',
       description: 'Physical and digital access control and tracking system featuring activity logs and dashboards.',
       technologies: ['Laravel', 'Vue.js', 'SQL', 'Bootstrap', 'Git'],
       type: 'web',
-      image: '/images/projects/access_management.png',
+      image: '/images/projects/access_management.webp',
     },
   ],
   skills: {

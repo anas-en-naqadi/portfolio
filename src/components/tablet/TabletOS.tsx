@@ -17,9 +17,9 @@ import IPadExperience from './IPadExperience'
 import IPadProjects from './IPadProjects'
 import IPadSkills from './IPadSkills'
 import IPadContact from './IPadContact'
-import IPadSettings from './IPadSettings'
+import IPadSettings, { TABLET_WALLPAPERS, type TabletWallpaperId } from './IPadSettings'
 import { getAppleIcon } from '../shared/AppleIcons'
-import { CheckmarkSymbol, GlobeSymbol, HouseSymbol, MoonSymbol, SunSymbol } from '../shared/SFSymbols'
+import { CheckmarkSymbol, GlobeSymbol, HouseSymbol, MoonSymbol, PhotoSymbol, SunSymbol } from '../shared/SFSymbols'
 import { CVDownloadModal, triggerCVDownload, type CVLanguage } from '../shared/CVDownloadModal'
 
 type AppId = 'about' | 'calendar' | 'appstore' | 'notes' | 'mail' | 'settings'
@@ -43,6 +43,7 @@ export default function TabletOS() {
   const { theme, toggleTheme } = useTheme()
   const [activeSheet, setActiveSheet] = useState<AppId | null>(null)
   const [controlCenterOpen, setControlCenterOpen] = useState(false)
+  const [wallpaper, setWallpaper] = useState<TabletWallpaperId>('default')
   const [cvModalOpen, setCvModalOpen] = useState(false)
   const [cvPill, setCvPill] = useState<{ id: number; lang: CVLanguage } | null>(null)
   const cvPillTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -158,6 +159,36 @@ export default function TabletOS() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeSheet, controlCenterOpen])
 
+  useEffect(() => {
+    try {
+      const savedWp = window.localStorage.getItem('ipados-wallpaper') as TabletWallpaperId | null
+      if (savedWp && TABLET_WALLPAPERS.some((w) => w.id === savedWp)) {
+        setWallpaper(savedWp)
+      }
+    } catch {
+      // Ignore storage access errors
+    }
+
+    try {
+      const raw = window.sessionStorage.getItem('ipados-preserved-sheet')
+      if (raw) {
+        const parsed = JSON.parse(raw) as { activeSheet?: AppId | null; ts?: number }
+        if (parsed.ts && Date.now() - parsed.ts < 10000 && parsed.activeSheet) {
+          setActiveSheet(parsed.activeSheet)
+          setTimeout(() => {
+            try {
+              window.sessionStorage.removeItem('ipados-preserved-sheet')
+            } catch {
+              // Ignore cleanup errors
+            }
+          }, 250)
+        }
+      }
+    } catch {
+      // Ignore storage access errors
+    }
+  }, [])
+
   const openApp = (appId: AppId) => {
     closeControlCenter()
     setActiveSheet(appId)
@@ -165,7 +196,24 @@ export default function TabletOS() {
 
   const closeSheet = () => setActiveSheet(null)
 
+  const handleSelectWallpaper = (wp: TabletWallpaperId) => {
+    setWallpaper(wp)
+    try {
+      window.localStorage.setItem('ipados-wallpaper', wp)
+    } catch {
+      // Ignore storage access errors
+    }
+  }
+
   const switchLocale = (newLocale: string) => {
+    try {
+      window.sessionStorage.setItem(
+        'ipados-preserved-sheet',
+        JSON.stringify({ activeSheet, ts: Date.now() })
+      )
+    } catch {
+      // Ignore storage access errors
+    }
     router.replace(pathname, { locale: newLocale })
     closeControlCenter()
   }
@@ -219,15 +267,26 @@ export default function TabletOS() {
     appstore: <IPadProjects theme={theme} />,
     notes: <IPadSkills theme={theme} />,
     mail: <IPadContact theme={theme} />,
-    settings: <IPadSettings theme={theme} toggleTheme={toggleTheme} />,
+    settings: (
+      <IPadSettings
+        theme={theme}
+        toggleTheme={toggleTheme}
+        onSwitchLocale={switchLocale}
+        wallpaper={wallpaper}
+        onSelectWallpaper={handleSelectWallpaper}
+      />
+    ),
   }
+
+  const activeWallpaperUrl =
+    TABLET_WALLPAPERS.find((w) => w.id === wallpaper)?.image ?? TABLET_WALLPAPERS[0].image
 
   return (
     <div
       className="ipad-os h-screen h-[100dvh] w-full overflow-hidden relative flex flex-col select-none"
       style={{
         backgroundColor: '#150f28',
-        backgroundImage: `url('/images/tablet-bg.png'), ${fallbackGradient}`,
+        backgroundImage: `url('${activeWallpaperUrl}'), ${fallbackGradient}`,
         backgroundSize: 'cover',
         backgroundPosition: '58% center',
         backgroundRepeat: 'no-repeat',
@@ -334,6 +393,43 @@ export default function TabletOS() {
                           }`}
                         >
                           {localeNames[loc]}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                {/* Wallpaper Switcher */}
+                <div
+                  className={`rounded-2xl p-3 ${
+                    isDark ? 'bg-white/10' : 'bg-black/5'
+                  }`}
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <PhotoSymbol className="w-3.5 h-3.5 text-sky-400" />
+                    <span className="text-xs font-semibold">{t('controlCenter.wallpaper')}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    {TABLET_WALLPAPERS.map((wp) => {
+                      const selected = wallpaper === wp.id
+                      return (
+                        <button
+                          key={wp.id}
+                          type="button"
+                          onClick={() => handleSelectWallpaper(wp.id)}
+                          aria-label={t(`settings.wallpapers.${wp.id}`)}
+                          className={`h-12 rounded-xl border relative overflow-hidden transition ${
+                            selected
+                              ? 'ring-2 ring-[#007AFF] border-white/70'
+                              : isDark
+                                ? 'border-white/15 opacity-80 hover:opacity-100'
+                                : 'border-black/15 opacity-85 hover:opacity-100'
+                          }`}
+                          style={{ background: `url('${wp.image}') center/cover` }}
+                        >
+                          <span className="absolute bottom-1 left-1.5 px-1.5 py-0.5 rounded bg-black/55 text-white text-[9.5px] font-medium backdrop-blur-sm">
+                            {t(`settings.wallpapers.${wp.id}`)}
+                          </span>
                         </button>
                       )
                     })}

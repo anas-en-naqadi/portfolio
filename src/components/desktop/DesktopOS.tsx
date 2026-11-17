@@ -42,13 +42,18 @@ interface WindowState {
 
 const WALLPAPER_BACKDROPS: Record<WallpaperPresetId, React.CSSProperties> = {
   default: {
-    backgroundImage: 'url(/images/desktop-bg.png)',
+    backgroundImage: 'url(/images/desktop-bg.webp)',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+  },
+  workspace: {
+    backgroundImage: 'url(/images/desktop-bg-2.webp)',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
   },
 }
 
-const WALLPAPER_ORDER: WallpaperPresetId[] = ['default']
+const WALLPAPER_ORDER: WallpaperPresetId[] = ['default', 'workspace']
 
 const WINDOW_IDS: DesktopWindowId[] = [
   'about',
@@ -151,8 +156,21 @@ export function DesktopOS() {
 
   const switchLanguage = useCallback(() => {
     const nextLocale = locale === 'fr' ? 'en' : 'fr'
+    try {
+      window.sessionStorage.setItem(
+        'macos-preserved-windows',
+        JSON.stringify({
+          openWindows,
+          maximizedWindows,
+          nextZ: zCounterRef.current,
+          ts: Date.now(),
+        })
+      )
+    } catch {
+      // Ignore storage access failures in restricted browsing modes
+    }
     router.replace(pathname, { locale: nextLocale })
-  }, [locale, pathname, router])
+  }, [locale, pathname, router, openWindows, maximizedWindows])
 
   // Compute frontmost active visible window
   const activeWindowId = useMemo<DesktopWindowId | null>(() => {
@@ -278,8 +296,36 @@ export function DesktopOS() {
     [showToast, tToast]
   )
 
-  // Open About window automatically on initial desktop mount
+  // Restore opened windows after a locale switch, or open About by default on initial mount
   useEffect(() => {
+    try {
+      const raw = window.sessionStorage.getItem('macos-preserved-windows')
+      if (raw) {
+        const parsed = JSON.parse(raw) as {
+          openWindows?: Record<DesktopWindowId, WindowState>
+          maximizedWindows?: Record<DesktopWindowId, boolean>
+          nextZ?: number
+          ts?: number
+        }
+        if (parsed.ts && Date.now() - parsed.ts < 10000 && parsed.openWindows && parsed.maximizedWindows) {
+          setOpenWindows(parsed.openWindows)
+          setMaximizedWindows(parsed.maximizedWindows)
+          if (typeof parsed.nextZ === 'number') {
+            zCounterRef.current = parsed.nextZ
+          }
+          setTimeout(() => {
+            try {
+              window.sessionStorage.removeItem('macos-preserved-windows')
+            } catch {
+              // Ignore cleanup errors
+            }
+          }, 250)
+          return
+        }
+      }
+    } catch {
+      // Ignore storage read failures and fall back to default
+    }
     openWindow('about')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

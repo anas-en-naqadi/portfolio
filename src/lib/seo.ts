@@ -54,8 +54,8 @@ export interface PortfolioSeoCopy {
 
 const SEO_COPY: Record<SupportedSeoLocale, PortfolioSeoCopy> = {
   en: {
-    title: 'Anas En-Naqadi | Full-Stack Developer & AI Engineer',
-    siteName: 'Anas En-Naqadi — Portfolio',
+    title: 'ANAS EN-NAQADI | Full-Stack Developer & AI Engineer',
+    siteName: 'ANAS EN-NAQADI — Portfolio',
     description:
       'Portfolio of Anas En-Naqadi, Full-Stack Developer & AI Engineering student building production web, mobile, and LLM/ML applications with Next.js, React, FastAPI, PyTorch, and Laravel.',
     jobTitle: 'Full-Stack Developer & AI Engineer',
@@ -82,8 +82,8 @@ const SEO_COPY: Record<SupportedSeoLocale, PortfolioSeoCopy> = {
     ogBadges: ['Next.js / React', 'FastAPI / PyTorch', 'LLMs / CrewAI', 'Laravel / .NET'],
   },
   fr: {
-    title: 'Anas En-Naqadi | Développeur Full-Stack & Ingénieur IA',
-    siteName: 'Anas En-Naqadi — Portfolio',
+    title: 'ANAS EN-NAQADI | Développeur Full-Stack & Ingénieur IA',
+    siteName: 'ANAS EN-NAQADI — Portfolio',
     description:
       'Portfolio de Anas En-Naqadi, Développeur Full-Stack & étudiant en Ingénierie IA. Applications web, mobiles et systèmes IA/LLM en production avec Next.js, React, FastAPI, PyTorch et Laravel.',
     jobTitle: 'Développeur Full-Stack & Ingénieur IA',

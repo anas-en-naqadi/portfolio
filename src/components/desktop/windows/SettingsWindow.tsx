@@ -26,7 +26,8 @@ interface SettingsWindowProps {
 }
 
 const WALLPAPERS: { id: WallpaperPresetId; gradient: string }[] = [
-  { id: 'default', gradient: 'url(/images/desktop-bg.png) center/cover' },
+  { id: 'default', gradient: 'url(/images/desktop-bg.webp) center/cover' },
+  { id: 'workspace', gradient: 'url(/images/desktop-bg-2.webp) center/cover' },
 ]
 
 export function SettingsWindow({
@@ -108,7 +109,7 @@ export function SettingsWindow({
               {portfolio.personalInfo.name}
             </div>
             <div className={`text-[11px] truncate ${isDark ? 'text-white/50' : 'text-gray-500'}`}>
-              Apple ID
+              {tSettings('sections.profile')}
             </div>
           </div>
         </div>

@@ -120,13 +120,13 @@ body {
   position: fixed;
   inset: 0;
   height: 100vh;
-  background: url('/images/desktop-bg.png') no-repeat center center;
+  background: url('/images/desktop-bg.webp') no-repeat center center;
   background-size: cover;
   overflow: hidden;
 }
 
 .light .desktop-os {
-  background: url('/images/desktop-bg.png') no-repeat center center;
+  background: url('/images/desktop-bg.webp') no-repeat center center;
   background-size: cover;
 }
 

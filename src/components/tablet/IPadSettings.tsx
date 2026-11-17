@@ -8,16 +8,32 @@ import { locales, localeNames, type Locale } from '@/i18n/config'
 import { getLocalizedPortfolioData } from '@/lib/data'
 import AnimatedSection from '../shared/AnimatedSection'
 import IPadSplitView from './IPadSplitView'
-import { PersonSymbol, MoonSymbol, GlobeSymbol } from '../shared/SFSymbols'
+import { CheckmarkSymbol, GlobeSymbol, MoonSymbol, PersonSymbol, PhotoSymbol } from '../shared/SFSymbols'
+
+export type TabletWallpaperId = 'default' | 'alt'
+
+export const TABLET_WALLPAPERS: { id: TabletWallpaperId; image: string }[] = [
+  { id: 'default', image: '/images/tablet-bg.webp' },
+  { id: 'alt', image: '/images/tablet-bg-2.webp' },
+]
 
 interface IPadSettingsProps {
   theme: 'dark' | 'light'
   toggleTheme: () => void
+  onSwitchLocale?: (newLocale: string) => void
+  wallpaper?: TabletWallpaperId
+  onSelectWallpaper?: (wp: TabletWallpaperId) => void
 }
 
-type SectionId = 'profile' | 'appearance' | 'language'
+type SectionId = 'profile' | 'appearance' | 'wallpaper' | 'language'
 
-export default function IPadSettings({ theme, toggleTheme }: IPadSettingsProps) {
+export default function IPadSettings({
+  theme,
+  toggleTheme,
+  onSwitchLocale,
+  wallpaper = 'default',
+  onSelectWallpaper,
+}: IPadSettingsProps) {
   const [activeSection, setActiveSection] = useState<SectionId>('profile')
   const isDark = theme === 'dark'
   const router = useRouter()
@@ -32,12 +48,17 @@ export default function IPadSettings({ theme, toggleTheme }: IPadSettingsProps) 
   const hoverItemBg = isDark ? 'hover:bg-white/5 text-zinc-400' : 'hover:bg-black/5 text-zinc-600'
 
   const switchLocale = (newLocale: string) => {
+    if (onSwitchLocale) {
+      onSwitchLocale(newLocale)
+      return
+    }
     router.replace(pathname, { locale: newLocale })
   }
 
   const sections = [
     { id: 'profile', label: t('sections.profile'), icon: <PersonSymbol className="w-3.5 h-3.5" />, iconBg: 'bg-blue-500' },
     { id: 'appearance', label: t('sections.appearance'), icon: <MoonSymbol className="w-3.5 h-3.5" />, iconBg: 'bg-indigo-500' },
+    { id: 'wallpaper', label: t('sections.wallpaper'), icon: <PhotoSymbol className="w-3.5 h-3.5" />, iconBg: 'bg-sky-500' },
     { id: 'language', label: t('sections.general'), icon: <GlobeSymbol className="w-3.5 h-3.5" />, iconBg: 'bg-emerald-500' },
   ] as const
 
@@ -189,6 +210,58 @@ export default function IPadSettings({ theme, toggleTheme }: IPadSettingsProps) 
                       }`}
                     />
                   </button>
+                </div>
+              </div>
+            </AnimatedSection>
+          )}
+
+          {activeSection === 'wallpaper' && (
+            <AnimatedSection delay={0.05}>
+              <div className="flex flex-col gap-4">
+                <div>
+                  <h2 className="text-xl font-extrabold text-gray-900 dark:text-white tracking-tight px-1">
+                    {t('sections.wallpaper')}
+                  </h2>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400 px-1 mt-1">
+                    {t('wallpaperDesc')}
+                  </p>
+                </div>
+
+                <div className="bg-white dark:bg-zinc-900 border border-black/[0.05] dark:border-white/[0.05] rounded-2xl p-4 sm:p-5 shadow-sm">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {TABLET_WALLPAPERS.map((wp) => {
+                      const selected = wallpaper === wp.id
+                      return (
+                        <button
+                          key={wp.id}
+                          type="button"
+                          onClick={() => onSelectWallpaper?.(wp.id)}
+                          className={`rounded-xl overflow-hidden border text-left transition-all ${
+                            selected
+                              ? 'border-[#007AFF] ring-2 ring-[#007AFF]'
+                              : isDark
+                                ? 'border-white/15 hover:border-white/30'
+                                : 'border-black/10 hover:border-black/25'
+                          }`}
+                        >
+                          <div
+                            className="h-32 w-full relative"
+                            style={{ background: `url('${wp.image}') center/cover` }}
+                          >
+                            {selected && (
+                              <span className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full bg-[#007AFF] text-white flex items-center justify-center shadow">
+                                <CheckmarkSymbol className="w-3 h-3" />
+                              </span>
+                            )}
+                          </div>
+                          <div className="px-3 py-2 text-xs font-semibold flex items-center justify-between text-gray-900 dark:text-white">
+                            <span>{t(`wallpapers.${wp.id}`)}</span>
+                            {selected && <span className="text-[10.5px] text-[#007AFF]">Active</span>}
+                          </div>
+                        </button>
+                      )
+                    })}
+                  </div>
                 </div>
               </div>
             </AnimatedSection>
