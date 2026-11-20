@@ -29,12 +29,17 @@ Device detection lives in `src/components/shared/ResponsiveOS.tsx`:
 - **Iconography** (`src/components/shared/SFSymbols.tsx`, `src/components/shared/AppleIcons.tsx`):
   - **Rule**: Never use raw emojis as system UI icons. Use monochrome inline SVGs from `SFSymbols.tsx` (`fill="currentColor"` or `stroke="currentColor"`).
   - `WifiSymbol` (`viewBox="0 0 24 18"`) uses 3 solid concentric fan tiers inheriting `currentColor` for automatic Dark/Light adaptation across all three status/menu bars.
+  - App icons come exclusively from `getAppleIcon(id, size)` in `AppleIcons.tsx`. Registered IDs: `finder`/`files`, `about`/`contacts`, `experience`/`calendar`, `projects`/`appstore`, `skills`/`notes`, `settings`, `contact`/`mail`, `safari`, `launchpad`, `downloads`/`cv`, `github`, `linkedin`, `phone`, `instagram`, `whatsapp`, `facetime`, `photos`, `camera`, `reminders`, `clock`, `messages`, `wallet`, `health`, `trash`.
 - **CV Download Flow** (`src/components/shared/CVDownloadModal.tsx`):
   - Uses variant-adapted native dialogs: `'macos'` centered sheet, `'ipados'` centered alert, `'ios'` bottom action sheet.
 - **Focus Audio Engine** (`src/components/shared/FocusAudioProvider.tsx`):
   - Two tracks: `argon` (`/audio/focus-1.mp3`) and `astra` (`/audio/focus-2.mp3`).
-  - **Audio control rule**: Wrap every audio player container in `data-audio-control="true"` so the global first-gesture autoplay unlocker does not double-trigger `play()` on top of interactive buttons.
+  - **Audio control rule**: Wrap every audio player container in `data-audio-control="true"` so the global first-gesture autoplay unlocker (`touchend`, `pointerup`, `click`, `keydown`) does not double-trigger `play()` on interactive player controls.
   - **Track-switch rule**: Never bind a reactive `src={currentTrack.src}` prop on `<audio>`. Manage `audio.setAttribute('src', ...)` imperatively inside `selectTrack` / `togglePlay` / mount so React re-renders never abort an in-flight `.play()` gesture.
+  - **Unlock & storage guards**:
+    - Never rely on `!audio.paused` to infer active playback; gate gesture cleanup on `playbackConfirmedRef` (`play()` resolution / `<audio onPlaying>`) paired with `playAttemptIdRef` so rejected `touchend` calls never block `click` or overwrite `isPlaying`.
+    - Always check `raw !== null && raw.trim() !== ''` before calling `Number(...)` on `localStorage` (`Number(null) === 0` would otherwise mute volume to `0` on fresh browsers).
+    - Clear `sessionStorage['portfolio-audio-paused']` on `navigation.type === 'reload'` while keeping it across in-app `EN <-> FR` locale switches.
 
 ---
 
@@ -68,6 +73,11 @@ Device detection lives in `src/components/shared/ResponsiveOS.tsx`:
    - Glass surface: `blur(36px) saturate(180%)`; Dark active `rgba(28, 28, 32, 0.86)` / inactive `0.78`; Light active `rgba(250, 250, 252, 0.88)` / inactive `rgba(245, 245, 247, 0.82)`.
    - Titlebar: `40px` height with centered `13px` semibold title and left-aligned traffic lights (`#FF5F57`, `#FEBC2E`, `#28C840`) that reveal hover glyphs (`CloseGlyph`, `MinusGlyph`, `MaximizeDiagonalGlyph`).
    - Responsive internal split views use `.macos-window-container` container queries (`660px` sidebar collapse threshold; `215px` -> `245px` width at `860px`).
+
+   ### Desktop Window Internal App Pattern (`src/components/desktop/windows/*`)
+   - Outer flex column: optional `<WindowToolbar buttons={...} rightContent={...} theme={theme} />` (`src/components/shared/WindowToolbar.tsx`) above `.macos-split-layout.flex-1.min-h-0`.
+   - Sidebar (`<aside className="macos-split-sidebar p-3 ...">`): `bg-white/[0.03]` (dark) / `bg-black/[0.025]` (light); `.macos-sidebar-nav` buttons use `bg-[#007AFF] text-white` when active, `text-white/80 hover:bg-white/[0.07]` (dark) / `text-gray-800 hover:bg-black/[0.05]` (light) when inactive.
+   - Detail canvas: `flex-1 overflow-y-auto macos-scroll p-5` (or `p-6`) with `cardClass` cards (`rounded-xl border p-4`: `bg-white/[0.04] border-white/10` dark, `bg-white/75`–`bg-white/80 border-black/10` light).
 
 3. **Dock (`Taskbar.tsx`) & Desktop Icons (`DesktopOS.tsx`)**
    - Dock: Centered pill `rounded-[22px]` (`bottom-3`), `blur(30px) saturate(190%)` dark / `blur(22px) saturate(165%)` light.
@@ -150,8 +160,28 @@ Device detection lives in `src/components/shared/ResponsiveOS.tsx`:
 
 ---
 
-## 6. Checklist Before Submitting UI Changes
+## 6. Blueprint: Adding a New App / Component Across All 3 Shells
+
+When adding a new portfolio app or feature, follow these exact conventions:
+
+1. **Data, Icons & i18n First**:
+   - Add content/types to `src/lib/data.ts` (localized in `getLocalizedPortfolioData(locale)`).
+   - Add strings in **both** `src/i18n/messages/en.json` and `src/i18n/messages/fr.json`.
+   - Use an existing ID in `getAppleIcon(id, size)` (`AppleIcons.tsx`) or add a new SVG squircle there; use `SFSymbols.tsx` for any monochrome system glyphs.
+2. **macOS / Desktop**:
+   - Create `src/components/desktop/windows/<Name>Window.tsx` following the `WindowToolbar` + `.macos-split-layout` + `.macos-scroll` + `cardClass` pattern (`AboutWindow.tsx` / `SettingsWindow.tsx`).
+   - Register its ID in `DesktopWindowId` (`SpotlightSearch.tsx`), `WINDOW_IDS`, state records, `windowTitles`, `desktopIcons`, Dock items, and `<Window>` mounts in `DesktopOS.tsx` (and `MacOSMenuBar.tsx` / `SpotlightSearch.tsx` if menu-listed).
+3. **iPadOS / Tablet**:
+   - Create `src/components/tablet/IPad<Name>.tsx` using `IPadSplitView` and `getIPadSidebarItemClasses(theme)`.
+   - Use default `IPadSplitView` backgrounds (`#EFEFF4` / `#161618` sidebar, `#F2F2F7` / `#1C1C1E` canvas) with `bg-white dark:bg-[#2C2C2E]` (`border-black/[0.05] dark:border-white/[0.08]`) cards.
+   - Register in `TabletOS.tsx` (`AppId`, `appConfigs`, `windowComponents`).
+4. **iOS / Mobile**:
+   - Add the app to `AppId`, `appTitles`, `appContent` (wrapped in `AnimatedSection` with `bg-white dark:bg-zinc-900 rounded-2xl` grouped cards), and `gridApps` inside `MobileOS.tsx`, plus `appMeta` in `DynamicIsland.tsx` so the island pill morphs when opening it.
+
+---
+
+## 7. Checklist Before Submitting UI Changes
 - [ ] **Cross-device parity**: Did you check whether Desktop, Tablet, and Mobile stay visually consistent where shared (`SFSymbols`, `FocusAudio`, `CVDownloadModal`, Wallpapers)?
-- [ ] **Light & Dark contrast**: Verify cards sit one step lighter than their canvas (`#FFFFFF` on `#F2F2F7` in Light; `#2C2C2E` on `#1C1C1E` in Dark) and muted labels stay legible (`zinc-500` light / `zinc-400` dark).
+- [ ] **Light & Dark contrast**: Verify cards sit one step lighter than their canvas (`#FFFFFF` on `#F2F2F7` in Light; `#2C2C2E` on `#1C1C1E` in Dark on iPadOS, and `#FFFFFF` on `#F2F2F7` / `bg-zinc-900` in iOS) and muted labels stay legible (`zinc-500` light / `zinc-400` dark).
 - [ ] **No raw emojis / unlocalized text**: All UI icons come from `SFSymbols.tsx` / `AppleIcons.tsx`; all text keys exist in both `en.json` and `fr.json`.
 - [ ] **Verification**: Run `npm run type-check; npm run lint; npm run build`.
