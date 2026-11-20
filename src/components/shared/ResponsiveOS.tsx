@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import dynamic from 'next/dynamic'
 import { AppleHelloSplash } from './AppleHelloSplash'
+import { FocusAudioProvider } from './FocusAudioProvider'
 
 const DesktopOS = dynamic(() => import('../desktop/DesktopOS'), { ssr: false })
 const MobileOS = dynamic(() => import('../mobile/MobileOS'), { ssr: false })
@@ -93,7 +94,7 @@ export default function ResponsiveOS() {
   }, [])
 
   return (
-    <>
+    <FocusAudioProvider>
       <AppleHelloSplash visible={showHello} onComplete={handleHelloComplete} />
       {deviceType === 'mobile' ? (
         <MobileOS />
@@ -102,6 +103,6 @@ export default function ResponsiveOS() {
       ) : (
         <DesktopOS />
       )}
-    </>
+    </FocusAudioProvider>
   )
 }

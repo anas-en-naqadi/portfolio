@@ -16,6 +16,15 @@ interface IPadSplitViewProps {
   children: ReactNode
 }
 
+/** Unified neutral iPadOS sidebar selection classes shared across About, Contact, Settings, and Experience. */
+export function getIPadSidebarItemClasses(theme: 'dark' | 'light') {
+  const isDark = theme === 'dark'
+  return {
+    active: isDark ? 'bg-white/15 text-white shadow-sm' : 'bg-white text-zinc-900 shadow-sm',
+    inactive: isDark ? 'hover:bg-white/5 text-zinc-400' : 'hover:bg-black/5 text-zinc-600',
+  }
+}
+
 /**
  * Shared iPadOS UISplitViewController shell used across iPad apps.
  * Provides responsive container-query stacking on narrow sheets (< 700px)
@@ -36,8 +45,8 @@ export default function IPadSplitView({
 }: IPadSplitViewProps) {
   const isDark = theme === 'dark'
 
-  const resolvedSidebarBg = sidebarBgClass ?? (isDark ? 'bg-zinc-900/50' : 'bg-[#ECECEF]/80')
-  const resolvedDetailBg = detailBgClass ?? (isDark ? 'bg-[#1C1C1E]' : 'bg-white/60')
+  const resolvedSidebarBg = sidebarBgClass ?? (isDark ? 'bg-[#161618]/95' : 'bg-[#EFEFF4]/95')
+  const resolvedDetailBg = detailBgClass ?? (isDark ? 'bg-[#1C1C1E]' : 'bg-[#F2F2F7]')
   const borderClass = isDark ? 'border-white/10' : 'border-black/10'
 
   return (
@@ -83,7 +92,7 @@ export default function IPadSplitView({
         </div>
 
         {/* Scrollable App Content */}
-        <div className={`flex-1 min-h-0 overflow-y-auto ${detailPaddingClass}`}>
+        <div className={`flex-1 min-h-0 overflow-y-auto ${detailPaddingClass} pb-10`}>
           {children}
         </div>
       </div>

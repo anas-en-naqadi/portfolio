@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
 import { getLocalizedPortfolioData } from '@/lib/data'
 import AnimatedSection from '../shared/AnimatedSection'
-import IPadSplitView from './IPadSplitView'
+import IPadSplitView, { getIPadSidebarItemClasses } from './IPadSplitView'
 import { MapPinSymbol } from '../shared/SFSymbols'
 
 interface IPadExperienceProps {
@@ -25,8 +25,8 @@ export default function IPadExperience({ theme }: IPadExperienceProps) {
   const [showEdu, setShowEdu] = useState(true)
   const isDark = theme === 'dark'
 
-  const cardBg = isDark ? 'bg-zinc-900 border-white/[0.06]' : 'bg-white border-black/[0.06]'
-  const detailBg = isDark ? 'bg-[#1C1C1E]' : 'bg-[#F8F8FA]'
+  const cardBg = isDark ? 'bg-[#2C2C2E] border-white/[0.08]' : 'bg-white border-black/[0.06]'
+  const sidebarItemClasses = getIPadSidebarItemClasses(theme)
 
   const intlLocale = LOCALE_MAP[locale] || locale || 'en-US'
   const today = useMemo(() => new Date(), [])
@@ -104,11 +104,7 @@ export default function IPadExperience({ theme }: IPadExperienceProps) {
           onClick={() => setShowWork((prev) => !prev)}
           aria-pressed={showWork}
           className={`flex items-center justify-between gap-2.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap shrink-0 ${
-            showWork
-              ? isDark
-                ? 'bg-white/10 text-white'
-                : 'bg-white text-zinc-900 shadow-sm'
-              : 'hover:bg-black/5 dark:hover:bg-white/5 opacity-60'
+            showWork ? sidebarItemClasses.active : `${sidebarItemClasses.inactive} opacity-60`
           }`}
         >
           <span className="flex items-center gap-2.5">
@@ -135,11 +131,7 @@ export default function IPadExperience({ theme }: IPadExperienceProps) {
           onClick={() => setShowEdu((prev) => !prev)}
           aria-pressed={showEdu}
           className={`flex items-center justify-between gap-2.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap shrink-0 ${
-            showEdu
-              ? isDark
-                ? 'bg-white/10 text-white'
-                : 'bg-white text-zinc-900 shadow-sm'
-              : 'hover:bg-black/5 dark:hover:bg-white/5 opacity-60'
+            showEdu ? sidebarItemClasses.active : `${sidebarItemClasses.inactive} opacity-60`
           }`}
         >
           <span className="flex items-center gap-2.5">
@@ -171,12 +163,11 @@ export default function IPadExperience({ theme }: IPadExperienceProps) {
       sidebarHeaderExtra={sidebarMiniCalendar}
       sidebarContent={sidebarContent}
       detailTitle={calendarTitle}
-      detailBgClass={detailBg}
       detailPaddingClass="p-4 sm:p-6 md:p-8"
     >
       <div className="max-w-2xl mx-auto flex flex-col gap-6">
         {!showWork && !showEdu ? (
-          <div className="py-16 text-center text-sm font-medium text-zinc-400 dark:text-zinc-500">
+          <div className="py-16 text-center text-sm font-medium text-zinc-500 dark:text-zinc-400">
             {t('noCalendars')}
           </div>
         ) : (

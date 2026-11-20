@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { useLocale, useTranslations } from 'next-intl'
 import { getLocalizedPortfolioData, socialLinks } from '@/lib/data'
 import AnimatedSection from '../shared/AnimatedSection'
-import IPadSplitView from './IPadSplitView'
+import IPadSplitView, { getIPadSidebarItemClasses } from './IPadSplitView'
 import {
   DesignSymbol,
   DocumentTextSymbol,
@@ -32,9 +32,7 @@ export default function IPadAbout({ theme }: IPadAboutProps) {
   const [activeTab, setActiveTab] = useState<TabId>('contact')
   const isDark = theme === 'dark'
 
-  const detailBg = isDark ? 'bg-zinc-900/20' : 'bg-white/40'
-  const activeTabBg = isDark ? 'bg-white/15 text-white shadow-sm' : 'bg-white text-black shadow-sm'
-  const hoverTabBg = isDark ? 'hover:bg-white/5 text-zinc-400' : 'hover:bg-black/5 text-zinc-600'
+  const { active: activeTabBg, inactive: hoverTabBg } = getIPadSidebarItemClasses(theme)
 
   const sidebarTabs: Array<{ id: TabId; label: string; icon: React.ReactNode }> = [
     {
@@ -99,7 +97,6 @@ export default function IPadAbout({ theme }: IPadAboutProps) {
       sidebarTitle={t('tablet.about.sidebarTitle')}
       sidebarContent={sidebarNav}
       detailTitle={activeTabLabel}
-      detailBgClass={detailBg}
       detailPaddingClass="p-4 sm:p-6 md:p-8"
     >
         {activeTab === 'contact' && (
@@ -117,7 +114,7 @@ export default function IPadAbout({ theme }: IPadAboutProps) {
                 <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white tracking-tight">
                   {personalInfo.name}
                 </h3>
-                <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mt-0.5">
+                <p className="text-xs text-zinc-600 dark:text-zinc-400 font-medium mt-0.5">
                   {personalInfo.title}
                 </p>
               </div>
@@ -154,7 +151,7 @@ export default function IPadAbout({ theme }: IPadAboutProps) {
                     href={action.href}
                     target={action.external ? '_blank' : undefined}
                     rel={action.external ? 'noopener noreferrer' : undefined}
-                    className="flex flex-col items-center gap-1.5 p-2 sm:p-2.5 bg-white dark:bg-zinc-900 border border-black/[0.04] dark:border-white/[0.04] rounded-2xl hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors shadow-sm active:scale-95 duration-100"
+                    className="flex flex-col items-center gap-1.5 p-2 sm:p-2.5 bg-white dark:bg-[#2C2C2E] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl hover:bg-gray-50 dark:hover:bg-[#3A3A3C] transition-colors shadow-sm active:scale-95 duration-100"
                   >
                     <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-[#D7BFA8]/35 to-[#9A7E64]/20 dark:from-[#D7BFA8]/20 dark:to-[#9A7E64]/15 flex items-center justify-center">
                       {action.icon}
@@ -168,7 +165,7 @@ export default function IPadAbout({ theme }: IPadAboutProps) {
             </AnimatedSection>
 
             <AnimatedSection delay={0.15}>
-              <div className="bg-white dark:bg-zinc-900 border border-black/[0.05] dark:border-white/[0.05] rounded-2xl divide-y divide-black/[0.05] dark:divide-white/[0.05] shadow-sm overflow-hidden">
+              <div className="bg-white dark:bg-[#2C2C2E] border border-black/[0.05] dark:border-white/[0.08] rounded-2xl divide-y divide-black/[0.05] dark:divide-white/[0.08] shadow-sm overflow-hidden">
                 <div className="p-4 flex flex-col gap-0.5">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">
                     {t('tablet.about.phone')}
@@ -206,11 +203,11 @@ export default function IPadAbout({ theme }: IPadAboutProps) {
               <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white tracking-tight mb-2">
                 {t('about.profile.title')}
               </h2>
-              <div className="bg-white mt-4 dark:bg-zinc-900 border border-black/[0.05] dark:border-white/[0.05] rounded-2xl p-5 sm:p-6 shadow-sm leading-relaxed text-sm flex flex-col gap-4">
+              <div className="bg-white mt-4 dark:bg-[#2C2C2E] border border-black/[0.05] dark:border-white/[0.08] rounded-2xl p-5 sm:p-6 shadow-sm leading-relaxed text-sm flex flex-col gap-4">
                 <p className="text-zinc-700 dark:text-zinc-100 select-text">
                   {t('about.profile.description')}
                 </p>
-                <div className="pt-3 border-t border-black/[0.05] dark:border-white/[0.05] text-xs font-semibold text-zinc-500 dark:text-zinc-400">
+                <div className="pt-3 border-t border-black/[0.05] dark:border-white/[0.08] text-xs font-semibold text-zinc-500 dark:text-zinc-400">
                   {personalInfo.subtitle}
                 </div>
               </div>
@@ -228,7 +225,7 @@ export default function IPadAbout({ theme }: IPadAboutProps) {
                 {expertiseList.map((exp, index) => (
                   <div
                     key={index}
-                    className="p-4 sm:p-5 rounded-2xl border border-black/[0.05] dark:border-white/[0.05] bg-white dark:bg-zinc-900 shadow-sm flex items-start gap-4"
+                    className="p-4 sm:p-5 rounded-2xl border border-black/[0.05] dark:border-white/[0.08] bg-white dark:bg-[#2C2C2E] shadow-sm flex items-start gap-4"
                   >
                     <span className="w-11 h-11 flex items-center justify-center rounded-xl bg-gradient-to-br from-[#D7BFA8]/35 to-[#9A7E64]/20 dark:from-[#D7BFA8]/20 dark:to-[#9A7E64]/15 shrink-0">
                       {exp.icon}

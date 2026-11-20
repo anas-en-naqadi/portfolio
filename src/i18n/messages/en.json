@@ -36,6 +36,21 @@
       "headline": "Welcome to my world, where code meets intelligence.",
       "subline": "ANAS EN-NAQADI • Full-Stack Developer & AI Engineer",
       "hint": "Click anywhere to enter"
+    },
+    "focusAudio": {
+      "nowPlaying": "Focus Audio",
+      "playing": "Playing",
+      "paused": "Paused",
+      "play": "Play",
+      "pause": "Pause",
+      "next": "Next track",
+      "prev": "Previous track",
+      "volume": "Volume",
+      "track1Title": "Argon Focus",
+      "track1Artist": "Lo-Fi Coding",
+      "track2Title": "Astra Ambient",
+      "track2Artist": "Deep Concentration",
+      "missingHint": "Add focus-1.mp3 & focus-2.mp3 in public/audio/"
     }
   },
   "about": {

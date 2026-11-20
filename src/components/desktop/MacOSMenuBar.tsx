@@ -14,7 +14,14 @@ import {
   PhotoSymbol,
   CheckmarkSymbol,
   GearSymbol,
+  MusicNoteSymbol,
+  PlaySymbol,
+  PauseSymbol,
+  ForwardEndSymbol,
+  BackwardEndSymbol,
+  SpeakerWaveSymbol,
 } from '@/components/shared/SFSymbols'
+import { AudioEqualizerBars, useFocusAudio } from '@/components/shared/FocusAudioProvider'
 import type { DesktopWindowId } from './SpotlightSearch'
 
 export type WallpaperPresetId = 'default' | 'workspace'
@@ -56,6 +63,7 @@ type OpenMenuKey =
   | 'go'
   | 'window'
   | 'help'
+  | 'nowPlaying'
   | 'controlCenter'
   | null
 
@@ -86,10 +94,23 @@ export function MacOSMenuBar({
   onCopyPhone,
 }: MacOSMenuBarProps) {
   const tCommon = useTranslations('common')
+  const tAudio = useTranslations('common.focusAudio')
   const tMenu = useTranslations('desktop.menuBar')
   const tWp = useTranslations('desktop.wallpapers')
   const locale = useLocale()
   const isDark = theme === 'dark'
+  const {
+    tracks,
+    currentTrackIndex,
+    currentTrack,
+    isPlaying,
+    volume,
+    togglePlay,
+    nextTrack,
+    prevTrack,
+    selectTrack,
+    setVolume,
+  } = useFocusAudio()
 
   const [timeString, setTimeString] = useState('')
   const [dateString, setDateString] = useState('')
@@ -589,8 +610,31 @@ export function MacOSMenuBar({
         </div>
       </div>
 
-      {/* Right: Status Tray + Spotlight + Control Center + Date/Time */}
+      {/* Right: Now Playing + Status Tray + Spotlight + Control Center + Date/Time */}
       <div className="flex items-center gap-1.5 relative">
+        <button
+          type="button"
+          onClick={() => handleTriggerClick('nowPlaying')}
+          onPointerEnter={(e) => handleHoverOpen('nowPlaying', e)}
+          onPointerLeave={handleHoverLeave}
+          aria-label={tAudio('nowPlaying')}
+          aria-haspopup="dialog"
+          aria-expanded={openMenu === 'nowPlaying'}
+          className={`px-1.5 h-[22px] rounded-[5px] flex items-center gap-1.5 transition-colors ${
+            openMenu === 'nowPlaying'
+              ? 'bg-[#007AFF] text-white'
+              : isDark
+                ? 'hover:bg-white/15'
+                : 'hover:bg-black/10'
+          }`}
+        >
+          {isPlaying ? (
+            <AudioEqualizerBars playing className={openMenu === 'nowPlaying' ? 'text-white' : 'text-[#007AFF]'} />
+          ) : (
+            <MusicNoteSymbol className="w-[13.5px] h-[13.5px]" />
+          )}
+        </button>
+
         <button
           type="button"
           onClick={() => handleTriggerClick('controlCenter')}
@@ -651,6 +695,99 @@ export function MacOSMenuBar({
           <span className="capitalize">{dateString}</span>
           <span>{timeString}</span>
         </div>
+
+        {/* Focus Audio Quick Player Popover */}
+        {openMenu === 'nowPlaying' && (
+          <div
+            role="dialog"
+            data-audio-control="true"
+            aria-label={tAudio('nowPlaying')}
+            onPointerEnter={handleDropdownEnter}
+            onPointerLeave={handleHoverLeave}
+            className="absolute top-[28px] right-0 w-[280px] rounded-2xl p-3 space-y-2.5 z-[9999]"
+            style={dropdownStyle}
+          >
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#007AFF] to-indigo-600 text-white flex items-center justify-center shrink-0 shadow-sm">
+                  {isPlaying ? <AudioEqualizerBars playing /> : <MusicNoteSymbol className="w-4 h-4" />}
+                </div>
+                <div className="min-w-0">
+                  <div className="text-[12px] font-semibold truncate">{tAudio(currentTrack.titleKey)}</div>
+                  <div className="text-[10.5px] opacity-65 truncate">
+                    {`${tAudio(currentTrack.artistKey)} • ${isPlaying ? tAudio('playing') : tAudio('paused')}`}
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-1 shrink-0">
+                <button
+                  type="button"
+                  onClick={prevTrack}
+                  aria-label={tAudio('prev')}
+                  className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors ${
+                    isDark ? 'hover:bg-white/15' : 'hover:bg-black/10'
+                  }`}
+                >
+                  <BackwardEndSymbol className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={togglePlay}
+                  aria-label={isPlaying ? tAudio('pause') : tAudio('play')}
+                  className="w-7 h-7 rounded-lg bg-[#007AFF] text-white flex items-center justify-center hover:bg-blue-600 transition-colors"
+                >
+                  {isPlaying ? <PauseSymbol className="w-3.5 h-3.5" /> : <PlaySymbol className="w-3.5 h-3.5" />}
+                </button>
+                <button
+                  type="button"
+                  onClick={nextTrack}
+                  aria-label={tAudio('next')}
+                  className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors ${
+                    isDark ? 'hover:bg-white/15' : 'hover:bg-black/10'
+                  }`}
+                >
+                  <ForwardEndSymbol className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-1.5">
+              {tracks.map((track, idx) => {
+                const selected = idx === currentTrackIndex
+                return (
+                  <button
+                    key={track.id}
+                    type="button"
+                    onClick={() => selectTrack(idx)}
+                    className={`px-2.5 py-1.5 rounded-lg text-[11px] font-semibold truncate transition-colors ${
+                      selected
+                        ? 'bg-[#007AFF] text-white'
+                        : isDark
+                          ? 'bg-white/[0.08] hover:bg-white/[0.15]'
+                          : 'bg-black/[0.05] hover:bg-black/[0.1]'
+                    }`}
+                  >
+                    {tAudio(track.titleKey)}
+                  </button>
+                )
+              })}
+            </div>
+
+            <div className="flex items-center gap-2 pt-0.5">
+              <SpeakerWaveSymbol className="w-3.5 h-3.5 opacity-65 shrink-0" />
+              <input
+                type="range"
+                min={0}
+                max={1}
+                step={0.02}
+                value={volume}
+                onChange={(e) => setVolume(Number(e.target.value))}
+                aria-label={tAudio('volume')}
+                className="w-full h-1.5 accent-[#007AFF] cursor-pointer"
+              />
+            </div>
+          </div>
+        )}
 
         {/* Liquid Glass Control Center Popover */}
         {openMenu === 'controlCenter' && (
@@ -736,6 +873,61 @@ export function MacOSMenuBar({
               >
                 {locale === 'fr' ? 'FR → EN' : 'EN → FR'}
               </button>
+            </div>
+
+            {/* Row 2b: Focus Audio Now Playing */}
+            <div
+              data-audio-control="true"
+              className={`p-2.5 rounded-xl space-y-2 ${
+                isDark ? 'bg-white/[0.08]' : 'bg-black/[0.05]'
+              }`}
+            >
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#007AFF] to-indigo-600 text-white flex items-center justify-center shrink-0">
+                    {isPlaying ? <AudioEqualizerBars playing /> : <MusicNoteSymbol className="w-3.5 h-3.5" />}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-[11.5px] font-semibold truncate">{tAudio(currentTrack.titleKey)}</div>
+                    <div className="text-[10px] opacity-65 truncate">
+                      {tAudio(currentTrack.artistKey)}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1 shrink-0">
+                  <button
+                    type="button"
+                    onClick={togglePlay}
+                    aria-label={isPlaying ? tAudio('pause') : tAudio('play')}
+                    className="w-7 h-7 rounded-lg bg-[#007AFF] text-white flex items-center justify-center hover:bg-blue-600 transition-colors"
+                  >
+                    {isPlaying ? <PauseSymbol className="w-3.5 h-3.5" /> : <PlaySymbol className="w-3.5 h-3.5" />}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={nextTrack}
+                    aria-label={tAudio('next')}
+                    className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors ${
+                      isDark ? 'hover:bg-white/15' : 'hover:bg-black/10'
+                    }`}
+                  >
+                    <ForwardEndSymbol className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <SpeakerWaveSymbol className="w-3 h-3 opacity-60 shrink-0" />
+                <input
+                  type="range"
+                  min={0}
+                  max={1}
+                  step={0.02}
+                  value={volume}
+                  onChange={(e) => setVolume(Number(e.target.value))}
+                  aria-label={tAudio('volume')}
+                  className="w-full h-1 accent-[#007AFF] cursor-pointer"
+                />
+              </div>
             </div>
 
             {/* Row 3: Quick Wallpaper Swatches */}

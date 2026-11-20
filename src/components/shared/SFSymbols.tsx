@@ -23,11 +23,16 @@ export function AppleLogoSymbol({ className = 'w-3.5 h-3.5', size }: SFSymbolPro
   )
 }
 
-/** macOS/iOS style Wi-Fi symbol. */
+/** Authentic bold 3-tier macOS/iOS status bar Wi-Fi symbol (filled concentric sectors via currentColor). */
 export function WifiSymbol({ className = 'w-4 h-3.5', size }: SFSymbolProps) {
   return (
-    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <path d="M12 18.5a1.75 1.75 0 100 3.5 1.75 1.75 0 000-3.5zm-4.95-2.9a.9.9 0 001.27 1.27 5.2 5.2 0 017.36 0 .9.9 0 001.27-1.27 7 7 0 00-9.9 0zm-3.54-3.54a.9.9 0 001.28 1.27 10.2 10.2 0 0114.42 0 .9.9 0 001.28-1.27 12 12 0 00-16.98 0zM1.1 8.52a.9.9 0 001.28 1.27 15.2 15.2 0 0119.24 0 .9.9 0 101.28-1.27 17 17 0 00-21.8 0z" />
+    <svg width={size} height={size} className={className} viewBox="0 0 24 18" fill="currentColor" aria-hidden="true">
+      {/* Top outer band */}
+      <path d="M1.22 6.70A14.5 14.5 0 0 1 22.78 6.70L20.55 8.71A11.5 11.5 0 0 0 3.45 8.71Z" />
+      {/* Middle band */}
+      <path d="M5.01 10.11A9.4 9.4 0 0 1 18.99 10.11L16.83 12.05A6.5 6.5 0 0 0 7.17 12.05Z" />
+      {/* Bottom sector wedge */}
+      <path d="M12 16.4L8.73 13.46A4.4 4.4 0 0 1 15.27 13.46Z" />
     </svg>
   )
 }
@@ -555,6 +560,60 @@ export function CommandSymbol({ className = 'w-4 h-4', size }: SFSymbolProps) {
   return (
     <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.85" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d="M18 3a3 3 0 00-3 3v12a3 3 0 003 3 3 3 0 003-3 3 3 0 00-3-3H6a3 3 0 00-3 3 3 3 0 003 3 3 3 0 003-3V6a3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3h12a3 3 0 003-3 3 3 0 00-3-3z" />
+    </svg>
+  )
+}
+
+export function MusicNoteSymbol({ className = 'w-4 h-4', size }: SFSymbolProps) {
+  return (
+    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M9 18V6.2a1.2 1.2 0 01.95-1.17l8-1.6A1.2 1.2 0 0119.5 4.6V16" />
+      <circle cx="6.5" cy="18" r="2.5" fill="currentColor" stroke="none" />
+      <circle cx="17" cy="16" r="2.5" fill="currentColor" stroke="none" />
+    </svg>
+  )
+}
+
+export function PlaySymbol({ className = 'w-4 h-4', size }: SFSymbolProps) {
+  return (
+    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M7.5 4.8a1.2 1.2 0 011.82-1.03l10.8 6.9a1.2 1.2 0 010 2.02l-10.8 6.9A1.2 1.2 0 017.5 18.58V4.8z" />
+    </svg>
+  )
+}
+
+export function PauseSymbol({ className = 'w-4 h-4', size }: SFSymbolProps) {
+  return (
+    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <rect x="6.5" y="4.5" width="4" height="15" rx="1.4" />
+      <rect x="13.5" y="4.5" width="4" height="15" rx="1.4" />
+    </svg>
+  )
+}
+
+export function ForwardEndSymbol({ className = 'w-4 h-4', size }: SFSymbolProps) {
+  return (
+    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M5 6.2a1 1 0 011.55-.83l8.1 5.4a1 1 0 010 1.66l-8.1 5.4A1 1 0 015 17V6.2z" />
+      <rect x="17" y="5.5" width="2.2" height="13" rx="1" />
+    </svg>
+  )
+}
+
+export function BackwardEndSymbol({ className = 'w-4 h-4', size }: SFSymbolProps) {
+  return (
+    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M19 6.2a1 1 0 00-1.55-.83l-8.1 5.4a1 1 0 000 1.66l8.1 5.4A1 1 0 0019 17V6.2z" />
+      <rect x="4.8" y="5.5" width="2.2" height="13" rx="1" />
+    </svg>
+  )
+}
+
+export function SpeakerWaveSymbol({ className = 'w-4 h-4', size }: SFSymbolProps) {
+  return (
+    <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.85" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M11 5.5L6.5 9.2H3.8a1.2 1.2 0 00-1.2 1.2v3.2a1.2 1.2 0 001.2 1.2h2.7L11 18.5V5.5z" fill="currentColor" stroke="none" />
+      <path d="M15.2 9.2a4.5 4.5 0 010 5.6M18 6.8a8 8 0 010 10.4" />
     </svg>
   )
 }

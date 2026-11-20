@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { useLocale, useTranslations } from 'next-intl'
 import { getLocalizedPortfolioData, socialLinks } from '@/lib/data'
 import AnimatedSection from '../shared/AnimatedSection'
-import IPadSplitView from './IPadSplitView'
+import IPadSplitView, { getIPadSidebarItemClasses } from './IPadSplitView'
 import {
   AppCubeSymbol,
   ArrowUpRightSymbol,
@@ -32,13 +32,9 @@ export default function IPadProjects({ theme }: IPadProjectsProps) {
   const [selectedProject, setSelectedProject] = useState<(typeof projects)[number] | null>(null)
   const isDark = theme === 'dark'
 
-  const detailBg = isDark ? 'bg-zinc-900/20' : 'bg-white/40'
-  const cardBg = isDark ? 'bg-zinc-900 border-white/[0.04]' : 'bg-white border-black/[0.04]'
+  const cardBg = isDark ? 'bg-[#2C2C2E] border-white/[0.08]' : 'bg-white border-black/[0.05]'
   const searchBg = isDark ? 'bg-white/10 text-white' : 'bg-black/5 text-black'
-  const activeFilterBg = 'bg-[#007AFF] text-white shadow-sm shadow-[#007AFF]/25'
-  const hoverFilterBg = isDark
-    ? 'hover:bg-[#007AFF]/15 text-zinc-300'
-    : 'hover:bg-[#007AFF]/10 text-zinc-700'
+  const { active: activeFilterBg, inactive: hoverFilterBg } = getIPadSidebarItemClasses(theme)
 
   const filters = [
     {
@@ -138,11 +134,7 @@ export default function IPadProjects({ theme }: IPadProjectsProps) {
               isActive ? activeFilterBg : hoverFilterBg
             }`}
           >
-            <span
-              className={`flex items-center justify-center shrink-0 ${
-                isActive ? 'text-white' : 'text-[#007AFF] dark:text-[#0A84FF]'
-              }`}
-            >
+            <span className="flex items-center justify-center shrink-0">
               {f.icon}
             </span>
             <span className="truncate">{f.label}</span>
@@ -160,7 +152,6 @@ export default function IPadProjects({ theme }: IPadProjectsProps) {
         sidebarHeaderExtra={searchBar}
         sidebarContent={filterNav}
         detailTitle={`${activeFilterLabel} (${filteredProjects.length})`}
-        detailBgClass={detailBg}
         detailPaddingClass="p-4 sm:p-6 md:p-8"
       >
         <div className="max-w-4xl mx-auto flex flex-col gap-5 sm:gap-6">
@@ -207,7 +198,7 @@ export default function IPadProjects({ theme }: IPadProjectsProps) {
                               <button
                                 type="button"
                                 onClick={() => setSelectedProject(project)}
-                                className="bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700 text-[#007AFF] dark:text-[#0A84FF] font-extrabold text-[10px] px-4 sm:px-5 py-1.5 rounded-full tracking-wider active:scale-95 transition-all duration-100 flex-shrink-0 shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                                className="bg-gray-100 dark:bg-[#3A3A3C] hover:bg-gray-200 dark:hover:bg-[#48484A] text-[#007AFF] dark:text-[#0A84FF] font-extrabold text-[10px] px-4 sm:px-5 py-1.5 rounded-full tracking-wider active:scale-95 transition-all duration-100 flex-shrink-0 shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                               >
                                 {t('get')}
                               </button>
@@ -236,12 +227,12 @@ export default function IPadProjects({ theme }: IPadProjectsProps) {
               </motion.div>
             ) : (
               <motion.div
-                className="flex flex-col items-center justify-center p-12 text-center text-zinc-400 dark:text-zinc-500"
+                className="flex flex-col items-center justify-center p-12 text-center text-zinc-500 dark:text-zinc-400"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
               >
-                <SearchSymbol className="w-10 h-10 text-zinc-400 dark:text-zinc-500 mb-2 shrink-0" />
+                <SearchSymbol className="w-10 h-10 text-zinc-500 dark:text-zinc-400 mb-2 shrink-0" />
                 <p className="text-sm font-semibold">{t('empty')}</p>
               </motion.div>
             )}
@@ -270,7 +261,7 @@ export default function IPadProjects({ theme }: IPadProjectsProps) {
               aria-label={selectedProject.title}
               className={`w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl border max-h-[85%] flex flex-col ${
                 isDark
-                  ? 'bg-zinc-900 border-white/15 text-white'
+                  ? 'bg-[#2C2C2E] border-white/15 text-white'
                   : 'bg-white border-black/10 text-zinc-900'
               }`}
             >

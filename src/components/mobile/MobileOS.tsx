@@ -16,17 +16,23 @@ import {
   ChevronRightSymbol,
   DocumentTextSymbol,
   EnvelopeSymbol,
+  ForwardEndSymbol,
   GitHubGlyphSymbol,
   GlobeSymbol,
   LinkedInGlyphSymbol,
   LocationArrowSymbol,
   MapPinSymbol,
   MoonSymbol,
+  MusicNoteSymbol,
+  PauseSymbol,
   PhoneFillSymbol,
   PhotoSymbol,
+  PlaySymbol,
   SearchSymbol,
+  SpeakerWaveSymbol,
   XMarkCircleSymbol,
 } from '../shared/SFSymbols'
+import { AudioEqualizerBars, useFocusAudio } from '../shared/FocusAudioProvider'
 
 import IOSStatusBar from './IOSStatusBar'
 import DynamicIsland from './DynamicIsland'
@@ -102,6 +108,17 @@ export default function MobileOS() {
   const [mobileWallpaper, setMobileWallpaper] = useState<MobileWallpaperId>('default')
   const [cvModalOpen, setCvModalOpen] = useState(false)
   const [cvDownloadEvent, setCvDownloadEvent] = useState<{ lang: CVLanguage; nonce: number } | null>(null)
+  const {
+    tracks,
+    currentTrackIndex,
+    currentTrack,
+    isPlaying,
+    volume,
+    togglePlay,
+    nextTrack,
+    selectTrack,
+    setVolume,
+  } = useFocusAudio()
   const {
     personalInfo: localizedPersonalInfo,
     education: localizedEducation,
@@ -793,6 +810,110 @@ export default function MobileOS() {
                     </button>
                   ))}
                 </div>
+              </div>
+            </div>
+          </div>
+        </AnimatedSection>
+
+        {/* Focus Audio Settings Section (Native iOS Grouped List) */}
+        <AnimatedSection delay={0.18}>
+          <div className="flex flex-col gap-2">
+            <span className="text-xs font-bold text-gray-500 uppercase tracking-wide ml-4 flex items-center gap-1.5">
+              <MusicNoteSymbol className="w-3.5 h-3.5 text-[#007AFF]" />
+              {t('common.focusAudio.nowPlaying')}
+            </span>
+            <div
+              data-audio-control="true"
+              className="bg-white dark:bg-zinc-900 border border-black/[0.05] dark:border-white/[0.05] rounded-2xl overflow-hidden divide-y divide-black/[0.05] dark:divide-white/[0.05] shadow-sm"
+            >
+              {/* Now Playing Row */}
+              <div className="px-4 py-3.5 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#007AFF] to-indigo-600 text-white flex items-center justify-center shrink-0 shadow-sm">
+                    {isPlaying ? <AudioEqualizerBars playing /> : <MusicNoteSymbol className="w-4 h-4" />}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-[14px] font-semibold tracking-tight text-gray-900 dark:text-white truncate">
+                      {t(`common.focusAudio.${currentTrack.titleKey}`)}
+                    </div>
+                    <div className="text-[12px] text-gray-500 dark:text-zinc-400 truncate">
+                      {t(`common.focusAudio.${currentTrack.artistKey}`)} •{' '}
+                      {isPlaying ? t('common.focusAudio.playing') : t('common.focusAudio.paused')}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <button
+                    type="button"
+                    onClick={togglePlay}
+                    aria-label={isPlaying ? t('common.focusAudio.pause') : t('common.focusAudio.play')}
+                    className="w-8 h-8 rounded-full bg-[#007AFF] text-white flex items-center justify-center active:scale-95 transition"
+                  >
+                    {isPlaying ? <PauseSymbol className="w-3.5 h-3.5" /> : <PlaySymbol className="w-3.5 h-3.5" />}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={nextTrack}
+                    aria-label={t('common.focusAudio.next')}
+                    className="w-8 h-8 rounded-full bg-black/[0.05] dark:bg-white/[0.08] text-gray-700 dark:text-white flex items-center justify-center active:scale-95 transition"
+                  >
+                    <ForwardEndSymbol className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Track Picker Rows (iOS Checkmark Style) */}
+              {tracks.map((track, idx) => {
+                const selected = idx === currentTrackIndex
+                return (
+                  <button
+                    key={track.id}
+                    type="button"
+                    onClick={() => selectTrack(idx)}
+                    className="w-full px-4 py-3 flex items-center justify-between gap-3 text-left hover:bg-black/[0.025] dark:hover:bg-white/[0.03] active:bg-black/[0.05] dark:active:bg-white/[0.06] transition-colors"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <span
+                        className={`w-2 h-2 rounded-full shrink-0 ${
+                          selected
+                            ? isPlaying
+                              ? 'bg-emerald-500 animate-pulse'
+                              : 'bg-[#007AFF]'
+                            : 'bg-gray-300 dark:bg-zinc-600'
+                        }`}
+                      />
+                      <div className="min-w-0">
+                        <div className="text-[13.5px] font-medium text-gray-900 dark:text-white truncate">
+                          {t(`common.focusAudio.${track.titleKey}`)}
+                        </div>
+                        <div className="text-[11px] text-gray-400 dark:text-zinc-500 truncate">
+                          {t(`common.focusAudio.${track.artistKey}`)}
+                        </div>
+                      </div>
+                    </div>
+                    {selected && <CheckmarkSymbol className="w-4 h-4 text-[#007AFF] shrink-0" />}
+                  </button>
+                )
+              })}
+
+              {/* Slim iOS Volume Slider Row */}
+              <div className="px-4 py-3 flex items-center gap-3">
+                <SpeakerWaveSymbol className="w-4 h-4 text-gray-400 dark:text-zinc-500 shrink-0" />
+                <input
+                  type="range"
+                  min={0}
+                  max={1}
+                  step={0.02}
+                  value={volume}
+                  onChange={(e) => setVolume(Number(e.target.value))}
+                  aria-label={t('common.focusAudio.volume')}
+                  className="ios-volume-slider w-full cursor-pointer"
+                  style={{
+                    background: `linear-gradient(to right, #007AFF ${Math.round(volume * 100)}%, ${
+                      theme === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(120, 120, 128, 0.24)'
+                    } ${Math.round(volume * 100)}%)`,
+                  }}
+                />
               </div>
             </div>
           </div>

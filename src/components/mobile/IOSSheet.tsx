@@ -79,7 +79,7 @@ export default function IOSSheet({
               borderRadius: "24px 24px 0 0",
               boxShadow: "0 -8px 40px rgba(0, 0, 0, 0.3)",
               fontFamily:
-                '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                '"SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, var(--font-inter), sans-serif',
             }}
             initial={{ y: "100%", opacity: 0.7, scale: 0.98 }}
             animate={{

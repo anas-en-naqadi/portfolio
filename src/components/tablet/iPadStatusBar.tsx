@@ -3,7 +3,8 @@
 import { useTime } from '@/hooks/useTime'
 import { motion } from 'framer-motion'
 import { useLocale, useTranslations } from 'next-intl'
-import { BatterySymbol, WifiSymbol } from '@/components/shared/SFSymbols'
+import { BatterySymbol, MusicNoteSymbol, WifiSymbol } from '@/components/shared/SFSymbols'
+import { AudioEqualizerBars, useFocusAudio } from '@/components/shared/FocusAudioProvider'
 
 interface IPadStatusBarProps {
   theme: 'dark' | 'light'
@@ -25,12 +26,15 @@ export default function IPadStatusBar({
   const locale = useLocale()
   const t = useTranslations('tablet.statusBar')
   const { timeShort, shortDateString } = useTime(locale)
+  const { isPlaying } = useFocusAudio()
 
   const isLightText = !isAppOpen || theme === 'dark'
   const textColor = isLightText ? 'text-white' : 'text-gray-900'
-  const bgStyle = isLightText
-    ? 'bg-black/20 backdrop-blur-xl border-b border-white/10'
-    : 'bg-white/25 backdrop-blur-xl border-b border-black/10'
+  const bgStyle = !isAppOpen
+    ? 'bg-black/15 backdrop-blur-xl border-b border-white/10'
+    : theme === 'dark'
+      ? 'bg-black/25 backdrop-blur-xl border-b border-white/10'
+      : 'bg-white/80 backdrop-blur-xl border-b border-black/[0.08]'
 
   return (
     <motion.div
@@ -57,6 +61,14 @@ export default function IPadStatusBar({
         aria-label={t('openControlCenter')}
         className={`flex items-center gap-2 sm:gap-2.5 px-2.5 py-1 -mr-1.5 rounded-full transition hover:bg-black/10 dark:hover:bg-white/10 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${textColor} select-none`}
       >
+        <span className="flex items-center opacity-90" aria-hidden="true">
+          {isPlaying ? (
+            <AudioEqualizerBars playing className="text-[#007AFF]" />
+          ) : (
+            <MusicNoteSymbol className="w-3.5 h-3.5 opacity-75 shrink-0" />
+          )}
+        </span>
+
         <span className="flex items-center opacity-90" aria-label={t('wifiConnected')}>
           <WifiSymbol className="w-4 h-3.5 shrink-0" />
         </span>

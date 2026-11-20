@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLocale, useTranslations } from 'next-intl'
 import { getLocalizedPortfolioData, socialLinks } from '@/lib/data'
-import IPadSplitView from './IPadSplitView'
+import IPadSplitView, { getIPadSidebarItemClasses } from './IPadSplitView'
 import {
   CheckmarkSymbol,
   CopySymbol,
@@ -29,9 +29,8 @@ export default function IPadContact({ theme }: IPadContactProps) {
   const isDark = theme === 'dark'
 
   const detailBg = isDark ? 'bg-[#1C1C1E]' : 'bg-white'
-  const activeMailBg = isDark ? 'bg-white/15 text-white shadow-sm' : 'bg-white text-black shadow-sm'
-  const hoverMailBg = isDark ? 'hover:bg-white/5' : 'hover:bg-black/5'
-  const emailBodyBg = isDark ? 'bg-zinc-900/60 border-white/10' : 'bg-gray-50 border-black/5'
+  const { active: activeMailBg, inactive: hoverMailBg } = getIPadSidebarItemClasses(theme)
+  const emailBodyBg = isDark ? 'bg-[#2C2C2E] border-white/[0.08]' : 'bg-gray-50 border-black/5'
 
   const mailList = [
     {

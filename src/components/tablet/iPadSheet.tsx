@@ -1,7 +1,7 @@
 'use client'
 
-import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { createContext, ReactNode, useContext, useEffect, useRef, useState } from 'react'
+import { motion, AnimatePresence, PanInfo } from 'framer-motion'
 import { useTranslations } from 'next-intl'
 import { HouseSymbol, XMarkSymbol } from '../shared/SFSymbols'
 
@@ -39,16 +39,49 @@ export default function IPadSheet({
   const t = useTranslations('tablet.sheet')
   const isDark = theme === 'dark'
   const [multitaskingOpen, setMultitaskingOpen] = useState(false)
+  const [swipeProgress, setSwipeProgress] = useState(0)
+  const didPanRef = useRef(false)
 
   useEffect(() => {
     if (isOpen) {
       setMultitaskingOpen(false)
+      setSwipeProgress(0)
+      didPanRef.current = false
     }
   }, [isOpen, title])
+
+  const handleHomeBarPan = (
+    _event: MouseEvent | TouchEvent | PointerEvent,
+    info: PanInfo
+  ) => {
+    if (Math.abs(info.offset.y) > 4) {
+      didPanRef.current = true
+    }
+    if (info.offset.y < 0) {
+      setSwipeProgress(Math.min(1, Math.abs(info.offset.y) / 90))
+    } else {
+      setSwipeProgress(0)
+    }
+  }
+
+  const handleHomeBarPanEnd = (
+    _event: MouseEvent | TouchEvent | PointerEvent,
+    info: PanInfo
+  ) => {
+    setSwipeProgress(0)
+    // Match mobile IOSSheet physics & threshold: upward swipe or flick returns home
+    if (info.offset.y < -28 || info.velocity.y < -180) {
+      onClose()
+    }
+    setTimeout(() => {
+      didPanRef.current = false
+    }, 0)
+  }
 
   const panelBackground = isDark
     ? 'rgba(28, 28, 30, 0.98)'
     : 'rgba(242, 242, 247, 0.98)'
+  const homeBarColor = isDark ? 'bg-white/75' : 'bg-black/65'
 
   return (
     <AnimatePresence>
@@ -60,7 +93,7 @@ export default function IPadSheet({
           }}
         >
           <motion.div
-            className="absolute inset-0 z-40 flex flex-col overflow-hidden pt-10 pb-7 ipad-sheet-container"
+            className="absolute inset-0 z-40 flex flex-col overflow-hidden pt-10 ipad-sheet-container"
             style={
               {
                 background: panelBackground,
@@ -71,10 +104,14 @@ export default function IPadSheet({
                   : 'rgba(0, 0, 0, 0.08)',
               } as React.CSSProperties
             }
-            initial={{ y: '100%', opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: '100%', opacity: 0 }}
-            transition={{ type: 'spring', damping: 28, stiffness: 220 }}
+            initial={{ y: '100%', opacity: 0.7, scale: 0.98 }}
+            animate={{
+              y: -swipeProgress * 28,
+              opacity: 1 - swipeProgress * 0.2,
+              scale: 1 - swipeProgress * 0.05,
+            }}
+            exit={{ y: -56, opacity: 0, scale: 0.92 }}
+            transition={{ type: 'spring', stiffness: 360, damping: 34 }}
             role="dialog"
             aria-modal="true"
             aria-label={title}
@@ -159,31 +196,29 @@ export default function IPadSheet({
             {/* Full-screen Edge-to-Edge App Content */}
             <div className="flex-1 min-h-0 overflow-hidden">{children}</div>
 
-            {/* iPad Home Indicator Grab Bar at the bottom to quit app */}
+            {/* Transparent iPad Swipe-Up Home Bar (mirrors mobile IOSSheet physics without detaching the bar) */}
             <motion.button
               type="button"
-              drag="y"
-              dragConstraints={{ top: -150, bottom: 0 }}
-              dragElastic={{ top: 0.2, bottom: 0 }}
-              dragMomentum={false}
-              onDragEnd={(_event, info) => {
-                if (info.offset.y < -50) {
+              className="group absolute bottom-0 left-1/2 -translate-x-1/2 w-48 h-7 pb-[max(0.5rem,env(safe-area-inset-bottom))] flex items-end justify-center z-50 cursor-grab active:cursor-grabbing touch-none select-none border-0 bg-transparent focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-t-full"
+              onPan={handleHomeBarPan}
+              onPanEnd={handleHomeBarPanEnd}
+              onClick={() => {
+                if (!didPanRef.current) onClose()
+              }}
+              aria-label={t('returnHome')}
+              title={t('returnHome')}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
                   onClose()
                 }
               }}
-              className="group absolute bottom-0 h-7 px-6 pb-2 flex items-end justify-center cursor-grab active:cursor-grabbing z-50 touch-none border-0 bg-transparent focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-full"
-              style={{ left: '50%', x: '-50%' }}
-              whileTap={{ scale: 0.96 }}
-              onClick={onClose}
-              aria-label={t('returnHome')}
-              title={t('returnHome')}
             >
               <span
-                className={`w-[134px] h-[5px] rounded-full transition-all duration-150 group-hover:scale-y-125 ${
-                  isDark
-                    ? 'bg-zinc-500/65 group-hover:bg-white/80'
-                    : 'bg-zinc-400/75 group-hover:bg-black/75'
-                }`}
+                className={`w-[134px] h-[5px] rounded-full transition-transform duration-150 ${homeBarColor}`}
+                style={{
+                  transform: `scaleX(${1 + swipeProgress * 0.08})`,
+                }}
               />
             </motion.button>
           </motion.div>
