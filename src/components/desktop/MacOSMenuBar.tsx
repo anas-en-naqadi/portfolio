@@ -157,7 +157,7 @@ export function MacOSMenuBar({
   }, [locale])
 
   useEffect(() => {
-    const handleOutside = (e: MouseEvent) => {
+    const handleOutside = (e: PointerEvent) => {
       if (barRef.current && !barRef.current.contains(e.target as Node)) {
         closeAllMenus()
       }
@@ -165,10 +165,10 @@ export function MacOSMenuBar({
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') closeAllMenus()
     }
-    window.addEventListener('mousedown', handleOutside)
+    window.addEventListener('pointerdown', handleOutside, { capture: true })
     window.addEventListener('keydown', handleEsc)
     return () => {
-      window.removeEventListener('mousedown', handleOutside)
+      window.removeEventListener('pointerdown', handleOutside, { capture: true })
       window.removeEventListener('keydown', handleEsc)
       clearCloseTimer()
     }
@@ -278,7 +278,7 @@ export function MacOSMenuBar({
           <button
             type="button"
             onClick={() => handleTriggerClick('apple')}
-            aria-label="Apple Menu"
+            aria-label={tMenu('appleMenuLabel')}
             aria-haspopup="menu"
             aria-expanded={openMenu === 'apple'}
             className={`px-2.5 h-[22px] rounded-[5px] flex items-center justify-center transition-colors ${
@@ -635,20 +635,12 @@ export function MacOSMenuBar({
           )}
         </button>
 
-        <button
-          type="button"
-          onClick={() => handleTriggerClick('controlCenter')}
-          onPointerEnter={(e) => handleHoverOpen('controlCenter', e)}
-          onPointerLeave={handleHoverLeave}
-          aria-label="Wi-Fi"
-          aria-haspopup="dialog"
-          aria-expanded={openMenu === 'controlCenter'}
-          className={`px-1.5 h-[22px] rounded-[5px] flex items-center justify-center transition-colors ${
-            isDark ? 'hover:bg-white/15' : 'hover:bg-black/10'
-          }`}
+        <div
+          className="px-1 h-[22px] flex items-center justify-center opacity-90"
+          aria-hidden="true"
         >
           <WifiSymbol className="w-[14px] h-[14px]" />
-        </button>
+        </div>
 
         <div
           className="px-1 h-[22px] flex items-center justify-center opacity-90"
@@ -660,8 +652,8 @@ export function MacOSMenuBar({
         <button
           type="button"
           onClick={() => runAction(onOpenSpotlight)}
-          aria-label="Spotlight"
-          title="Spotlight (⌘K)"
+          aria-label={tMenu('editMenu.spotlight')}
+          title={tMenu('spotlightTooltip')}
           className={`px-1.5 h-[22px] rounded-[5px] flex items-center justify-center transition-colors ${
             isDark ? 'hover:bg-white/15' : 'hover:bg-black/10'
           }`}

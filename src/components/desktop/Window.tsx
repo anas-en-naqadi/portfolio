@@ -32,6 +32,9 @@ const MIN_HEIGHT = 380
 const TITLEBAR_SAFE_VISIBLE = 180
 const RIGHT_ICONS_CLEARANCE = 124
 
+const DEFAULT_WIDTH = 870
+const DEFAULT_HEIGHT = 580
+
 function getSafeInitialGeometry(
   initialPosition: { x: number; y: number },
   initialSize?: { width: number; height: number }
@@ -39,13 +42,13 @@ function getSafeInitialGeometry(
   if (typeof window === 'undefined') {
     return {
       position: initialPosition,
-      size: initialSize ?? { width: 800, height: 560 },
+      size: initialSize ?? { width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT },
     }
   }
   const maxAvailW = Math.max(MIN_WIDTH, window.innerWidth - RIGHT_ICONS_CLEARANCE - 24)
   const maxAvailH = Math.max(MIN_HEIGHT, window.innerHeight - MENU_BAR_HEIGHT - DOCK_RESERVE - 24)
-  const width = Math.min(initialSize?.width ?? 820, maxAvailW)
-  const height = Math.min(initialSize?.height ?? 580, maxAvailH)
+  const width = Math.min(initialSize?.width ?? DEFAULT_WIDTH, maxAvailW)
+  const height = Math.min(initialSize?.height ?? DEFAULT_HEIGHT, maxAvailH)
 
   const maxX = Math.max(20, window.innerWidth - width - RIGHT_ICONS_CLEARANCE)
   const maxY = Math.max(MENU_BAR_HEIGHT + 8, window.innerHeight - height - DOCK_RESERVE)
@@ -95,8 +98,8 @@ export function Window({
     mouseY: 0,
     winX: 0,
     winY: 0,
-    width: 800,
-    height: 560,
+    width: DEFAULT_WIDTH,
+    height: DEFAULT_HEIGHT,
   })
 
   // Clamp window bounds when viewport resizes

@@ -8,6 +8,7 @@ interface DesktopIconProps {
   label: string
   onClick?: () => void
   onDoubleClick: () => void
+  onPreload?: () => void
   selected?: boolean
 }
 
@@ -16,6 +17,7 @@ export function DesktopIcon({
   label,
   onClick,
   onDoubleClick,
+  onPreload,
   selected = false,
 }: DesktopIconProps) {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -47,27 +49,29 @@ export function DesktopIcon({
         e.stopPropagation()
         onDoubleClick()
       }}
+      onMouseEnter={() => onPreload?.()}
+      onFocus={() => onPreload?.()}
       onKeyDown={handleKeyDown}
-      whileTap={{ scale: 0.94 }}
-      className="w-[88px] flex flex-col items-center gap-1.5 p-1.5 rounded-xl cursor-pointer select-none focus:outline-none group"
+      whileTap={{ scale: 0.98 }}
+      className="w-[88px] flex flex-col items-center gap-1 p-1 rounded-lg cursor-default select-none focus:outline-none group"
     >
       <div
-        className={`w-[58px] h-[58px] rounded-[12px] flex items-center justify-center p-1 transition-colors ${
+        className={`w-[60px] h-[60px] rounded-[6px] flex items-center justify-center p-1 transition-colors duration-100 ${
           selected
-            ? 'bg-white/[0.16] border border-white/25 backdrop-blur-sm'
-            : 'border border-transparent'
+            ? 'bg-black/[0.28] border-[1.5px] border-white/[0.32] shadow-[inset_0_0_0_0.5px_rgba(0,0,0,0.22)]'
+            : 'border-[1.5px] border-transparent group-focus-visible:border-white/30'
         }`}
       >
-        <div className="w-[50px] h-[50px] flex items-center justify-center [&>svg]:w-full [&>svg]:h-full drop-shadow-md">
+        <div className="w-[50px] h-[50px] flex items-center justify-center [&>svg]:w-full [&>svg]:h-full drop-shadow-[0_2px_4px_rgba(0,0,0,0.42)]">
           {icon}
         </div>
       </div>
 
       <span
-        className={`px-2 py-0.5 rounded-[4px] text-[11.5px] font-semibold text-center leading-tight max-w-[84px] truncate transition-colors ${
+        className={`px-[6px] py-[1px] rounded-[4px] text-[11.5px] font-medium text-center leading-[15px] tracking-[-0.01em] max-w-[84px] truncate transition-colors duration-100 ${
           selected
-            ? 'bg-[#007AFF] text-white'
-            : 'text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]'
+            ? 'bg-[#0063E1] text-white shadow-[0_1px_2px_rgba(0,0,0,0.35)]'
+            : 'text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.88),0_0_6px_rgba(0,0,0,0.45)]'
         }`}
       >
         {label}

@@ -2,14 +2,15 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import Image from 'next/image'
 import { useLocale, useTranslations } from 'next-intl'
 import { getLocalizedPortfolioData, socialLinks } from '@/lib/data'
 import AnimatedSection from '../shared/AnimatedSection'
+import { ProjectImage, PROJECT_IMAGE_SIZES } from '../shared/ProjectImage'
 import IPadSplitView, { getIPadSidebarItemClasses } from './IPadSplitView'
 import {
   AppCubeSymbol,
   ArrowUpRightSymbol,
+  BriefcaseSymbol,
   GlobeSymbol,
   GridSymbol,
   PhoneDeviceSymbol,
@@ -26,8 +27,9 @@ interface IPadProjectsProps {
 export default function IPadProjects({ theme }: IPadProjectsProps) {
   const locale = useLocale()
   const t = useTranslations('tablet.projects')
+  const tCommon = useTranslations('common')
   const { projects } = getLocalizedPortfolioData(locale)
-  const [activeFilter, setActiveFilter] = useState<'all' | 'ai' | 'web' | 'mobile'>('all')
+  const [activeFilter, setActiveFilter] = useState<'all' | 'freelance' | 'ai' | 'web' | 'mobile'>('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedProject, setSelectedProject] = useState<(typeof projects)[number] | null>(null)
   const isDark = theme === 'dark'
@@ -36,28 +38,49 @@ export default function IPadProjects({ theme }: IPadProjectsProps) {
   const searchBg = isDark ? 'bg-white/10 text-white' : 'bg-black/5 text-black'
   const { active: activeFilterBg, inactive: hoverFilterBg } = getIPadSidebarItemClasses(theme)
 
-  const filters = [
+  const counts = {
+    all: projects.length,
+    freelance: projects.filter((p) => p.isFreelance).length,
+    ai: projects.filter((p) => p.type === 'ai').length,
+    web: projects.filter((p) => p.type === 'web').length,
+    mobile: projects.filter((p) => p.type === 'mobile').length,
+  }
+
+  const domainFilters = [
     {
       id: 'all',
       label: t('all'),
       icon: <GridSymbol className="w-4 h-4 shrink-0" />,
+      count: counts.all,
     },
     {
       id: 'ai',
       label: t('categories.ai'),
       icon: <SparklesAISymbol className="w-4 h-4 shrink-0" />,
+      count: counts.ai,
     },
     {
       id: 'web',
       label: t('categories.web'),
       icon: <GlobeSymbol className="w-4 h-4 shrink-0" />,
+      count: counts.web,
     },
     {
       id: 'mobile',
       label: t('categories.mobile'),
       icon: <PhoneDeviceSymbol className="w-4 h-4 shrink-0" />,
+      count: counts.mobile,
     },
   ] as const
+
+  const freelanceFilter = {
+    id: 'freelance' as const,
+    label: t('categories.freelance'),
+    icon: <BriefcaseSymbol className="w-4 h-4 shrink-0" />,
+    count: counts.freelance,
+  }
+
+  const allFilters = [...domainFilters, freelanceFilter]
 
   const getCategory = (project: (typeof projects)[number]) => {
     if (project.technologies.includes('Machine Learning')) {
@@ -81,7 +104,9 @@ export default function IPadProjects({ theme }: IPadProjectsProps) {
   }
 
   const filteredProjects = projects.filter((p) => {
-    const matchesFilter = activeFilter === 'all' || p.type === activeFilter
+    const matchesFilter =
+      activeFilter === 'all' ||
+      (activeFilter === 'freelance' ? Boolean(p.isFreelance) : p.type === activeFilter)
     const q = searchQuery.toLowerCase()
     const matchesSearch =
       p.title.toLowerCase().includes(q) ||
@@ -91,7 +116,7 @@ export default function IPadProjects({ theme }: IPadProjectsProps) {
   })
 
   const activeFilterLabel =
-    filters.find((f) => f.id === activeFilter)?.label ?? t('all')
+    allFilters.find((f) => f.id === activeFilter)?.label ?? t('all')
 
   const searchBar = (
     <div className="px-0.5 sm:px-1.5">
@@ -111,7 +136,7 @@ export default function IPadProjects({ theme }: IPadProjectsProps) {
           <button
             type="button"
             onClick={() => setSearchQuery('')}
-            aria-label="Clear search"
+            aria-label={tCommon('clearSearch')}
             className="absolute inset-y-0 right-2.5 rtl:right-auto rtl:left-2.5 flex items-center justify-center text-zinc-400 dark:text-zinc-500 hover:text-zinc-600"
           >
             <XMarkCircleSymbol className="w-4 h-4" />
@@ -123,24 +148,54 @@ export default function IPadProjects({ theme }: IPadProjectsProps) {
 
   const filterNav = (
     <nav className="ipad-sidebar-nav" aria-label={t('sidebarTitle')}>
-      {filters.map((f) => {
+      {domainFilters.map((f) => {
         const isActive = activeFilter === f.id
         return (
           <button
             key={f.id}
             type="button"
             onClick={() => setActiveFilter(f.id)}
-            className={`flex items-center gap-2.5 px-3.5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 whitespace-nowrap shrink-0 ${
+            className={`flex items-center justify-between gap-2.5 px-3.5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 whitespace-nowrap shrink-0 ${
               isActive ? activeFilterBg : hoverFilterBg
             }`}
           >
-            <span className="flex items-center justify-center shrink-0">
-              {f.icon}
+            <span className="flex items-center gap-2.5 min-w-0">
+              <span className="flex items-center justify-center shrink-0">
+                {f.icon}
+              </span>
+              <span className="truncate">{f.label}</span>
             </span>
-            <span className="truncate">{f.label}</span>
+            <span className="text-[11px] font-bold opacity-60 tabular-nums shrink-0">
+              {f.count}
+            </span>
           </button>
         )
       })}
+
+      <div
+        className={`ipad-desktop-only my-1.5 mx-2 h-px ${isDark ? 'bg-white/10' : 'bg-black/10'}`}
+        aria-hidden="true"
+      />
+      <div className="ipad-desktop-only px-3 pb-0.5 text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+        {t('clientWorkTitle')}
+      </div>
+      <button
+        type="button"
+        onClick={() => setActiveFilter(freelanceFilter.id)}
+        className={`flex items-center justify-between gap-2.5 px-3.5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 whitespace-nowrap shrink-0 ${
+          activeFilter === freelanceFilter.id ? activeFilterBg : hoverFilterBg
+        }`}
+      >
+        <span className="flex items-center gap-2.5 min-w-0">
+          <span className="flex items-center justify-center shrink-0 text-amber-500 dark:text-amber-400">
+            {freelanceFilter.icon}
+          </span>
+          <span className="truncate">{freelanceFilter.label}</span>
+        </span>
+        <span className="text-[11px] font-bold text-amber-600 dark:text-amber-400 tabular-nums shrink-0">
+          {freelanceFilter.count}
+        </span>
+      </button>
     </nav>
   )
 
@@ -157,28 +212,44 @@ export default function IPadProjects({ theme }: IPadProjectsProps) {
         <div className="max-w-4xl mx-auto flex flex-col gap-5 sm:gap-6">
           <AnimatePresence mode="popLayout">
             {filteredProjects.length > 0 ? (
-              <motion.div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6 pb-8" layout>
+              <motion.div className="grid grid-cols-1 lg:grid-cols-2 auto-rows-fr gap-5 sm:gap-6 pb-8" layout>
                 {filteredProjects.map((project, idx) => {
                   const category = getCategory(project)
                   return (
-                    <AnimatedSection key={project.title} delay={idx * 0.04}>
+                    <AnimatedSection key={project.image || project.title} delay={Math.min(idx, 5) * 0.03} className="h-full">
                       <motion.div
-                        className={`border rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col group h-full ${cardBg}`}
+                        onClick={() => setSelectedProject(project)}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault()
+                            setSelectedProject(project)
+                          }
+                        }}
+                        className={`border rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col group h-full cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${cardBg}`}
                         layout
                       >
                         {/* Spotlight Image */}
                         <div className="relative w-full h-40 bg-gradient-to-br from-primary/10 to-primary-dark/15 overflow-hidden flex-shrink-0">
-                          {project.image ? (
-                            <Image
-                              src={project.image}
-                              alt={project.title}
-                              fill
-                              className="object-cover group-hover:scale-[1.03] transition-transform duration-500"
-                            />
-                          ) : (
-                            <div className="w-full h-full bg-gradient-to-br from-primary/20 via-indigo-500/10 to-cyan-500/25 flex items-center justify-center">
-                              <AppCubeSymbol className="w-9 h-9 text-blue-500/80 dark:text-blue-400/80" />
-                            </div>
+                          <ProjectImage
+                            src={project.image}
+                            alt={project.title}
+                            sizes={PROJECT_IMAGE_SIZES.tabletCard}
+                            priority={idx < 4}
+                            tone={theme}
+                            imgClassName="group-hover:scale-[1.03]"
+                            fallback={
+                              <div className="w-full h-full bg-gradient-to-br from-primary/20 via-indigo-500/10 to-cyan-500/25 flex items-center justify-center">
+                                <AppCubeSymbol className="w-9 h-9 text-blue-500/80 dark:text-blue-400/80" />
+                              </div>
+                            }
+                          />
+                          {project.isFreelance && (
+                            <span className="absolute top-2.5 left-2.5 z-[2] inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wide border backdrop-blur-md bg-black/65 text-amber-300 border-amber-400/50 shadow-sm">
+                              <BriefcaseSymbol className="w-3 h-3 shrink-0" />
+                              <span>{t('categories.freelance')}</span>
+                            </span>
                           )}
                         </div>
 
@@ -197,14 +268,17 @@ export default function IPadProjects({ theme }: IPadProjectsProps) {
 
                               <button
                                 type="button"
-                                onClick={() => setSelectedProject(project)}
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  setSelectedProject(project)
+                                }}
                                 className="bg-gray-100 dark:bg-[#3A3A3C] hover:bg-gray-200 dark:hover:bg-[#48484A] text-[#007AFF] dark:text-[#0A84FF] font-extrabold text-[10px] px-4 sm:px-5 py-1.5 rounded-full tracking-wider active:scale-95 transition-all duration-100 flex-shrink-0 shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                               >
                                 {t('get')}
                               </button>
                             </div>
 
-                            <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed font-medium line-clamp-3">
+                            <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed font-medium line-clamp-3 min-h-[3.6rem]">
                               {project.description}
                             </p>
                           </div>
@@ -265,24 +339,24 @@ export default function IPadProjects({ theme }: IPadProjectsProps) {
                   : 'bg-white border-black/10 text-zinc-900'
               }`}
             >
-              <div className="relative w-full h-44 sm:h-48 bg-gradient-to-br from-primary/20 to-primary-dark/25 shrink-0">
-                {selectedProject.image ? (
-                  <Image
-                    src={selectedProject.image}
-                    alt={selectedProject.title}
-                    fill
-                    className="object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <AppCubeSymbol className="w-12 h-12 text-blue-500" />
-                  </div>
-                )}
+              <div className="relative w-full h-44 sm:h-48 overflow-hidden bg-gradient-to-br from-primary/20 to-primary-dark/25 shrink-0">
+                <ProjectImage
+                  src={selectedProject.image}
+                  alt={selectedProject.title}
+                  sizes={PROJECT_IMAGE_SIZES.tabletModal}
+                  priority
+                  tone={theme}
+                  fallback={
+                    <div className="w-full h-full flex items-center justify-center">
+                      <AppCubeSymbol className="w-12 h-12 text-blue-500" />
+                    </div>
+                  }
+                />
                 <button
                   type="button"
                   onClick={() => setSelectedProject(null)}
                   aria-label={t('close')}
-                  className="absolute top-3 right-3 rtl:right-auto rtl:left-3 w-8 h-8 rounded-full bg-black/50 text-white hover:bg-black/70 flex items-center justify-center transition"
+                  className="absolute top-3 right-3 rtl:right-auto rtl:left-3 z-10 w-8 h-8 rounded-full bg-black/50 text-white hover:bg-black/70 flex items-center justify-center transition"
                 >
                   <XMarkSymbol className="w-4 h-4" />
                 </button>
@@ -290,9 +364,17 @@ export default function IPadProjects({ theme }: IPadProjectsProps) {
 
               <div className="p-5 sm:p-6 overflow-y-auto flex flex-col gap-4">
                 <div>
-                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-blue-500 dark:text-blue-400">
-                    {getCategory(selectedProject)}
-                  </span>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-blue-500 dark:text-blue-400">
+                      {getCategory(selectedProject)}
+                    </span>
+                    {selectedProject.isFreelance && (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9.5px] font-bold uppercase tracking-wider bg-amber-500/15 text-amber-600 dark:text-amber-300 border border-amber-500/30">
+                        <BriefcaseSymbol className="w-2.5 h-2.5 shrink-0" />
+                        <span>{t('categories.freelance')}</span>
+                      </span>
+                    )}
+                  </div>
                   <h3 className="text-lg sm:text-xl font-extrabold mt-0.5 tracking-tight">
                     {selectedProject.title}
                   </h3>

@@ -85,7 +85,7 @@ const SEO_COPY: Record<SupportedSeoLocale, PortfolioSeoCopy> = {
     title: 'ANAS EN-NAQADI | Développeur Full-Stack & Ingénieur IA',
     siteName: 'ANAS EN-NAQADI — Portfolio',
     description:
-      'Portfolio de Anas En-Naqadi, Développeur Full-Stack & étudiant en Ingénierie IA. Applications web, mobiles et systèmes IA/LLM en production avec Next.js, React, FastAPI, PyTorch et Laravel.',
+      "Portfolio d'Anas En-Naqadi, Développeur Full-Stack & étudiant en Ingénierie IA. Applications web, mobiles et systèmes IA/LLM en production avec Next.js, React, FastAPI, PyTorch et Laravel.",
     jobTitle: 'Développeur Full-Stack & Ingénieur IA',
     keywords: [
       'Anas En-Naqadi',
@@ -211,8 +211,8 @@ export function buildPortfolioJsonLd(locale: string): Record<string, unknown> {
       {
         '@type': 'ItemList',
         '@id': projectsListId,
-        name: safeLocale === 'fr' ? 'Projets Principaux' : 'Featured Projects',
-        itemListElement: portfolio.projects.slice(0, 12).map((project, index) => ({
+        name: safeLocale === 'fr' ? 'Projets Phares' : 'Featured Projects',
+        itemListElement: portfolio.projects.map((project, index) => ({
           '@type': 'ListItem',
           position: index + 1,
           item: {

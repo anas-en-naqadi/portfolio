@@ -7,16 +7,17 @@
     "contact": "Contact",
     "settings": "Paramètres",
     "phone": "Téléphone",
-    "downloadCV": "Télécharger CV",
+    "downloadCV": "Télécharger le CV",
     "viewGithub": "Voir GitHub",
     "scheduleCall": "Planifier un appel",
-    "emailMe": "M'envoyer un email",
+    "emailMe": "M'envoyer un e-mail",
     "theme": "Thème",
     "language": "Langue",
     "fullscreen": "Plein écran",
     "close": "Fermer",
     "minimize": "Réduire",
     "maximize": "Agrandir",
+    "clearSearch": "Effacer la recherche",
     "cvModal": {
       "title": "Télécharger le CV",
       "subtitle": "Choisissez la version linguistique (PDF)",
@@ -30,11 +31,12 @@
       "downloadedFr": "Téléchargement du CV français (PDF) lancé",
       "badgeEn": "EN",
       "badgeFr": "FR",
-      "savedLabel": "Téléchargé"
+      "savedLabel": "Téléchargé",
+      "justNow": "maintenant"
     },
     "helloSplash": {
       "headline": "Bienvenue dans mon univers, là où le code rencontre l'intelligence.",
-      "subline": "ANAS EN-NAQADI • Développeur Full-Stack & AI Engineer",
+      "subline": "ANAS EN-NAQADI • Développeur Full-Stack & Ingénieur IA",
       "hint": "Cliquez ou touchez pour entrer"
     },
     "focusAudio": {
@@ -47,7 +49,7 @@
       "prev": "Piste précédente",
       "volume": "Volume",
       "track1Title": "Argon Focus",
-      "track1Artist": "Lo-Fi Coding",
+      "track1Artist": "Ambiance Lo-Fi",
       "track2Title": "Astra Ambient",
       "track2Artist": "Concentration Profonde",
       "missingHint": "Ajoutez focus-1.mp3 & focus-2.mp3 dans public/audio/"
@@ -55,10 +57,10 @@
   },
   "about": {
     "title": "À Propos de Moi",
-    "subtitle": "Développeur Full-Stack & AI Engineer | Spécialiste React • Next.js • Vue.js • FastAPI • Laravel",
+    "subtitle": "Développeur Full-Stack & Ingénieur IA | Spécialiste React • Next.js • Vue.js • FastAPI • Laravel",
     "profile": {
       "title": "Profil Professionnel",
-      "description": "Développeur Full-Stack & AI Engineer, je conçois des applications web performantes et des solutions intelligentes basées sur l'IA, le Machine Learning, le Deep Learning et le NLP. Spécialisé en React, Next.js, Vue.js, Laravel, Node.js et FastAPI, avec une expérience concrète en déploiement production, intégration de LLMs et développement de systèmes IA. Actuellement en Master IA, je construis, j'apprends et je livre."
+      "description": "Développeur Full-Stack & Ingénieur IA, je conçois des applications web performantes et des solutions intelligentes basées sur l'IA, le Machine Learning, le Deep Learning et le NLP. Spécialisé en React, Next.js, Vue.js, Laravel, Node.js et FastAPI, avec une expérience concrète en déploiement en production, intégration de LLMs et développement de systèmes IA. Actuellement en Master IA, je conçois, j'innove et je mets en production."
     },
     "expertise": {
       "fullstack": {
@@ -71,7 +73,7 @@
       },
       "design": {
         "title": "Design UX/UI",
-        "description": "Interfaces belles et intuitives avec des principes de design modernes"
+        "description": "Interfaces élégantes et intuitives fondées sur les principes du design moderne"
       }
     }
   },
@@ -85,8 +87,9 @@
     }
   },
   "projects": {
-    "title": "Projets en Vedette",
+    "title": "Projets Phares",
     "all": "Tous",
+    "freelance": "Freelance",
     "ai": "IA",
     "web": "Web",
     "mobile": "Mobile",
@@ -107,7 +110,7 @@
     "description": "Je suis toujours ravi de discuter de nouveaux projets, d'idées créatives ou d'opportunités pour donner vie à votre vision. Construisons quelque chose d'extraordinaire ensemble !",
     "location": {
       "title": "Localisation",
-      "available": "Disponible pour le travail à distance dans le monde entier",
+      "available": "Disponible en télétravail à l'international",
       "timezone": "Fuseau horaire"
     }
   },
@@ -119,9 +122,9 @@
     "myWork": "Mon travail",
     "techStack": "Stack technique",
     "getInTouch": "Me contacter",
-    "getResume": "Obtenir CV",
-    "viewRepos": "Voir repos",
-    "bookMeeting": "Réserver une réunion",
+    "getResume": "Télécharger le CV",
+    "viewRepos": "Voir les dépôts",
+    "bookMeeting": "Planifier un échange",
     "directContact": "Contact direct"
   },
   "mobile": {
@@ -143,7 +146,7 @@
     },
     "home": {
       "homeLabel": "Accueil",
-      "goHome": "Aller à l'écran d'accueil",
+      "goHome": "Revenir à l'écran d'accueil",
       "openApp": "Ouvrir {label}",
       "homeScreenLabel": "Écran d'accueil",
       "dockLabel": "Dock iPhone"
@@ -189,8 +192,8 @@
       "wallpaperTitle": "Fond d'écran",
       "wallpaperDesc": "Choisissez l'arrière-plan de l'écran d'accueil",
       "wallpapers": {
-        "default": "Argon Workspace",
-        "alt": "Astra Workspace"
+        "default": "Espace Argon",
+        "alt": "Espace Astra"
       }
     },
     "contact": {
@@ -199,7 +202,7 @@
         "body": "Découvrez mes dernières contributions open source et mes dépôts. Construisons quelque chose ensemble."
       },
       "linkedin": {
-        "subject": "Proposition de Connexion Professionnelle",
+        "subject": "Mise en relation professionnelle",
         "body": "Connectons-nous sur LinkedIn pour discuter d'opportunités freelance ou de postes à temps plein."
       },
       "email": {
@@ -212,6 +215,12 @@
         "subject": "Demandes Directes & Planification d'Appel",
         "body": "Appelez directement mon numéro mobile pour toute demande professionnelle ou mission freelance."
       }
+    },
+    "recentApps": {
+      "title": "Apps récentes",
+      "empty": "Aucune application récente",
+      "lastOpened": "Dernière ouverture : {time}",
+      "closeAll": "Tout fermer"
     }
   },
   "tablet": {
@@ -273,13 +282,15 @@
         }
       },
       "availability": "Disponible pour collaborer",
-      "downloadCV": "Télécharger CV",
+      "downloadCV": "Télécharger le CV",
       "viewGithub": "GitHub",
       "clock": "Horloge",
       "profile": "Profil",
       "resumeTitle": "CV / Parcours",
       "curriculumVitae": "Curriculum Vitae",
       "resumeDesc": "Téléchargez mon dernier CV pour un aperçu complet.",
+      "resumeSize": "60 Ko",
+      "widgetsGridLabel": "Widgets de l'écran d'accueil",
       "marrakech": "Marrakech"
     },
     "about": {
@@ -311,6 +322,7 @@
     },
     "projects": {
       "sidebarTitle": "Découvrir",
+      "clientWorkTitle": "Missions",
       "all": "Toutes les apps",
       "searchPlaceholder": "Rechercher des apps...",
       "get": "OBTENIR",
@@ -321,11 +333,12 @@
       "close": "OK",
       "empty": "Aucun projet dans cette catégorie",
       "categories": {
+        "freelance": "Freelance",
         "ai": "IA & Agents",
         "ml": "Machine Learning",
-        "mobile": "Apps Mobile",
+        "mobile": "Apps mobiles",
         "fullstack": "Web Full-Stack",
-        "tools": "Outils Dev",
+        "tools": "Outils développeur",
         "web": "Plateformes Web"
       }
     },
@@ -349,6 +362,10 @@
       "sidebarTitle": "Boîtes",
       "inbox": "Boîte de réception",
       "copyInfo": "Copier l'e-mail",
+      "copyEmail": "Copier l'e-mail",
+      "copyGithub": "Copier GitHub",
+      "copyLinkedin": "Copier LinkedIn",
+      "copyPhone": "Copier le numéro",
       "copied": "Copié !",
       "sendEmail": "Écrire un e-mail",
       "openLink": "Ouvrir le lien",
@@ -391,9 +408,10 @@
       "darkModeDesc": "Basculer entre les thèmes clair et sombre d'iPadOS",
       "wallpaperDesc": "Choisissez un fond d'écran pour l'écran d'accueil d'iPadOS.",
       "wallpapers": {
-        "default": "Argon Workspace",
-        "alt": "Astra Workspace"
+        "default": "Espace Argon",
+        "alt": "Espace Astra"
       },
+      "active": "Actif",
       "systemLanguage": "Langue et région",
       "systemLanguageDesc": "Changer la langue active du portfolio",
       "roleLabel": "Poste",
@@ -401,13 +419,16 @@
       "portfolioVersion": "Système",
       "versionValue": "iPadOS 18 Édition Web",
       "framework": "Framework",
-      "styling": "Style Responsive",
+      "styling": "Interface responsive",
       "repository": "Dépôt source",
       "openRepo": "Voir sur GitHub"
     }
   },
   "desktop": {
+    "desktopIconsLabel": "Icônes du bureau",
     "menuBar": {
+      "appleMenuLabel": "Menu Pomme",
+      "spotlightTooltip": "Spotlight (⌘K)",
       "finder": "Finder",
       "file": "Fichier",
       "edit": "Édition",
@@ -440,7 +461,7 @@
       },
       "windowMenu": {
         "minimize": "Réduire",
-        "zoom": "Zoom",
+        "zoom": "Réduire / Agrandir",
         "closeAll": "Fermer toutes les fenêtres",
         "noOpenWindows": "Aucune fenêtre ouverte"
       },
@@ -463,8 +484,8 @@
       }
     },
     "wallpapers": {
-      "default": "Argon Workspace",
-      "workspace": "Astra Workspace",
+      "default": "Espace Argon",
+      "workspace": "Espace Astra",
       "aurora": "Aurore Boréale",
       "midnight": "Studio Minuit",
       "horizon": "Horizon Liquide"
@@ -483,9 +504,11 @@
       "hint": "Appuyez sur Échap ou cliquez ailleurs pour fermer"
     },
     "spotlight": {
+      "ariaLabel": "Recherche Spotlight",
       "placeholder": "Spotlight — Applications, Projets, Compétences, Actions...",
       "empty": "Saisissez un mot-clé pour rechercher dans le portfolio",
       "noResults": "Aucun résultat trouvé",
+      "resultsCount": "{count} résultats",
       "categories": {
         "app": "Applications",
         "action": "Actions rapides",
@@ -521,7 +544,8 @@
       "downloadBody": "Ouverture du CV PDF...",
       "printTitle": "Aperçu avant impression",
       "printBody": "Ouverture du dialogue d'impression...",
-      "wallpaperTitle": "Fond d'écran mis à jour"
+      "wallpaperTitle": "Fond d'écran mis à jour",
+      "dismiss": "Fermer la notification"
     },
     "windows": {
       "actions": {
@@ -531,7 +555,7 @@
         "export": "Exporter",
         "copyVCard": "Copier vCard",
         "openGithub": "GitHub",
-        "openMail": "Envoyer e-mail",
+        "openMail": "Envoyer un e-mail",
         "callNow": "Appeler"
       },
       "about": {
@@ -539,7 +563,7 @@
         "overview": "Aperçu",
         "bio": "Biographie",
         "expertise": "Expertise",
-        "role": "Développeur Full-Stack & AI Engineer",
+        "role": "Développeur Full-Stack & Ingénieur IA",
         "status": "Disponible pour projets & postes"
       },
       "experience": {
@@ -553,8 +577,9 @@
       },
       "projects": {
         "sidebarTitle": "Catégories",
+        "clientWorkTitle": "Missions",
         "searchPlaceholder": "Filtrer les projets...",
-        "subtitle": "{count} Projets d'ingénierie phares",
+        "subtitle": "{count} projets d'ingénierie",
         "viewCode": "Code source",
         "viewDetails": "Voir les détails",
         "technologies": "Technologies",
@@ -564,7 +589,7 @@
         "sidebarTitle": "Catégories",
         "allCategories": "Toutes",
         "searchPlaceholder": "Rechercher...",
-        "levelAll": "Tous niveaux",
+        "levelAll": "Tout afficher",
         "levelCore": "Stack principale",
         "itemsCount": "{count} éléments",
         "empty": "Aucune compétence trouvée"
@@ -579,7 +604,7 @@
         "copyPhone": "Copier le numéro",
         "availabilityTitle": "Disponibilité actuelle",
         "availabilityBadge": "Ouvert aux opportunités",
-        "availabilityDesc": "Disponible pour des missions Full-Stack, architecture systèmes IA / LLM et conseil technique.",
+        "availabilityDesc": "Disponible pour des missions Full-Stack, l'architecture de systèmes IA / LLM et le conseil technique.",
         "composeTitle": "Message rapide",
         "nameLabel": "Votre nom",
         "namePlaceholder": "Votre nom",
@@ -593,10 +618,12 @@
         "sendingBtn": "Envoi...",
         "sentTitle": "Message envoyé",
         "sentBody": "Votre message a bien été envoyé dans ma boîte de réception.",
-        "errorMissingKey": "Clé Web3Forms manquante. Ajoutez NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY dans .env.local.",
+        "errorMissingKey": "Le formulaire de contact est temporairement indisponible. Veuillez m'écrire directement par e-mail.",
         "errorSend": "Échec de l'envoi. Veuillez réessayer.",
+        "errorNameRequired": "Veuillez saisir votre nom.",
         "errorEmailRequired": "Veuillez saisir votre adresse e-mail.",
         "errorEmailInvalid": "Veuillez saisir une adresse e-mail valide.",
+        "errorSubjectRequired": "Veuillez saisir un objet.",
         "errorMessageRequired": "Veuillez saisir votre message."
       },
       "settings": {

@@ -16,6 +16,7 @@ type NoteId = 'languages' | 'frameworks' | 'databases' | 'libraries' | 'tools' |
 export default function IPadSkills({ theme }: IPadSkillsProps) {
   const locale = useLocale()
   const t = useTranslations('tablet.skills')
+  const tCommon = useTranslations('common')
   const { skills } = getLocalizedPortfolioData(locale)
   const [activeNoteId, setActiveNoteId] = useState<NoteId>('languages')
   const [searchQuery, setSearchQuery] = useState('')
@@ -62,7 +63,7 @@ export default function IPadSkills({ theme }: IPadSkillsProps) {
           <button
             type="button"
             onClick={() => setSearchQuery('')}
-            aria-label="Clear search"
+            aria-label={tCommon('clearSearch')}
             className="absolute inset-y-0 right-2.5 rtl:right-auto rtl:left-2.5 flex items-center justify-center text-zinc-400 dark:text-zinc-500 hover:text-zinc-600"
           >
             <XMarkCircleSymbol className="w-4 h-4" />

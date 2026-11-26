@@ -4,9 +4,11 @@ import React, { useState, useMemo, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslations, useLocale } from 'next-intl'
 import { getLocalizedPortfolioData, socialLinks } from '@/lib/data'
+import { ProjectImage, PROJECT_IMAGE_SIZES } from '@/components/shared/ProjectImage'
 import { WindowToolbar } from '@/components/shared/WindowToolbar'
 import {
   GridSymbol,
+  BriefcaseSymbol,
   SparklesAISymbol,
   GlobeSymbol,
   PhoneDeviceSymbol,
@@ -22,7 +24,7 @@ interface ProjectsWindowProps {
   spotlightQuery?: { term: string; nonce: number } | null
 }
 
-type ProjectFilter = 'all' | 'ai' | 'web' | 'mobile'
+type ProjectFilter = 'all' | 'freelance' | 'ai' | 'web' | 'mobile'
 
 export function ProjectsWindow({ theme = 'dark', spotlightQuery }: ProjectsWindowProps) {
   const t = useTranslations('projects')
@@ -35,7 +37,6 @@ export function ProjectsWindow({ theme = 'dark', spotlightQuery }: ProjectsWindo
   const [filter, setFilter] = useState<ProjectFilter>('all')
   const [search, setSearch] = useState('')
   const [selectedTitle, setSelectedTitle] = useState<string | null>(null)
-  const [brokenImages, setBrokenImages] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
     if (spotlightQuery?.term) {
@@ -62,6 +63,7 @@ export function ProjectsWindow({ theme = 'dark', spotlightQuery }: ProjectsWindo
   const counts = useMemo(
     () => ({
       all: projects.length,
+      freelance: projects.filter((p) => p.isFreelance).length,
       ai: projects.filter((p) => p.type === 'ai').length,
       web: projects.filter((p) => p.type === 'web').length,
       mobile: projects.filter((p) => p.type === 'mobile').length,
@@ -72,7 +74,9 @@ export function ProjectsWindow({ theme = 'dark', spotlightQuery }: ProjectsWindo
   const filteredProjects = useMemo(() => {
     const q = search.trim().toLowerCase()
     return projects.filter((project) => {
-      const matchesType = filter === 'all' || project.type === filter
+      const matchesType =
+        filter === 'all' ||
+        (filter === 'freelance' ? Boolean(project.isFreelance) : project.type === filter)
       if (!matchesType) return false
       if (!q) return true
       return (
@@ -104,6 +108,13 @@ export function ProjectsWindow({ theme = 'dark', spotlightQuery }: ProjectsWindo
       count: counts.mobile,
     },
   ]
+
+  const freelanceCategory: { id: ProjectFilter; label: string; icon: React.ReactNode; count: number } = {
+    id: 'freelance',
+    label: t('freelance'),
+    icon: <BriefcaseSymbol className="w-3.5 h-3.5" />,
+    count: counts.freelance,
+  }
 
   const toolbarButtons = [
     {
@@ -145,6 +156,7 @@ export function ProjectsWindow({ theme = 'dark', spotlightQuery }: ProjectsWindo
                 <button
                   type="button"
                   onClick={() => setSearch('')}
+                  aria-label={tCommon('clearSearch')}
                   className="opacity-50 hover:opacity-100"
                 >
                   <XMarkCircleSymbol className="w-3.5 h-3.5" />
@@ -208,6 +220,47 @@ export function ProjectsWindow({ theme = 'dark', spotlightQuery }: ProjectsWindo
                 </button>
               )
             })}
+
+            <div
+              className={`macos-desktop-only my-2 mx-2 h-px ${
+                isDark ? 'bg-white/10' : 'bg-black/10'
+              }`}
+              aria-hidden="true"
+            />
+            <div
+              className={`macos-desktop-only px-2 pb-1 text-[10.5px] font-semibold uppercase tracking-wider ${
+                isDark ? 'text-white/40' : 'text-gray-500'
+              }`}
+            >
+              {tDesktop('clientWorkTitle')}
+            </div>
+            <button
+              type="button"
+              onClick={() => setFilter(freelanceCategory.id)}
+              className={`flex items-center justify-between gap-2 px-3 py-1.5 rounded-lg text-[12.5px] font-medium whitespace-nowrap transition-colors ${
+                filter === freelanceCategory.id
+                  ? 'bg-[#007AFF] text-white'
+                  : isDark
+                    ? 'text-amber-300/90 hover:bg-white/[0.07]'
+                    : 'text-amber-700 hover:bg-black/[0.05]'
+              }`}
+            >
+              <span className="flex items-center gap-2">
+                {freelanceCategory.icon}
+                <span>{freelanceCategory.label}</span>
+              </span>
+              <span
+                className={`text-[11px] px-1.5 py-0.5 rounded-md ${
+                  filter === freelanceCategory.id
+                    ? 'bg-white/20 text-white'
+                    : isDark
+                      ? 'bg-amber-500/15 text-amber-300'
+                      : 'bg-amber-500/15 text-amber-700'
+                }`}
+              >
+                {freelanceCategory.count}
+              </span>
+            </button>
           </nav>
         </aside>
 
@@ -222,107 +275,119 @@ export function ProjectsWindow({ theme = 'dark', spotlightQuery }: ProjectsWindo
               {tTabletEmpty('empty')}
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {filteredProjects.map((project, idx) => {
-                const hasValidImage = Boolean(project.image) && !brokenImages[project.title]
-                return (
-                  <article
-                    key={`${project.title}-${idx}`}
-                    onClick={() => setSelectedTitle(project.title)}
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault()
-                        setSelectedTitle(project.title)
-                      }
-                    }}
-                    className={`rounded-xl border overflow-hidden flex flex-col cursor-pointer transition-transform hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#007AFF] ${
-                      isDark
-                        ? 'bg-white/[0.04] border-white/10 hover:border-white/25'
-                        : 'bg-white/85 border-black/10 hover:border-black/25 shadow-sm'
-                    }`}
-                  >
-                    <div className="relative h-36 w-full overflow-hidden bg-gradient-to-br from-slate-800 via-indigo-900 to-purple-900">
-                      {hasValidImage ? (
-                        <img
-                          src={project.image}
-                          alt={project.title}
-                          loading="lazy"
-                          onError={() =>
-                            setBrokenImages((prev) => ({ ...prev, [project.title]: true }))
-                          }
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 auto-rows-fr gap-4">
+              {filteredProjects.map((project, idx) => (
+                <article
+                  key={project.image || project.title}
+                  onClick={() => setSelectedTitle(project.title)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      setSelectedTitle(project.title)
+                    }
+                  }}
+                  className={`h-full rounded-xl border overflow-hidden flex flex-col cursor-pointer transition-transform hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#007AFF] ${
+                    isDark
+                      ? 'bg-white/[0.04] border-white/10 hover:border-white/25'
+                      : 'bg-white/85 border-black/10 hover:border-black/25 shadow-sm'
+                  }`}
+                >
+                  <div className="relative h-36 w-full shrink-0 overflow-hidden bg-gradient-to-br from-slate-800 via-indigo-900 to-purple-900">
+                    <ProjectImage
+                      src={project.image}
+                      alt={project.title}
+                      sizes={PROJECT_IMAGE_SIZES.desktopCard}
+                      priority={idx < 4}
+                      tone="dark"
+                      fallback={
                         <div className="w-full h-full flex items-center justify-center text-white/30">
                           <SparklesAISymbol className="w-8 h-8" />
                         </div>
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-                      <span
-                        className={`absolute top-2.5 right-2.5 px-2 py-0.5 rounded-md text-[10.5px] font-semibold border backdrop-blur-md uppercase ${typeBadgeColor(
-                          project.type
-                        )}`}
-                      >
-                        {t(project.type as 'ai' | 'web' | 'mobile')}
+                      }
+                    />
+                    <div className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                    {project.isFreelance && (
+                      <span className="absolute top-2.5 left-2.5 z-[2] inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10.5px] font-semibold border backdrop-blur-md uppercase bg-black/65 text-amber-300 border-amber-400/50 shadow-sm">
+                        <BriefcaseSymbol className="w-3 h-3 shrink-0" />
+                        <span>{t('freelance')}</span>
                       </span>
-                    </div>
+                    )}
+                    <span
+                      className={`absolute top-2.5 right-2.5 z-[2] px-2 py-0.5 rounded-md text-[10.5px] font-semibold border backdrop-blur-md uppercase ${typeBadgeColor(
+                        project.type
+                      )}`}
+                    >
+                      {t(project.type as 'ai' | 'web' | 'mobile')}
+                    </span>
+                  </div>
 
-                    <div className="p-4 flex-1 flex flex-col">
-                      <h3
-                        className={`text-sm font-bold mb-1.5 ${
-                          isDark ? 'text-white' : 'text-gray-900'
-                        }`}
-                      >
-                        {project.title}
-                      </h3>
-                      <p
-                        className={`text-[12px] leading-relaxed mb-3 flex-1 ${
-                          isDark ? 'text-white/70' : 'text-gray-600'
-                        }`}
-                      >
-                        {project.description}
-                      </p>
+                  <div className="p-4 flex-1 flex flex-col min-w-0">
+                    <h3
+                      title={project.title}
+                      className={`text-sm font-bold mb-1.5 truncate ${
+                        isDark ? 'text-white' : 'text-gray-900'
+                      }`}
+                    >
+                      {project.title}
+                    </h3>
+                    <p
+                      className={`text-[12px] leading-[1.6] line-clamp-3 h-[58px] mb-3 ${
+                        isDark ? 'text-white/70' : 'text-gray-600'
+                      }`}
+                    >
+                      {project.description}
+                    </p>
 
-                      <div className="flex flex-wrap gap-1.5 mb-3">
-                        {project.technologies.map((tech) => (
-                          <span
-                            key={tech}
-                            className={`px-2 py-0.5 rounded-md text-[10.5px] font-medium ${
-                              isDark
-                                ? 'bg-white/[0.07] text-white/75'
-                                : 'bg-black/[0.05] text-gray-700'
-                            }`}
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
-
-                      <div
-                        className={`pt-2.5 border-t flex items-center justify-between ${
-                          isDark ? 'border-white/10' : 'border-black/10'
-                        }`}
-                      >
-                        <span className="text-[11px] font-medium opacity-65">
-                          {tDesktop('viewDetails')}
-                        </span>
-                        <a
-                          href={socialLinks.github}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={(e) => e.stopPropagation()}
-                          className="inline-flex items-center gap-1 text-[11.5px] font-semibold text-[#007AFF] hover:underline"
+                    <div className="flex items-center gap-1.5 mb-3 overflow-hidden">
+                      {project.technologies.slice(0, 3).map((tech) => (
+                        <span
+                          key={tech}
+                          className={`px-2 py-0.5 rounded-md text-[10.5px] font-medium truncate max-w-[115px] ${
+                            isDark
+                              ? 'bg-white/[0.07] text-white/75'
+                              : 'bg-black/[0.05] text-gray-700'
+                          }`}
                         >
-                          <span>{tDesktop('viewCode')}</span>
-                          <ArrowUpRightSymbol className="w-3 h-3" />
-                        </a>
-                      </div>
+                          {tech}
+                        </span>
+                      ))}
+                      {project.technologies.length > 3 && (
+                        <span
+                          className={`px-1.5 py-0.5 rounded-md text-[10.5px] font-semibold shrink-0 ${
+                            isDark
+                              ? 'bg-white/[0.06] text-white/55'
+                              : 'bg-black/[0.05] text-gray-500'
+                          }`}
+                        >
+                          +{project.technologies.length - 3}
+                        </span>
+                      )}
                     </div>
-                  </article>
-                )
-              })}
+
+                    <div
+                      className={`mt-auto pt-2.5 border-t flex items-center justify-between ${
+                        isDark ? 'border-white/10' : 'border-black/10'
+                      }`}
+                    >
+                      <span className="text-[11px] font-medium opacity-65">
+                        {tDesktop('viewDetails')}
+                      </span>
+                      <a
+                        href={socialLinks.github}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="inline-flex items-center gap-1 text-[11.5px] font-semibold text-[#007AFF] hover:underline"
+                      >
+                        <span>{tDesktop('viewCode')}</span>
+                        <ArrowUpRightSymbol className="w-3 h-3" />
+                      </a>
+                    </div>
+                  </div>
+                </article>
+              ))}
             </div>
           )}
         </div>
@@ -333,7 +398,6 @@ export function ProjectsWindow({ theme = 'dark', spotlightQuery }: ProjectsWindo
         {selectedTitle && (() => {
           const activeProject = projects.find((p) => p.title === selectedTitle)
           if (!activeProject) return null
-          const hasImg = Boolean(activeProject.image) && !brokenImages[activeProject.title]
           return (
             <motion.div
               initial={{ opacity: 0 }}
@@ -348,44 +412,53 @@ export function ProjectsWindow({ theme = 'dark', spotlightQuery }: ProjectsWindo
                 exit={{ opacity: 0, scale: 0.95, y: 8 }}
                 transition={{ duration: 0.16 }}
                 onClick={(e) => e.stopPropagation()}
-                className={`w-full max-w-[520px] rounded-2xl overflow-hidden border shadow-2xl ${
+                className={`w-full max-w-[520px] max-h-[88%] flex flex-col rounded-2xl overflow-hidden border shadow-2xl ${
                   isDark
                     ? 'bg-[#1f1f24]/95 border-white/15 text-white'
                     : 'bg-white/95 border-black/10 text-gray-900'
                 }`}
               >
-                <div className="relative h-48 w-full bg-gradient-to-br from-slate-800 to-indigo-950">
-                  {hasImg ? (
-                    <img
-                      src={activeProject.image}
-                      alt={activeProject.title}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-white/30">
-                      <SparklesAISymbol className="w-10 h-10" />
-                    </div>
-                  )}
+                <div className="relative h-48 w-full shrink-0 overflow-hidden bg-gradient-to-br from-slate-800 to-indigo-950">
+                  <ProjectImage
+                    src={activeProject.image}
+                    alt={activeProject.title}
+                    sizes={PROJECT_IMAGE_SIZES.desktopModal}
+                    priority
+                    tone="dark"
+                    fallback={
+                      <div className="w-full h-full flex items-center justify-center text-white/30">
+                        <SparklesAISymbol className="w-10 h-10" />
+                      </div>
+                    }
+                  />
                   <button
                     type="button"
                     onClick={() => setSelectedTitle(null)}
                     aria-label={tCommon('close')}
-                    className="absolute top-3 right-3 w-7 h-7 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center transition-colors"
+                    className="absolute top-3 right-3 z-10 w-7 h-7 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center transition-colors"
                   >
                     <XMarkSymbol className="w-3.5 h-3.5" />
                   </button>
                 </div>
 
-                <div className="p-5 space-y-4">
+                <div className="p-5 space-y-4 overflow-y-auto macos-scroll">
                   <div className="flex items-start justify-between gap-3">
                     <h3 className="text-base font-bold">{activeProject.title}</h3>
-                    <span
-                      className={`px-2 py-0.5 rounded-md text-[10.5px] font-semibold border uppercase shrink-0 ${typeBadgeColor(
-                        activeProject.type
-                      )}`}
-                    >
-                      {t(activeProject.type as 'ai' | 'web' | 'mobile')}
-                    </span>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      {activeProject.isFreelance && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10.5px] font-semibold border uppercase bg-amber-500/15 text-amber-500 dark:text-amber-300 border-amber-500/30">
+                          <BriefcaseSymbol className="w-3 h-3 shrink-0" />
+                          <span>{t('freelance')}</span>
+                        </span>
+                      )}
+                      <span
+                        className={`px-2 py-0.5 rounded-md text-[10.5px] font-semibold border uppercase ${typeBadgeColor(
+                          activeProject.type
+                        )}`}
+                      >
+                        {t(activeProject.type as 'ai' | 'web' | 'mobile')}
+                      </span>
+                    </div>
                   </div>
 
                   <p className={`text-xs leading-relaxed ${isDark ? 'text-white/75' : 'text-gray-600'}`}>

@@ -20,6 +20,11 @@ import {
   CheckmarkSymbol,
 } from '@/components/shared/SFSymbols'
 import { CVDownloadModal, triggerCVDownload, type CVLanguage } from '@/components/shared/CVDownloadModal'
+import {
+  preloadProjectImages,
+  PROJECT_IMAGE_SIZES,
+  scheduleProjectImagePreload,
+} from '@/components/shared/ProjectImage'
 import { Window } from './Window'
 import { Taskbar, type DockApp } from './Taskbar'
 import { DesktopIcon } from './DesktopIcon'
@@ -66,6 +71,7 @@ const WINDOW_IDS: DesktopWindowId[] = [
 
 export function DesktopOS() {
   const tCommon = useTranslations('common')
+  const tDesktop = useTranslations('desktop')
   const tMenu = useTranslations('desktop.menuBar')
   const tCtx = useTranslations('desktop.contextMenu')
   const tToast = useTranslations('desktop.toast')
@@ -79,6 +85,19 @@ export function DesktopOS() {
   const isDark = theme === 'dark'
 
   const portfolio = useMemo(() => getLocalizedPortfolioData(locale), [locale])
+  const projectImageUrls = useMemo(
+    () => portfolio.projects.map((p) => p.image),
+    [portfolio.projects]
+  )
+  const warmProjectImages = useCallback(() => {
+    preloadProjectImages(projectImageUrls, PROJECT_IMAGE_SIZES.desktopCard)
+  }, [projectImageUrls])
+
+  // Warm project card thumbnails during browser idle time after initial desktop paint
+  useEffect(
+    () => scheduleProjectImagePreload(projectImageUrls, PROJECT_IMAGE_SIZES.desktopCard, 1200),
+    [projectImageUrls]
+  )
 
   const [openWindows, setOpenWindows] = useState<Record<DesktopWindowId, WindowState>>({
     about: { isOpen: false, isMinimized: false, zIndex: 100 },
@@ -396,8 +415,9 @@ export function DesktopOS() {
         isOpen: openWindows[id].isOpen,
         isActive: activeWindowId === id,
         onClick: () => handleDockAppClick(id),
+        onPreload: id === 'projects' ? warmProjectImages : undefined,
       })),
-    [windowTitles, openWindows, activeWindowId, handleDockAppClick]
+    [windowTitles, openWindows, activeWindowId, handleDockAppClick, warmProjectImages]
   )
 
   const desktopIcons: { id: DesktopWindowId; label: string }[] = useMemo(
@@ -480,7 +500,7 @@ export function DesktopOS() {
       {/* Top-Right Desktop Icons (Authentic macOS Alignment) */}
       <div
         className="absolute top-[42px] right-4 z-10 flex flex-col gap-2 items-end"
-        aria-label="Desktop Icons"
+        aria-label={tDesktop('desktopIconsLabel')}
       >
         {desktopIcons.map((item) => (
           <DesktopIcon
@@ -490,6 +510,7 @@ export function DesktopOS() {
             selected={selectedDesktopIcon === item.id}
             onClick={() => setSelectedDesktopIcon(item.id)}
             onDoubleClick={() => openWindow(item.id)}
+            onPreload={item.id === 'projects' ? warmProjectImages : undefined}
           />
         ))}
       </div>

@@ -19,6 +19,7 @@ import IPadSkills from './IPadSkills'
 import IPadContact from './IPadContact'
 import IPadSettings, { TABLET_WALLPAPERS, type TabletWallpaperId } from './IPadSettings'
 import { getAppleIcon } from '../shared/AppleIcons'
+import { PROJECT_IMAGE_SIZES, scheduleProjectImagePreload } from '../shared/ProjectImage'
 import {
   BackwardEndSymbol,
   CheckmarkSymbol,
@@ -79,13 +80,34 @@ export default function TabletOS() {
     setVolume,
   } = useFocusAudio()
 
+  const clearCvPillTimer = () => {
+    if (cvPillTimerRef.current) {
+      clearTimeout(cvPillTimerRef.current)
+      cvPillTimerRef.current = null
+    }
+  }
+
+  const dismissCvPill = () => {
+    clearCvPillTimer()
+    setCvPill(null)
+  }
+
+  const scheduleCvPillDismiss = (delay = 3400) => {
+    clearCvPillTimer()
+    cvPillTimerRef.current = setTimeout(() => {
+      cvPillTimerRef.current = null
+      setCvPill(null)
+    }, delay)
+  }
+
   const handleSelectCVLanguage = (lang: CVLanguage) => {
     triggerCVDownload(lang)
     setCvModalOpen(false)
     setCvPill({ id: Date.now(), lang })
-    if (cvPillTimerRef.current) clearTimeout(cvPillTimerRef.current)
-    cvPillTimerRef.current = setTimeout(() => setCvPill(null), 2600)
+    scheduleCvPillDismiss(3400)
   }
+
+  useEffect(() => () => clearCvPillTimer(), [])
 
   const clearCcTimer = () => {
     if (ccTimerRef.current) {
@@ -143,7 +165,17 @@ export default function TabletOS() {
   const pathname = usePathname()
   const locale = useLocale()
   const t = useTranslations('tablet')
-  const { personalInfo } = getLocalizedPortfolioData(locale)
+  const { personalInfo, projects } = getLocalizedPortfolioData(locale)
+
+  useEffect(
+    () =>
+      scheduleProjectImagePreload(
+        projects.map((p) => p.image),
+        PROJECT_IMAGE_SIZES.tabletCard,
+        1200
+      ),
+    [projects]
+  )
 
   useEffect(() => {
     const updateIconSizes = () => {
@@ -258,6 +290,11 @@ export default function TabletOS() {
       },
     },
     {
+      id: 'cv',
+      label: t('widgets.downloadCV'),
+      onClick: () => setCvModalOpen(true),
+    },
+    {
       id: 'github',
       label: t('apps.github'),
       onClick: () =>
@@ -330,7 +367,14 @@ export default function TabletOS() {
       />
 
       {/* Status Bar */}
-      <div className="relative z-50 flex-shrink-0">
+      <div
+        className="relative z-[70] flex-shrink-0"
+        onClick={(e) => {
+          if (controlCenterOpen && !(e.target as HTMLElement).closest('button')) {
+            closeControlCenter()
+          }
+        }}
+      >
         <IPadStatusBar
           theme={theme}
           isAppOpen={activeSheet !== null}
@@ -346,7 +390,7 @@ export default function TabletOS() {
         {controlCenterOpen && (
           <>
             <div
-              className={`fixed inset-0 z-40 transition-colors ${
+              className={`fixed inset-0 z-[65] transition-colors ${
                 isDark ? 'bg-black/20' : 'bg-black/10'
               }`}
               onClick={closeControlCenter}
@@ -369,7 +413,7 @@ export default function TabletOS() {
                   ? '0 26px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.16)'
                   : '0 24px 56px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.9)',
               }}
-              className={`fixed top-12 right-4 sm:right-6 rtl:right-auto rtl:left-4 sm:rtl:left-6 z-50 w-[336px] sm:w-[356px] max-w-[calc(100vw-2rem)] rounded-[28px] p-3.5 border ${
+              className={`fixed top-12 right-4 sm:right-6 rtl:right-auto rtl:left-4 sm:rtl:left-6 z-[70] w-[336px] sm:w-[356px] max-w-[calc(100vw-2rem)] rounded-[28px] p-3.5 border ${
                 isDark
                   ? 'border-white/[0.16] text-white'
                   : 'border-white/65 text-zinc-900'
@@ -693,36 +737,96 @@ export default function TabletOS() {
         variant="ipados"
       />
 
-      {/* iPadOS AirDrop/Files-style Top-Center Pill Feedback */}
-      <AnimatePresence>
-        {cvPill && (
-          <motion.div
-            key={cvPill.id}
-            role="status"
-            aria-live="polite"
-            initial={{ opacity: 0, y: -18, scale: 0.92 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -14, scale: 0.92 }}
-            transition={{ type: 'spring', stiffness: 420, damping: 28 }}
-            className="fixed top-9 left-1/2 -translate-x-1/2 z-[100060] pointer-events-none max-w-[calc(100vw-2rem)]"
-          >
-            <div
-              className={`flex items-center gap-2.5 px-4 py-2 rounded-full border backdrop-blur-2xl shadow-xl ${
-                isDark
-                  ? 'bg-zinc-900/88 border-white/15 text-white'
-                  : 'bg-white/88 border-black/10 text-gray-900'
+      {/* Native iPadOS 18 Notification Banner (centered below the 40px Status Bar) */}
+      <div className="fixed top-12 inset-x-0 z-[100060] flex justify-center px-4 pointer-events-none">
+        <AnimatePresence>
+          {cvPill && (
+            <motion.div
+              key={cvPill.id}
+              role="status"
+              aria-live="polite"
+              initial={{ opacity: 0, y: -24, scale: 0.94 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -64, scale: 0.94 }}
+              transition={{ type: 'spring', stiffness: 440, damping: 32, mass: 0.85 }}
+              drag="y"
+              dragSnapToOrigin
+              dragConstraints={{ top: -80, bottom: 0 }}
+              dragElastic={{ top: 0.45, bottom: 0.08 }}
+              onDragStart={clearCvPillTimer}
+              onDragEnd={(_, info) => {
+                if (info.offset.y < -18 || info.velocity.y < -140) {
+                  dismissCvPill()
+                } else {
+                  scheduleCvPillDismiss(2400)
+                }
+              }}
+              onTap={dismissCvPill}
+              style={{
+                background: isDark ? 'rgba(38, 38, 42, 0.78)' : 'rgba(255, 255, 255, 0.80)',
+                backdropFilter: 'blur(40px) saturate(200%)',
+                WebkitBackdropFilter: 'blur(40px) saturate(200%)',
+                border: isDark
+                  ? '1px solid rgba(255, 255, 255, 0.16)'
+                  : '1px solid rgba(0, 0, 0, 0.08)',
+                boxShadow: isDark
+                  ? '0 20px 48px rgba(0, 0, 0, 0.52), 0 4px 12px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.16)'
+                  : '0 18px 44px rgba(0, 0, 0, 0.16), 0 4px 12px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.92)',
+              }}
+              className={`pointer-events-auto w-full max-w-[376px] px-3.5 pt-3 pb-2 rounded-[22px] select-none touch-none cursor-grab active:cursor-grabbing ${
+                isDark ? 'text-white' : 'text-gray-900'
               }`}
             >
-              <span className="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0">
-                <CheckmarkSymbol className="w-3 h-3" />
-              </span>
-              <span className="text-xs font-semibold truncate">
-                {tCommonCV('downloadedTitle')} ({cvPill.lang.toUpperCase()})
-              </span>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              <div className="flex items-center gap-3">
+                {/* App squircle icon + iPadOS corner confirmation badge */}
+                <div className="relative w-[38px] h-[38px] shrink-0">
+                  <div className="w-[38px] h-[38px] rounded-[9px] overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.22)] flex items-center justify-center">
+                    {getAppleIcon('cv', 38)}
+                  </div>
+                  <span
+                    className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-[#34C759] text-white flex items-center justify-center shadow-sm ring-2 ${
+                      isDark ? 'ring-[#26262A]' : 'ring-white/90'
+                    }`}
+                  >
+                    <CheckmarkSymbol className="w-2.5 h-2.5" />
+                  </span>
+                </div>
+
+                {/* Title + top-right localized timestamp + body */}
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-baseline justify-between gap-2">
+                    <div className="text-[13px] font-semibold leading-tight tracking-[-0.01em] truncate">
+                      {tCommonCV('downloadedTitle')} ({cvPill.lang.toUpperCase()})
+                    </div>
+                    <span
+                      className={`text-[11px] font-normal shrink-0 ${
+                        isDark ? 'text-white/50' : 'text-black/45'
+                      }`}
+                    >
+                      {tCommonCV('justNow')}
+                    </span>
+                  </div>
+                  <div
+                    className={`text-[12px] mt-0.5 leading-snug line-clamp-2 ${
+                      isDark ? 'text-white/75' : 'text-gray-600'
+                    }`}
+                  >
+                    {cvPill.lang === 'en' ? tCommonCV('downloadedEn') : tCommonCV('downloadedFr')}
+                  </div>
+                </div>
+              </div>
+
+              {/* Subtle iPadOS swipe-up grabber indicator */}
+              <div
+                aria-hidden="true"
+                className={`mt-2 mx-auto w-8 h-[3px] rounded-full ${
+                  isDark ? 'bg-white/20' : 'bg-black/15'
+                }`}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   )
 }

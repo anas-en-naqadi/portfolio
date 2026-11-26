@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLocale, useTranslations } from 'next-intl'
 import { getLocalizedPortfolioData, socialLinks } from '@/lib/data'
@@ -26,7 +26,17 @@ export default function IPadContact({ theme }: IPadContactProps) {
   const { personalInfo } = getLocalizedPortfolioData(locale)
   const [activeMailId, setActiveMailId] = useState<MailId>('email')
   const [copied, setCopied] = useState(false)
+  const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const isDark = theme === 'dark'
+
+  useEffect(() => {
+    return () => {
+      if (copyTimerRef.current) clearTimeout(copyTimerRef.current)
+    }
+  }, [])
+
+  const githubUrl = process.env.NEXT_PUBLIC_GITHUB_URL || socialLinks.github
+  const linkedinUrl = process.env.NEXT_PUBLIC_LINKEDIN_URL || socialLinks.linkedin
 
   const detailBg = isDark ? 'bg-[#1C1C1E]' : 'bg-white'
   const { active: activeMailBg, inactive: hoverMailBg } = getIPadSidebarItemClasses(theme)
@@ -37,6 +47,8 @@ export default function IPadContact({ theme }: IPadContactProps) {
       id: 'email' as const,
       sender: t('channels.email.sender'),
       address: personalInfo.email,
+      copyValue: personalInfo.email,
+      copyLabel: t('copyEmail'),
       avatarText: 'EM',
       subject: t('channels.email.subject'),
       body: t('channels.email.body'),
@@ -48,10 +60,12 @@ export default function IPadContact({ theme }: IPadContactProps) {
       id: 'github' as const,
       sender: t('channels.github.sender'),
       address: 'github.com/anas-en-naqadi',
+      copyValue: githubUrl,
+      copyLabel: t('copyGithub'),
       avatarText: 'GH',
       subject: t('channels.github.subject'),
       body: t('channels.github.body'),
-      href: process.env.NEXT_PUBLIC_GITHUB_URL || socialLinks.github,
+      href: githubUrl,
       actionLabel: t('openLink'),
       external: true,
     },
@@ -59,10 +73,12 @@ export default function IPadContact({ theme }: IPadContactProps) {
       id: 'linkedin' as const,
       sender: t('channels.linkedin.sender'),
       address: 'linkedin.com/in/anas-en-naqadi',
+      copyValue: linkedinUrl,
+      copyLabel: t('copyLinkedin'),
       avatarText: 'LN',
       subject: t('channels.linkedin.subject'),
       body: t('channels.linkedin.body'),
-      href: process.env.NEXT_PUBLIC_LINKEDIN_URL || socialLinks.linkedin,
+      href: linkedinUrl,
       actionLabel: t('openLink'),
       external: true,
     },
@@ -70,6 +86,8 @@ export default function IPadContact({ theme }: IPadContactProps) {
       id: 'phone' as const,
       sender: t('channels.phone.sender'),
       address: personalInfo.phone,
+      copyValue: personalInfo.phone,
+      copyLabel: t('copyPhone'),
       avatarText: 'PH',
       subject: t('channels.phone.subject'),
       body: t('channels.phone.body'),
@@ -81,11 +99,21 @@ export default function IPadContact({ theme }: IPadContactProps) {
 
   const activeMail = mailList.find((m) => m.id === activeMailId) || mailList[0]
 
-  const handleCopyEmail = async () => {
+  const handleSelectChannel = (id: MailId) => {
+    setActiveMailId(id)
+    setCopied(false)
+    if (copyTimerRef.current) {
+      clearTimeout(copyTimerRef.current)
+      copyTimerRef.current = null
+    }
+  }
+
+  const handleCopyActive = async () => {
     try {
-      await navigator.clipboard.writeText(personalInfo.email)
+      await navigator.clipboard.writeText(activeMail.copyValue)
       setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+      if (copyTimerRef.current) clearTimeout(copyTimerRef.current)
+      copyTimerRef.current = setTimeout(() => setCopied(false), 2000)
     } catch {
       // Clipboard API fallback ignored safely
     }
@@ -97,7 +125,7 @@ export default function IPadContact({ theme }: IPadContactProps) {
         <button
           key={mail.id}
           type="button"
-          onClick={() => setActiveMailId(mail.id)}
+          onClick={() => handleSelectChannel(mail.id)}
           className={`text-left rtl:text-right px-3.5 py-2 sm:p-3.5 rounded-xl transition-all duration-200 flex gap-2.5 items-center sm:items-start shrink-0 ${
             activeMailId === mail.id ? activeMailBg : hoverMailBg
           }`}
@@ -127,11 +155,11 @@ export default function IPadContact({ theme }: IPadContactProps) {
   const copyActionButton = (
     <button
       type="button"
-      onClick={handleCopyEmail}
+      onClick={handleCopyActive}
       className="text-xs text-blue-500 font-bold hover:underline flex items-center gap-1 whitespace-nowrap"
     >
       {copied ? <CheckmarkSymbol className="w-3.5 h-3.5" /> : <CopySymbol className="w-3.5 h-3.5" />}
-      {copied ? t('copied') : t('copyInfo')}
+      {copied ? t('copied') : activeMail.copyLabel}
     </button>
   )
 

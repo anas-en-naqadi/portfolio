@@ -37,12 +37,19 @@ export function ContactWindow({ theme = 'dark', onNotify }: ContactWindowProps) 
   const [senderEmail, setSenderEmail] = useState('')
   const [subject, setSubject] = useState('')
   const [message, setMessage] = useState('')
+  const [botcheck, setBotcheck] = useState('')
   const [isSending, setIsSending] = useState(false)
-  const [fieldErrors, setFieldErrors] = useState<{ email?: string; message?: string }>({})
+  const [fieldErrors, setFieldErrors] = useState<{
+    name?: string
+    email?: string
+    subject?: string
+    message?: string
+  }>({})
   const [formFeedback, setFormFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const composeFormRef = useRef<HTMLFormElement>(null)
   const nameInputRef = useRef<HTMLInputElement>(null)
   const emailInputRef = useRef<HTMLInputElement>(null)
+  const subjectInputRef = useRef<HTMLInputElement>(null)
   const messageInputRef = useRef<HTMLTextAreaElement>(null)
   const portfolio = useMemo(() => getLocalizedPortfolioData(locale), [locale])
   const { personalInfo } = portfolio
@@ -57,9 +64,15 @@ export function ContactWindow({ theme = 'dark', onNotify }: ContactWindowProps) 
     if (isSending) return
     setFormFeedback(null)
 
+    const trimmedName = senderName.trim()
     const trimmedEmail = senderEmail.trim()
+    const trimmedSubject = subject.trim()
     const trimmedMessage = message.trim()
-    const nextErrors: { email?: string; message?: string } = {}
+    const nextErrors: { name?: string; email?: string; subject?: string; message?: string } = {}
+
+    if (!trimmedName) {
+      nextErrors.name = tDesktop('errorNameRequired')
+    }
 
     if (!trimmedEmail) {
       nextErrors.email = tDesktop('errorEmailRequired')
@@ -67,14 +80,22 @@ export function ContactWindow({ theme = 'dark', onNotify }: ContactWindowProps) 
       nextErrors.email = tDesktop('errorEmailInvalid')
     }
 
+    if (!trimmedSubject) {
+      nextErrors.subject = tDesktop('errorSubjectRequired')
+    }
+
     if (!trimmedMessage) {
       nextErrors.message = tDesktop('errorMessageRequired')
     }
 
-    if (nextErrors.email || nextErrors.message) {
+    if (nextErrors.name || nextErrors.email || nextErrors.subject || nextErrors.message) {
       setFieldErrors(nextErrors)
-      if (nextErrors.email) {
+      if (nextErrors.name) {
+        nameInputRef.current?.focus()
+      } else if (nextErrors.email) {
         emailInputRef.current?.focus()
+      } else if (nextErrors.subject) {
+        subjectInputRef.current?.focus()
       } else if (nextErrors.message) {
         messageInputRef.current?.focus()
       }
@@ -82,6 +103,17 @@ export function ContactWindow({ theme = 'dark', onNotify }: ContactWindowProps) 
     }
 
     setFieldErrors({})
+
+    // Silently ignore honeypot-triggered bot submissions
+    if (botcheck.trim()) {
+      setSenderName('')
+      setSenderEmail('')
+      setSubject('')
+      setMessage('')
+      setBotcheck('')
+      setFormFeedback({ type: 'success', text: tDesktop('sentBody') })
+      return
+    }
 
     const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY?.trim()
     if (!accessKey) {
@@ -101,13 +133,19 @@ export function ContactWindow({ theme = 'dark', onNotify }: ContactWindowProps) 
         },
         body: JSON.stringify({
           access_key: accessKey,
-          name: senderName.trim() || 'Portfolio Visitor',
-          email: senderEmail.trim(),
-          subject: subject.trim() || 'Portfolio Inquiry',
-          message: message.trim(),
+          name: trimmedName,
+          email: trimmedEmail,
+          subject: trimmedSubject,
+          message: trimmedMessage,
+          from_name: 'Portfolio Contact Form',
+          replyto: trimmedEmail,
+          botcheck: '',
         }),
       })
-      const data = (await response.json()) as { success?: boolean; message?: string }
+      const data = (await response.json().catch(() => ({}))) as {
+        success?: boolean
+        message?: string
+      }
       if (!response.ok || !data.success) {
         throw new Error(data.message || tDesktop('errorSend'))
       }
@@ -116,6 +154,7 @@ export function ContactWindow({ theme = 'dark', onNotify }: ContactWindowProps) 
       setSenderEmail('')
       setSubject('')
       setMessage('')
+      setBotcheck('')
       setFormFeedback({ type: 'success', text: tDesktop('sentBody') })
       onNotify?.(tDesktop('sentTitle'), tDesktop('sentBody'))
     } catch (err) {
@@ -207,6 +246,37 @@ export function ContactWindow({ theme = 'dark', onNotify }: ContactWindowProps) 
   const cardClass = `rounded-xl border p-4 ${
     isDark ? 'bg-white/[0.04] border-white/10' : 'bg-white/85 border-black/10 shadow-sm'
   }`
+
+  const getFieldClass = (hasError: boolean, extra = 'py-1.5') =>
+    `w-full px-3 ${extra} rounded-lg border text-xs outline-none transition-all ${
+      hasError
+        ? isDark
+          ? 'bg-[#FF453A]/[0.08] border-[#FF453A] ring-2 ring-[#FF453A]/20 text-white placeholder:text-white/40'
+          : 'bg-[#FF3B30]/[0.04] border-[#FF3B30] ring-2 ring-[#FF3B30]/15 text-gray-900 placeholder:text-gray-400'
+        : isDark
+          ? 'bg-white/[0.06] border-white/10 focus:border-[#007AFF] text-white placeholder:text-white/40'
+          : 'bg-black/[0.03] border-black/10 focus:border-[#007AFF] text-gray-900 placeholder:text-gray-400'
+    }`
+
+  const renderFieldError = (error?: string) =>
+    error ? (
+      <div
+        role="alert"
+        className={`flex items-center gap-1.5 text-[11px] font-medium ${
+          isDark ? 'text-[#FF453A]' : 'text-[#FF3B30]'
+        }`}
+      >
+        <span
+          aria-hidden="true"
+          className={`w-3.5 h-3.5 rounded-full text-[9px] font-bold text-white flex items-center justify-center shrink-0 ${
+            isDark ? 'bg-[#FF453A]' : 'bg-[#FF3B30]'
+          }`}
+        >
+          !
+        </span>
+        <span>{error}</span>
+      </div>
+    ) : null
 
   return (
     <div className="flex flex-col h-full">
@@ -359,6 +429,17 @@ export function ContactWindow({ theme = 'dark', onNotify }: ContactWindowProps) 
             noValidate
             className={`${cardClass} space-y-3`}
           >
+            {/* Honeypot field for spam bots */}
+            <input
+              type="text"
+              name="botcheck"
+              value={botcheck}
+              onChange={(e) => setBotcheck(e.target.value)}
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              className="hidden"
+            />
             <div className="flex items-center gap-2">
               <PaperPlaneSymbol className="w-4 h-4 text-[#007AFF]" />
               <h4 className={`text-xs font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
@@ -367,23 +448,30 @@ export function ContactWindow({ theme = 'dark', onNotify }: ContactWindowProps) 
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 items-start">
-              <input
-                ref={nameInputRef}
-                type="text"
-                value={senderName}
-                onChange={(e) => setSenderName(e.target.value)}
-                placeholder={tDesktop('namePlaceholder')}
-                aria-label={tDesktop('nameLabel')}
-                className={`w-full px-3 py-1.5 rounded-lg border text-xs outline-none transition-all ${
-                  isDark
-                    ? 'bg-white/[0.06] border-white/10 focus:border-[#007AFF] text-white placeholder:text-white/40'
-                    : 'bg-black/[0.03] border-black/10 focus:border-[#007AFF] text-gray-900 placeholder:text-gray-400'
-                }`}
-              />
+              <div className="space-y-1">
+                <input
+                  ref={nameInputRef}
+                  type="text"
+                  required
+                  aria-required="true"
+                  value={senderName}
+                  onChange={(e) => {
+                    setSenderName(e.target.value)
+                    if (fieldErrors.name) setFieldErrors((prev) => ({ ...prev, name: undefined }))
+                  }}
+                  placeholder={tDesktop('namePlaceholder')}
+                  aria-label={tDesktop('nameLabel')}
+                  aria-invalid={Boolean(fieldErrors.name)}
+                  className={getFieldClass(Boolean(fieldErrors.name))}
+                />
+                {renderFieldError(fieldErrors.name)}
+              </div>
               <div className="space-y-1">
                 <input
                   ref={emailInputRef}
                   type="email"
+                  required
+                  aria-required="true"
                   value={senderEmail}
                   onChange={(e) => {
                     setSenderEmail(e.target.value)
@@ -392,54 +480,39 @@ export function ContactWindow({ theme = 'dark', onNotify }: ContactWindowProps) 
                   placeholder={tDesktop('emailPlaceholder')}
                   aria-label={tDesktop('emailLabel')}
                   aria-invalid={Boolean(fieldErrors.email)}
-                  className={`w-full px-3 py-1.5 rounded-lg border text-xs outline-none transition-all ${
-                    fieldErrors.email
-                      ? isDark
-                        ? 'bg-[#FF453A]/[0.08] border-[#FF453A] ring-2 ring-[#FF453A]/20 text-white placeholder:text-white/40'
-                        : 'bg-[#FF3B30]/[0.04] border-[#FF3B30] ring-2 ring-[#FF3B30]/15 text-gray-900 placeholder:text-gray-400'
-                      : isDark
-                        ? 'bg-white/[0.06] border-white/10 focus:border-[#007AFF] text-white placeholder:text-white/40'
-                        : 'bg-black/[0.03] border-black/10 focus:border-[#007AFF] text-gray-900 placeholder:text-gray-400'
-                  }`}
+                  className={getFieldClass(Boolean(fieldErrors.email))}
                 />
-                {fieldErrors.email && (
-                  <div
-                    role="alert"
-                    className={`flex items-center gap-1.5 text-[11px] font-medium ${
-                      isDark ? 'text-[#FF453A]' : 'text-[#FF3B30]'
-                    }`}
-                  >
-                    <span
-                      aria-hidden="true"
-                      className={`w-3.5 h-3.5 rounded-full text-[9px] font-bold text-white flex items-center justify-center shrink-0 ${
-                        isDark ? 'bg-[#FF453A]' : 'bg-[#FF3B30]'
-                      }`}
-                    >
-                      !
-                    </span>
-                    <span>{fieldErrors.email}</span>
-                  </div>
-                )}
+                {renderFieldError(fieldErrors.email)}
               </div>
             </div>
 
             <div className="grid grid-cols-1 gap-2.5">
-              <input
-                type="text"
-                value={subject}
-                onChange={(e) => setSubject(e.target.value)}
-                placeholder={tDesktop('subjectPlaceholder')}
-                aria-label={tDesktop('subjectLabel')}
-                className={`w-full px-3 py-1.5 rounded-lg border text-xs outline-none transition-all ${
-                  isDark
-                    ? 'bg-white/[0.06] border-white/10 focus:border-[#007AFF] text-white placeholder:text-white/40'
-                    : 'bg-black/[0.03] border-black/10 focus:border-[#007AFF] text-gray-900 placeholder:text-gray-400'
-                }`}
-              />
+              <div className="space-y-1">
+                <input
+                  ref={subjectInputRef}
+                  type="text"
+                  required
+                  aria-required="true"
+                  value={subject}
+                  onChange={(e) => {
+                    setSubject(e.target.value)
+                    if (fieldErrors.subject) {
+                      setFieldErrors((prev) => ({ ...prev, subject: undefined }))
+                    }
+                  }}
+                  placeholder={tDesktop('subjectPlaceholder')}
+                  aria-label={tDesktop('subjectLabel')}
+                  aria-invalid={Boolean(fieldErrors.subject)}
+                  className={getFieldClass(Boolean(fieldErrors.subject))}
+                />
+                {renderFieldError(fieldErrors.subject)}
+              </div>
               <div className="space-y-1">
                 <textarea
                   ref={messageInputRef}
                   rows={3}
+                  required
+                  aria-required="true"
                   value={message}
                   onChange={(e) => {
                     setMessage(e.target.value)
@@ -450,34 +523,9 @@ export function ContactWindow({ theme = 'dark', onNotify }: ContactWindowProps) 
                   placeholder={tDesktop('messagePlaceholder')}
                   aria-label={tDesktop('messageLabel')}
                   aria-invalid={Boolean(fieldErrors.message)}
-                  className={`w-full px-3 py-2 rounded-lg border text-xs outline-none resize-none transition-all ${
-                    fieldErrors.message
-                      ? isDark
-                        ? 'bg-[#FF453A]/[0.08] border-[#FF453A] ring-2 ring-[#FF453A]/20 text-white placeholder:text-white/40'
-                        : 'bg-[#FF3B30]/[0.04] border-[#FF3B30] ring-2 ring-[#FF3B30]/15 text-gray-900 placeholder:text-gray-400'
-                      : isDark
-                        ? 'bg-white/[0.06] border-white/10 focus:border-[#007AFF] text-white placeholder:text-white/40'
-                        : 'bg-black/[0.03] border-black/10 focus:border-[#007AFF] text-gray-900 placeholder:text-gray-400'
-                  }`}
+                  className={getFieldClass(Boolean(fieldErrors.message), 'py-2 resize-none')}
                 />
-                {fieldErrors.message && (
-                  <div
-                    role="alert"
-                    className={`flex items-center gap-1.5 text-[11px] font-medium ${
-                      isDark ? 'text-[#FF453A]' : 'text-[#FF3B30]'
-                    }`}
-                  >
-                    <span
-                      aria-hidden="true"
-                      className={`w-3.5 h-3.5 rounded-full text-[9px] font-bold text-white flex items-center justify-center shrink-0 ${
-                        isDark ? 'bg-[#FF453A]' : 'bg-[#FF3B30]'
-                      }`}
-                    >
-                      !
-                    </span>
-                    <span>{fieldErrors.message}</span>
-                  </div>
-                )}
+                {renderFieldError(fieldErrors.message)}
               </div>
             </div>
 

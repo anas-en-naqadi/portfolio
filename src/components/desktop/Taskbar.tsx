@@ -12,6 +12,7 @@ export interface DockApp {
   isOpen: boolean
   isActive?: boolean
   onClick: () => void
+  onPreload?: () => void
   onSecondaryAction?: () => void
 }
 
@@ -107,7 +108,11 @@ function DockIcon({
           ref={ref}
           type="button"
           onClick={app.onClick}
-          onMouseEnter={() => setHovered(true)}
+          onMouseEnter={() => {
+            setHovered(true)
+            app.onPreload?.()
+          }}
+          onFocus={() => app.onPreload?.()}
           onMouseLeave={() => setHovered(false)}
           whileTap={{ scale: 0.9, y: 2 }}
           aria-label={app.label}

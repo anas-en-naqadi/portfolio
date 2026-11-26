@@ -38,6 +38,7 @@ const CORE_CATEGORIES = new Set<SkillCategoryKey>(['languages', 'frameworks', 'd
 
 export function SkillsWindow({ theme = 'dark', spotlightQuery }: SkillsWindowProps) {
   const t = useTranslations('skills')
+  const tCommon = useTranslations('common')
   const tDesktop = useTranslations('desktop.windows.skills')
   const locale = useLocale()
   const isDark = theme === 'dark'
@@ -185,6 +186,7 @@ export function SkillsWindow({ theme = 'dark', spotlightQuery }: SkillsWindowPro
                 <button
                   type="button"
                   onClick={() => setSearch('')}
+                  aria-label={tCommon('clearSearch')}
                   className="opacity-50 hover:opacity-100"
                 >
                   <XMarkCircleSymbol className="w-3.5 h-3.5" />

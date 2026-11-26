@@ -12,6 +12,7 @@ import { fetchMarrakechWeather, type WeatherState } from '@/lib/weather'
 import { getAppleIcon } from '../shared/AppleIcons'
 import {
   AppCubeSymbol,
+  BriefcaseSymbol,
   CheckmarkSymbol,
   ChevronRightSymbol,
   DocumentTextSymbol,
@@ -41,6 +42,11 @@ import IOSSheet from './IOSSheet'
 import IOSDock from './IOSDock'
 
 import AnimatedSection from '../shared/AnimatedSection'
+import {
+  ProjectImage,
+  PROJECT_IMAGE_SIZES,
+  scheduleProjectImagePreload,
+} from '../shared/ProjectImage'
 import { CVDownloadModal, triggerCVDownload, type CVLanguage } from '../shared/CVDownloadModal'
 
 type AppId = 'home' | 'about' | 'experience' | 'projects' | 'skills' | 'contact' | 'settings'
@@ -102,7 +108,7 @@ export default function MobileOS() {
   const { theme, toggleTheme } = useTheme()
   const [activeApp, setActiveApp] = useState<AppId>('home')
   const [sheetApp, setSheetApp] = useState<Exclude<AppId, 'home'>>('about')
-  const [projectFilter, setProjectFilter] = useState<'all' | 'ai' | 'web' | 'mobile'>('all')
+  const [projectFilter, setProjectFilter] = useState<'all' | 'freelance' | 'ai' | 'web' | 'mobile'>('all')
   const [expandedSkillFolder, setExpandedSkillFolder] = useState<string | null>(null)
   const [skillSearchQuery, setSkillSearchQuery] = useState('')
   const [mobileWallpaper, setMobileWallpaper] = useState<MobileWallpaperId>('default')
@@ -161,6 +167,16 @@ export default function MobileOS() {
     loadWeather()
     return () => controller.abort()
   }, [])
+
+  useEffect(
+    () =>
+      scheduleProjectImagePreload(
+        localizedProjects.map((p) => p.image),
+        PROJECT_IMAGE_SIZES.mobileCard,
+        1200
+      ),
+    [localizedProjects]
+  )
 
   const openApp = (appId: AppId) => {
     if (appId !== 'home') {
@@ -305,10 +321,20 @@ export default function MobileOS() {
                 href={action.href}
                 target={action.external ? '_blank' : undefined}
                 rel={action.external ? 'noopener noreferrer' : undefined}
-                className="flex flex-col items-center gap-1.5 p-2 bg-white dark:bg-zinc-900 border border-black/[0.04] dark:border-white/[0.04] rounded-2xl hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors shadow-sm active:scale-95 duration-100"
+                className="group cursor-pointer flex flex-col items-center gap-1.5 p-2 bg-white dark:bg-zinc-900 border border-black/[0.06] dark:border-white/[0.06] rounded-2xl hover:bg-[#FAF8F5] dark:hover:bg-zinc-800 hover:border-[#9A7E64]/35 dark:hover:border-[#D7BFA8]/30 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200 shadow-sm active:scale-95 active:translate-y-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#9A7E64]/50"
               >
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#D7BFA8]/35 to-[#9A7E64]/20 dark:from-[#D7BFA8]/20 dark:to-[#9A7E64]/15 flex items-center justify-center">
-                  {action.icon}
+                <div className="relative w-10 h-10 flex items-center justify-center">
+                  <span
+                    aria-hidden="true"
+                    className="quick-action-beat-ring pointer-events-none absolute inset-0 rounded-full border border-[#9A7E64]/55 dark:border-[#D7BFA8]/45"
+                    style={{ animationDelay: `${idx * 0.25}s` }}
+                  />
+                  <div
+                    className="quick-action-beat-icon w-full h-full rounded-full bg-gradient-to-br from-[#D7BFA8]/40 to-[#9A7E64]/20 dark:from-[#D7BFA8]/25 dark:to-[#9A7E64]/15 flex items-center justify-center group-hover:scale-110 transition-transform duration-200"
+                    style={{ animationDelay: `${idx * 0.25}s` }}
+                  >
+                    {action.icon}
+                  </div>
                 </div>
                 <span className="text-[9px] font-bold text-[#7E634B] dark:text-[#D7BFA8] tracking-tight">{action.label}</span>
               </a>
@@ -486,9 +512,10 @@ export default function MobileOS() {
         {/* Sticky iOS style Segmented Control */}
         <div className="sticky top-0 z-20 px-4 pt-3 pb-3 bg-[#f2f2f7]/90 dark:bg-[#1c1c1e]/90 backdrop-blur-md border-b border-black/[0.04] dark:border-white/[0.06]">
           <AnimatedSection delay={0.08}>
-            <div className="bg-gray-100 dark:bg-zinc-800 p-0.5 rounded-xl flex w-full select-none shadow-inner border border-black/[0.04] dark:border-white/[0.06]">
+            <div className="bg-gray-100 dark:bg-zinc-800 p-0.5 rounded-xl flex w-full select-none shadow-inner border border-black/[0.04] dark:border-white/[0.06] overflow-x-auto">
               {([
                 { key: 'all', label: t('projects.all') },
+                { key: 'freelance', label: t('projects.freelance') },
                 { key: 'ai', label: t('projects.ai') },
                 { key: 'web', label: t('projects.web') },
                 { key: 'mobile', label: t('projects.mobile') }
@@ -496,7 +523,7 @@ export default function MobileOS() {
                 <button
                   key={filter.key}
                   onClick={() => setProjectFilter(filter.key)}
-                  className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  className={`flex-1 py-1.5 px-2 rounded-lg text-[11px] font-bold whitespace-nowrap transition-all ${
                     projectFilter === filter.key
                       ? 'bg-white dark:bg-zinc-700 text-gray-900 dark:text-white shadow-sm'
                       : 'text-gray-500 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-200 hover:bg-black/[0.04] dark:hover:bg-white/[0.06]'
@@ -512,7 +539,10 @@ export default function MobileOS() {
         {/* Projects Cards List */}
         <div className="px-4 pt-3 pb-4 flex flex-col gap-6">
           {localizedProjects
-            .filter((p) => projectFilter === 'all' || p.type === projectFilter)
+            .filter((p) =>
+              projectFilter === 'all' ||
+              (projectFilter === 'freelance' ? Boolean(p.isFreelance) : p.type === projectFilter)
+            )
             .map((project, idx) => {
               // Extract a category label based on technologies or type
               let category = t('mobile.projects.categories.tools')
@@ -527,21 +557,31 @@ export default function MobileOS() {
               }
 
               return (
-                <AnimatedSection key={idx} delay={0.12 + idx * 0.08}>
+                <AnimatedSection
+                  key={project.image || project.title}
+                  delay={0.04 + Math.min(idx, 4) * 0.04}
+                >
                   <div className="bg-white dark:bg-zinc-900 border border-black/[0.05] dark:border-white/[0.05] rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col group">
                     {/* Big Spotlight Card Image */}
                     <div className="relative w-full h-44 bg-gradient-to-br from-primary/10 to-primary-dark/15 overflow-hidden flex-shrink-0">
-                      {project.image ? (
-                        <Image
-                          src={project.image}
-                          alt={project.title}
-                          fill
-                          className="object-cover group-hover:scale-[1.03] transition-transform duration-500"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-primary/20 via-indigo-500/10 to-cyan-500/25 flex items-center justify-center">
-                          <AppCubeSymbol className="w-10 h-10 text-blue-500/80 dark:text-blue-400/80" />
-                        </div>
+                      <ProjectImage
+                        src={project.image}
+                        alt={project.title}
+                        sizes={PROJECT_IMAGE_SIZES.mobileCard}
+                        priority={idx < 3}
+                        tone={theme}
+                        imgClassName="group-hover:scale-[1.03]"
+                        fallback={
+                          <div className="w-full h-full bg-gradient-to-br from-primary/20 via-indigo-500/10 to-cyan-500/25 flex items-center justify-center">
+                            <AppCubeSymbol className="w-10 h-10 text-blue-500/80 dark:text-blue-400/80" />
+                          </div>
+                        }
+                      />
+                      {project.isFreelance && (
+                        <span className="absolute top-2.5 left-2.5 z-[2] inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wide border backdrop-blur-md bg-black/65 text-amber-300 border-amber-400/50 shadow-sm">
+                          <BriefcaseSymbol className="w-3 h-3 shrink-0" />
+                          <span>{t('projects.freelance')}</span>
+                        </span>
                       )}
                     </div>
 
@@ -554,9 +594,16 @@ export default function MobileOS() {
                             <h3 className="text-sm font-bold text-gray-900 dark:text-white truncate">
                               {project.title}
                             </h3>
-                            <span className="text-[10px] font-bold text-[#003f8c] dark:text-[#3A82F6] uppercase tracking-wide truncate">
-                              {category}
-                            </span>
+                            <div className="flex items-center gap-1.5 min-w-0">
+                              <span className="text-[10px] font-bold text-[#003f8c] dark:text-[#3A82F6] uppercase tracking-wide truncate">
+                                {category}
+                              </span>
+                              {project.isFreelance && (
+                                <span className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-600 dark:text-amber-300 shrink-0">
+                                  {t('projects.freelance')}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
 

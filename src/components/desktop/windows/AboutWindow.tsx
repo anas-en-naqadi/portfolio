@@ -185,7 +185,7 @@ export function AboutWindow({ theme = 'dark', onNotify, onDownloadCV }: AboutWin
                   </span>
                 </div>
                 <p className={`text-xs font-medium mt-1 ${isDark ? 'text-[#D7BFA8]' : 'text-[#8C6F55]'}`}>
-                  {t('subtitle')}
+                  {tDesktop('about.role')}
                 </p>
 
                 <div className="flex flex-wrap gap-2 mt-3">

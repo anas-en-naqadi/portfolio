@@ -396,7 +396,7 @@ export default function IPadSettings({
                           </div>
                           <div className="px-3 py-2 text-xs font-semibold flex items-center justify-between text-gray-900 dark:text-white">
                             <span>{t(`wallpapers.${wp.id}`)}</span>
-                            {selected && <span className="text-[10.5px] text-[#007AFF]">Active</span>}
+                            {selected && <span className="text-[10.5px] text-[#007AFF]">{t('active')}</span>}
                           </div>
                         </button>
                       )

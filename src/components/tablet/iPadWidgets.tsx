@@ -138,7 +138,7 @@ export default function IPadWidgets({ theme, onDownloadCV }: IPadWidgetsProps) {
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.2 }}
-      aria-label="Home screen widgets grid"
+      aria-label={t('widgetsGridLabel')}
     >
       {/* Widget 1: Rich Apple Analog + Digital Clock */}
       <motion.div
@@ -388,7 +388,7 @@ export default function IPadWidgets({ theme, onDownloadCV }: IPadWidgetsProps) {
             <span className="text-[9px] px-1.5 py-0.5 bg-[#FF3B30]/90 text-white rounded font-bold uppercase tracking-wide shadow-sm">
               PDF
             </span>
-            <span className={`${subTextColorClass} text-[9.5px] font-medium`}>1.2 MB</span>
+            <span className={`${subTextColorClass} text-[9.5px] font-medium`}>{t('resumeSize')}</span>
           </div>
         </div>
 

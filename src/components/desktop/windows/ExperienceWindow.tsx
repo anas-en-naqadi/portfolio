@@ -211,12 +211,18 @@ export function ExperienceWindow({ theme = 'dark' }: ExperienceWindowProps) {
                       {edu.institution}
                     </div>
                     <div
-                      className={`inline-flex items-center gap-1.5 text-[11px] ${
+                      className={`flex flex-wrap items-center gap-3 text-[11px] ${
                         isDark ? 'text-white/55' : 'text-gray-500'
                       }`}
                     >
-                      <MapPinSymbol className="w-3 h-3" />
-                      <span>{edu.period}</span>
+                      <span className="inline-flex items-center gap-1">
+                        <CalendarSymbol className="w-3 h-3" />
+                        <span>{edu.period}</span>
+                      </span>
+                      <span className="inline-flex items-center gap-1">
+                        <MapPinSymbol className="w-3 h-3" />
+                        <span>{edu.city}</span>
+                      </span>
                     </div>
                   </div>
                 ))}

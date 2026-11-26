@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useTranslations } from 'next-intl'
 import { CheckmarkSymbol, XMarkSymbol } from '@/components/shared/SFSymbols'
 
 export interface MacToastData {
@@ -18,6 +19,7 @@ interface MacToastProps {
 }
 
 export function MacToast({ toast, theme = 'dark', onDismiss }: MacToastProps) {
+  const tToast = useTranslations('desktop.toast')
   const isDark = theme === 'dark'
 
   return (
@@ -75,7 +77,7 @@ export function MacToast({ toast, theme = 'dark', onDismiss }: MacToastProps) {
             <button
               type="button"
               onClick={onDismiss}
-              aria-label="Dismiss notification"
+              aria-label={tToast('dismiss')}
               className={`p-1 rounded-lg transition-colors shrink-0 ${
                 isDark
                   ? 'text-white/40 hover:text-white hover:bg-white/10'

@@ -151,10 +151,20 @@ export default function IPadAbout({ theme }: IPadAboutProps) {
                     href={action.href}
                     target={action.external ? '_blank' : undefined}
                     rel={action.external ? 'noopener noreferrer' : undefined}
-                    className="flex flex-col items-center gap-1.5 p-2 sm:p-2.5 bg-white dark:bg-[#2C2C2E] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl hover:bg-gray-50 dark:hover:bg-[#3A3A3C] transition-colors shadow-sm active:scale-95 duration-100"
+                    className="group cursor-pointer flex flex-col items-center gap-1.5 p-2 sm:p-2.5 bg-white dark:bg-[#2C2C2E] border border-black/[0.06] dark:border-white/[0.08] rounded-2xl hover:bg-[#FAF8F5] dark:hover:bg-[#3A3A3C] hover:border-[#9A7E64]/35 dark:hover:border-[#D7BFA8]/30 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200 shadow-sm active:scale-95 active:translate-y-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#9A7E64]/50"
                   >
-                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-[#D7BFA8]/35 to-[#9A7E64]/20 dark:from-[#D7BFA8]/20 dark:to-[#9A7E64]/15 flex items-center justify-center">
-                      {action.icon}
+                    <div className="relative w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center">
+                      <span
+                        aria-hidden="true"
+                        className="quick-action-beat-ring pointer-events-none absolute inset-0 rounded-full border border-[#9A7E64]/55 dark:border-[#D7BFA8]/45"
+                        style={{ animationDelay: `${idx * 0.25}s` }}
+                      />
+                      <div
+                        className="quick-action-beat-icon w-full h-full rounded-full bg-gradient-to-br from-[#D7BFA8]/40 to-[#9A7E64]/20 dark:from-[#D7BFA8]/25 dark:to-[#9A7E64]/15 flex items-center justify-center group-hover:scale-110 transition-transform duration-200"
+                        style={{ animationDelay: `${idx * 0.25}s` }}
+                      >
+                        {action.icon}
+                      </div>
                     </div>
                     <span className="text-[10px] font-bold text-[#7E634B] dark:text-[#D7BFA8] truncate max-w-full tracking-tight">
                       {action.label}

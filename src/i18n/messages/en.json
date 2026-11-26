@@ -17,20 +17,22 @@
     "close": "Close",
     "minimize": "Minimize",
     "maximize": "Maximize",
+    "clearSearch": "Clear search",
     "cvModal": {
       "title": "Download CV / Resume",
       "subtitle": "Choose your preferred language version (PDF)",
       "englishTitle": "English Version",
       "englishSubtitle": "International Resume (PDF)",
       "frenchTitle": "French Version",
-      "frenchSubtitle": "Curriculum Vitae Français (PDF)",
+      "frenchSubtitle": "French Resume / CV (PDF)",
       "cancel": "Cancel",
       "downloadedTitle": "CV Downloaded",
       "downloadedEn": "English CV (PDF) started downloading",
       "downloadedFr": "French CV (PDF) started downloading",
       "badgeEn": "EN",
       "badgeFr": "FR",
-      "savedLabel": "Downloaded"
+      "savedLabel": "Downloaded",
+      "justNow": "now"
     },
     "helloSplash": {
       "headline": "Welcome to my world, where code meets intelligence.",
@@ -58,7 +60,7 @@
     "subtitle": "Full-Stack Developer & AI Engineer | React • Next.js • Vue.js • FastAPI • Laravel",
     "profile": {
       "title": "Professional Profile",
-      "description": "Full-Stack Developer & AI Engineer, I design high-performance web applications and intelligent solutions based on AI, Machine Learning, Deep Learning, and NLP. Specialized in React, Next.js, Vue.js, Laravel, Node.js, and FastAPI, with concrete experience in production deployment, LLM integration, and AI systems development. Currently in AI Master's program, I build, learn, and deliver."
+      "description": "Full-Stack Developer & AI Engineer designing high-performance web applications and intelligent systems powered by AI, Machine Learning, Deep Learning, and NLP. Specialized in React, Next.js, Vue.js, Laravel, Node.js, and FastAPI, with hands-on experience in production deployments, LLM integration, and AI engineering. Currently pursuing a Master's in AI, I build, learn, and ship."
     },
     "expertise": {
       "fullstack": {
@@ -71,7 +73,7 @@
       },
       "design": {
         "title": "UX/UI Design",
-        "description": "Beautiful, intuitive interfaces with modern design principles"
+        "description": "Refined, intuitive interfaces built on modern design principles"
       }
     }
   },
@@ -87,6 +89,7 @@
   "projects": {
     "title": "Featured Projects",
     "all": "All",
+    "freelance": "Freelance",
     "ai": "AI",
     "web": "Web",
     "mobile": "Mobile",
@@ -196,7 +199,7 @@
     "contact": {
       "github": {
         "subject": "Portfolio & Code Repositories",
-        "body": "Hi, check out my latest open source contributions and repositories. Let's build something together."
+        "body": "Explore my latest open-source contributions and repositories. Let's build something together."
       },
       "linkedin": {
         "subject": "Professional Connection Proposal",
@@ -205,13 +208,19 @@
       "email": {
         "sender": "Email Inbox",
         "subject": "New Project Collaboration Inquiry",
-        "body": "Send me a direct email to initiate a conversation, request my resume, or get a quotation."
+        "body": "Send me a direct email to start a conversation, request my resume, or ask for a project quote."
       },
       "phone": {
         "sender": "Phone Call",
         "subject": "Direct Inquiries & Call Scheduling",
-        "body": "Dial my mobile number directly for immediate business enquiries or freelance requests."
+        "body": "Call my mobile number directly for urgent business inquiries or freelance projects."
       }
+    },
+    "recentApps": {
+      "title": "Recent Apps",
+      "empty": "No recent apps",
+      "lastOpened": "Last opened: {time}",
+      "closeAll": "Close All"
     }
   },
   "tablet": {
@@ -279,7 +288,9 @@
       "profile": "Profile",
       "resumeTitle": "CV / Resume",
       "curriculumVitae": "Curriculum Vitae",
-      "resumeDesc": "Download latest resume for professional overview.",
+      "resumeDesc": "Download my latest resume for a complete professional overview.",
+      "resumeSize": "60 KB",
+      "widgetsGridLabel": "Home screen widgets",
       "marrakech": "Marrakech"
     },
     "about": {
@@ -311,6 +322,7 @@
     },
     "projects": {
       "sidebarTitle": "Discover",
+      "clientWorkTitle": "Client Work",
       "all": "All Apps",
       "searchPlaceholder": "Search apps...",
       "get": "GET",
@@ -321,6 +333,7 @@
       "close": "Done",
       "empty": "No projects in this category",
       "categories": {
+        "freelance": "Freelance",
         "ai": "AI & Agents",
         "ml": "Machine Learning",
         "mobile": "Mobile Apps",
@@ -349,6 +362,10 @@
       "sidebarTitle": "Mailboxes",
       "inbox": "Inbox",
       "copyInfo": "Copy Email",
+      "copyEmail": "Copy Email",
+      "copyGithub": "Copy GitHub",
+      "copyLinkedin": "Copy LinkedIn",
+      "copyPhone": "Copy Phone",
       "copied": "Copied!",
       "sendEmail": "Compose Email",
       "openLink": "Open Link",
@@ -394,6 +411,7 @@
         "default": "Argon Workspace",
         "alt": "Astra Workspace"
       },
+      "active": "Active",
       "systemLanguage": "Language & Region",
       "systemLanguageDesc": "Change the active portfolio interface language",
       "roleLabel": "Role",
@@ -407,7 +425,10 @@
     }
   },
   "desktop": {
+    "desktopIconsLabel": "Desktop Icons",
     "menuBar": {
+      "appleMenuLabel": "Apple Menu",
+      "spotlightTooltip": "Spotlight (⌘K)",
       "finder": "Finder",
       "file": "File",
       "edit": "Edit",
@@ -483,9 +504,11 @@
       "hint": "Press Esc or click outside to close"
     },
     "spotlight": {
+      "ariaLabel": "Spotlight Search",
       "placeholder": "Spotlight Search — Apps, Projects, Skills, Actions...",
       "empty": "Type to search across apps, projects, skills, or quick actions",
       "noResults": "No results found",
+      "resultsCount": "{count} results",
       "categories": {
         "app": "Applications",
         "action": "Quick Actions",
@@ -521,7 +544,8 @@
       "downloadBody": "Opening CV PDF...",
       "printTitle": "Print Preview",
       "printBody": "Opening system print dialog...",
-      "wallpaperTitle": "Wallpaper Updated"
+      "wallpaperTitle": "Wallpaper Updated",
+      "dismiss": "Dismiss notification"
     },
     "windows": {
       "actions": {
@@ -553,8 +577,9 @@
       },
       "projects": {
         "sidebarTitle": "Categories",
+        "clientWorkTitle": "Client Work",
         "searchPlaceholder": "Filter projects...",
-        "subtitle": "{count} Featured Engineering Works",
+        "subtitle": "{count} Featured Projects",
         "viewCode": "Source Code",
         "viewDetails": "Inspect Project",
         "technologies": "Technologies",
@@ -586,17 +611,19 @@
         "emailLabel": "Your Email",
         "emailPlaceholder": "you@example.com",
         "subjectLabel": "Subject",
-        "subjectPlaceholder": "Project inquiry, role or collaboration...",
+        "subjectPlaceholder": "Project inquiry, role, or collaboration...",
         "messageLabel": "Message",
         "messagePlaceholder": "Hi Anas, I would like to discuss...",
         "sendBtn": "Send Message",
         "sendingBtn": "Sending...",
         "sentTitle": "Message Sent",
         "sentBody": "Your message has been delivered directly to my inbox.",
-        "errorMissingKey": "Web3Forms key is not configured. Add NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY to .env.local.",
+        "errorMissingKey": "Contact form is temporarily unavailable. Please email me directly.",
         "errorSend": "Failed to send message. Please try again.",
+        "errorNameRequired": "Please enter your name.",
         "errorEmailRequired": "Please enter your email address.",
         "errorEmailInvalid": "Please enter a valid email address.",
+        "errorSubjectRequired": "Please enter a subject.",
         "errorMessageRequired": "Please enter your message."
       },
       "settings": {

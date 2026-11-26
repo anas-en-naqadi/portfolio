@@ -52,6 +52,8 @@ export function SpotlightSearch({
 }: SpotlightSearchProps) {
   const tCommon = useTranslations('common')
   const t = useTranslations('desktop.spotlight')
+  const tExp = useTranslations('desktop.windows.experience')
+  const tSkills = useTranslations('desktop.windows.skills')
   const locale = useLocale()
   const isDark = theme === 'dark'
 
@@ -87,7 +89,10 @@ export function SpotlightSearch({
         id: 'app-experience',
         category: 'app',
         title: tCommon('experience'),
-        subtitle: `${portfolio.experiences.length} • ${portfolio.education.length}`,
+        subtitle: tExp('subtitle', {
+          workCount: portfolio.experiences.length,
+          eduCount: portfolio.education.length,
+        }),
         icon: getAppleIcon('experience', 26),
         onSelect: () => {
           onOpenWindow('experience')
@@ -109,13 +114,14 @@ export function SpotlightSearch({
         id: 'app-skills',
         category: 'app',
         title: tCommon('skills'),
-        subtitle: `${
-          portfolio.skills.languages.length +
-          portfolio.skills.frameworks.length +
-          portfolio.skills.libraries.length +
-          portfolio.skills.databases.length +
-          portfolio.skills.tools.length
-        }`,
+        subtitle: tSkills('itemsCount', {
+          count:
+            portfolio.skills.languages.length +
+            portfolio.skills.frameworks.length +
+            portfolio.skills.libraries.length +
+            portfolio.skills.databases.length +
+            portfolio.skills.tools.length,
+        }),
         icon: getAppleIcon('skills', 26),
         onSelect: () => {
           onOpenWindow('skills')
@@ -270,6 +276,8 @@ export function SpotlightSearch({
   }, [
     tCommon,
     t,
+    tExp,
+    tSkills,
     portfolio,
     isDark,
     locale,
@@ -334,7 +342,7 @@ export function SpotlightSearch({
             transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
             onClick={(e) => e.stopPropagation()}
             role="dialog"
-            aria-label="Spotlight Search"
+            aria-label={t('ariaLabel')}
             className="w-full max-w-[620px] rounded-2xl overflow-hidden shadow-2xl"
             style={{
               background: isDark ? 'rgba(30, 30, 34, 0.84)' : 'rgba(255, 255, 255, 0.88)',
@@ -374,6 +382,7 @@ export function SpotlightSearch({
                 <button
                   type="button"
                   onClick={() => setQuery('')}
+                  aria-label={tCommon('clearSearch')}
                   className={isDark ? 'text-white/40 hover:text-white/80' : 'text-gray-400 hover:text-gray-700'}
                 >
                   <XMarkCircleSymbol className="w-4 h-4" />
@@ -459,7 +468,7 @@ export function SpotlightSearch({
                   : 'border-black/10 text-gray-500 bg-black/[0.02]'
               }`}
             >
-              <span>{!query ? t('empty') : `${filteredItems.length}`}</span>
+              <span>{!query ? t('empty') : t('resultsCount', { count: filteredItems.length })}</span>
               <span>{t('footerHint')}</span>
             </div>
           </motion.div>

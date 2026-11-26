@@ -2,8 +2,8 @@
 
 export const personalInfo = {
   name: 'ANAS EN-NAQADI',
-  title: 'Développeur Full-Stack & AI Engineer',
-  subtitle: 'React • Next.js • Vue.js • FastAPI • Laravel Specialist',
+  title: 'Développeur Full-Stack & Ingénieur IA',
+  subtitle: 'Spécialiste React • Next.js • Vue.js • FastAPI • Laravel',
   location: 'Marrakech, Maroc',
   email: 'anas.ennaqadi0@gmail.com',
   phone: '+212 628540272',
@@ -50,21 +50,21 @@ export const education = [
 
 export const experiences = [
   {
-    title: 'AI Engineer | Freelance',
+    title: 'Ingénieur IA | Freelance',
     company: 'Melodia AI',
-    location: 'Canada (Remote)',
+    location: 'Canada (À distance)',
     period: 'Juin 2026 - Septembre 2026',
     description: [
-      'Conception et construction de l\'IA de matching : architecture conçue de zéro du moteur central de recommandation multi-critères (scoring audio, métadonnées, popularité) évaluant l\'affinité Titre/Station avec génération dynamique de justifications.',
+      'Conception et construction de l\'IA de matching : architecture conçue de A à Z du moteur central de recommandation multi-critères (scoring audio, métadonnées, popularité) évaluant l\'affinité Titre/Station avec génération dynamique de justifications.',
       'Pipeline automatisé d\'extraction audio et profilage : analyse asynchrone de plus de 35 features acoustiques, spectrales et émotionnelles (MFCCs, valence, instruments) via l\'intégration de Librosa et Essentia-TensorFlow.',
       'Scores et Batch : génération de centroïdes audio et calcul de distributions statistiques sur l\'historique de diffusion, incluant une gestion algorithmique des démarrages à froid.',
     ],
-    technologies: ['Microsoft Azure', 'Python', 'Matching', 'Testing and Debugging', 'Docker', 'Microservices', 'GitHub Actions (CI/CD)'],
+    technologies: ['Microsoft Azure', 'Python', 'Matching IA', 'Tests & Débogage', 'Docker', 'Microservices', 'GitHub Actions (CI/CD)'],
   },
   {
-    title: 'FullStack Developer | Freelance',
+    title: 'Développeur Full-Stack | Freelance',
     company: 'Melodia',
-    location: 'Canada (Remote)',
+    location: 'Canada (À distance)',
     period: 'Janvier 2026 - Mars 2026',
     description: [
       'Audit & QA end-to-end multi-rôles (Artist, Agent, Station, Admin) : correction de bugs critiques, APIs défaillantes et comportements illogiques.',
@@ -72,12 +72,12 @@ export const experiences = [
       'Optimisation full-stack : résolution N+1, pagination serveur, internationalisation complète EN/FR et sécurisation JWT/RBAC.',
       'Déploiement CI/CD sur Microsoft Azure via GitHub Actions (frontend & backend) avec monitoring Application Insights.'
     ],
-    technologies: ['React.js', '.NET / C#', 'Microsoft Azure', 'MySQL', 'GitHub Actions', 'Testing and Debugging', 'JavaScript'],
+    technologies: ['React.js', '.NET / C#', 'Microsoft Azure', 'MySQL', 'GitHub Actions', 'Tests & Débogage', 'JavaScript'],
   },
   {
-    title: 'FullStack Developer | Freelance',
+    title: 'Développeur Full-Stack | Freelance',
     company: '3ommy',
-    location: 'Rabat, Maroc (Remote)',
+    location: 'Rabat, Maroc (À distance)',
     period: 'Septembre 2025 - Janvier 2026',
     description: [
       'Mise en production d\'une app cross-platform (Web, iOS, Android) avec tests QA end-to-end et validation des workflows métier.',
@@ -85,32 +85,32 @@ export const experiences = [
       'Conception et correction d\'APIs RESTful avec Supabase (PostgreSQL) : endpoints, refactor métier, sécurisation JWT/RLS et Edge Functions.',
       'Refactorisation architecture (maintenabilité, scalabilité), résolution de bugs critiques en production et travail en méthodologie Agile/Scrum.'
     ],
-    technologies: ['React Native', 'Expo', 'Supabase', 'PostgreSQL', 'TypeScript', 'Testing and Debugging', 'Agile'],
+    technologies: ['React Native', 'Expo', 'Supabase', 'PostgreSQL', 'TypeScript', 'Tests & Débogage', 'Agile'],
   },
   {
-    title: 'FullStack Developer | Stage PFE',
+    title: 'Développeur Full-Stack | Stage PFE',
     company: 'GRANDE CHARTE Inc',
     location: 'El Jadida, Maroc',
     period: 'Avril 2025 - Juin 2025',
     description: [
       'Conception et développement d’une plateforme e‑learning interne : système d’authentification sécurisé (JWT), gestion fine des rôles et permissions, suivi des logs, notifications et envoi d’emails, renforcement de la sécurité backend et intégration des pages frontend.',
-      'Qualification et stabilité : rédaction de tests unitaires et d’intégration, identification et correction des anomalies jusqu’à la mise en production et déploiement sur un VPS à zéro.'
+      'Qualification et stabilité : rédaction de tests unitaires et d’intégration, identification et correction des anomalies jusqu’à la mise en production et déploiement complet sur un VPS.'
     ],
-    technologies: ['Node.js', 'Express.js', 'Next.js', 'React.js', 'PostgreSQL', 'TypeScript', 'TailwindCss', 'VPS', 'Testing and Debugging'],
+    technologies: ['Node.js', 'Express.js', 'Next.js', 'React.js', 'PostgreSQL', 'TypeScript', 'Tailwind CSS', 'VPS', 'Tests & Débogage'],
   },
   {
-    title: 'FullStack Developer | Stage PFE',
+    title: 'Développeur Full-Stack | Stage PFE',
     company: 'OCP MAINTENANCE SOLUTIONS',
     location: 'Jorf Lasfar, Maroc',
     period: 'Avril 2024 - Mai 2024',
     description: [
-      'Conception, Développement et intégration de nouvelles fonctionnalités dans une application web de gestion des accès (suivi des logs d\'accès et d\'activité, gestion des tableaux de bord, support, badges, etc.).',
+      'Conception, développement et intégration de nouvelles fonctionnalités dans une application web de gestion des accès (suivi des logs d\'accès et d\'activité, gestion des tableaux de bord, support, badges, etc.).',
       'Test de l\'application pour garantir son bon fonctionnement. Identification et correction des bugs.'
     ],
-    technologies: ['Laravel', 'Vue.js', 'SQL', 'Jira', 'GitLab', 'Bootstrap', 'Git', 'Testing and Debugging', 'Clean Code'],
+    technologies: ['Laravel', 'Vue.js', 'SQL', 'Jira', 'GitLab', 'Bootstrap', 'Git', 'Tests & Débogage', 'Clean Code'],
   },
   {
-    title: 'Junior Developer | Stage Initiation',
+    title: 'Développeur Junior | Stage d\'initiation',
     company: 'OCP/DSI',
     location: 'Jorf Lasfar, Maroc',
     period: 'Juillet 2023 - Août 2023',
@@ -119,11 +119,44 @@ export const experiences = [
       'Création d’une solution pour la génération automatisée des factures.',
       'Optimisation des fonctionnalités pour améliorer l\'expérience utilisateur.'
     ],
-    technologies: ['HTML', 'CSS', 'JS', 'PHP', 'SQL', 'MYSQL'],
+    technologies: ['HTML', 'CSS', 'JS', 'PHP', 'SQL', 'MySQL'],
   },
 ]
 
-export const projects = [
+export interface PortfolioProject {
+  title: string
+  description: string
+  technologies: string[]
+  type: 'ai' | 'web' | 'mobile'
+  image: string
+  isFreelance?: boolean
+}
+
+export const projects: PortfolioProject[] = [
+  {
+    title: "Melodia AI — Moteur de Matching Audio",
+    description: "Moteur de recommandation IA multi-critères évaluant l'affinité Titre/Station avec pipeline d'extraction de 35+ features acoustiques (Librosa, Essentia-TensorFlow), gestion des démarrages à froid et justifications dynamiques.",
+    technologies: ["Python", "Microsoft Azure", "Librosa", "Essentia-TensorFlow", "Docker", "Microservices"],
+    type: "ai",
+    isFreelance: true,
+    image: "/images/projects/melodia_ai.webp"
+  },
+  {
+    title: "Melodia — Plateforme Musicale & Radio",
+    description: "Plateforme web multi-rôles (Artiste, Agent, Station, Admin) optimisée en production : UX réactive avec Optimistic UI, pagination serveur, sécurisation JWT/RBAC, internationalisation EN/FR et déploiement CI/CD sur Azure.",
+    technologies: ["React.js", ".NET / C#", "Microsoft Azure", "MySQL", "GitHub Actions"],
+    type: "web",
+    isFreelance: true,
+    image: "/images/projects/melodia_platform.webp"
+  },
+  {
+    title: "3ommy — Location de Piscines",
+    description: "Application cross-platform (Web, iOS, Android) de réservation et location de piscines privées, développée avec React Native, Expo et Supabase (PostgreSQL, Edge Functions, sécurité JWT/RLS).",
+    technologies: ["React Native", "Expo", "Supabase", "PostgreSQL", "TypeScript"],
+    type: "mobile",
+    isFreelance: true,
+    image: "/images/projects/3ommy_pool_rental.webp"
+  },
   {
     title: "Diagnostic Radiographique IA",
     description: "Système de diagnostic et d'analyse automatique d'images radiographiques thoraciques utilisant l'architecture EfficientNet et PyTorch.",
@@ -133,15 +166,15 @@ export const projects = [
   },
   {
     title: "Prédiction du Cancer du Côlon",
-    description: "Modèle de prédiction médicale basé sur l'apprentissage automatique (Scikit-Learn) pour la détection précoce du cancer du côlon.",
-    technologies: ["Python", "FastAPI", "React", "Scikit-Learn", "Machine Learning"],
+    description: "Modèle de prédiction médicale basé sur l'apprentissage automatique (Scikit-learn) pour la détection précoce du cancer du côlon.",
+    technologies: ["Python", "FastAPI", "React", "Scikit-learn", "Machine Learning"],
     type: "ai",
     image: "/images/projects/colon_cancer_prediction.webp"
   },
   {
-    title: "Code Review Automatisé par IA",
+    title: "Revue de Code Automatisée par IA",
     description: "Application d'audit et de révision de code automatique s'appuyant sur des LLMs via Groq pour détecter des vulnérabilités de sécurité.",
-    technologies: ["Next.js", "TypeScript", "Groq", "LlamaIndex", "AI"],
+    technologies: ["Next.js", "TypeScript", "Groq", "LlamaIndex", "IA"],
     type: "ai",
     image: "/images/projects/code_review_ai.webp"
   },
@@ -168,7 +201,7 @@ export const projects = [
   },
   {
     title: "Application Mobile pour les Animes",
-    description: "Application mobile de streaming et d'informations animées cross-platform avec gestion hors ligne et favoris.",
+    description: "Application mobile cross-platform de streaming et de catalogue d'animes, avec gestion hors ligne et favoris.",
     technologies: ["React Native", "Expo", "Firebase", "Mobile"],
     type: "mobile",
     image: "/images/projects/anime_mobile_app.webp"
@@ -182,7 +215,7 @@ export const projects = [
   },
   {
     title: "Plateforme E-Learning",
-    description: "Solution complète d'e-learning sécurisée par JWT, avec gestion robuste de rôles/permissions et suivi des logs.",
+    description: "Solution complète d'e-learning sécurisée par JWT, avec gestion fine des rôles et permissions et suivi des logs.",
     technologies: ["Node.js", "Express.js", "Next.js", "React.js", "PostgreSQL"],
     type: "web",
     image: "/images/projects/elearning_platform.webp"
@@ -198,15 +231,15 @@ export const projects = [
 
 export const skills = {
   languages: ['HTML', 'CSS', 'PHP', 'JavaScript', 'TypeScript', 'Java', 'C#', 'Python'],
-  frameworks: ['Vue.js', 'React.js', 'Next.js', 'React-Native', 'Laravel', 'Node.js', 'Express.js', 'FastAPI', '.NET', 'TensorFlow', 'PyTorch'],
+  frameworks: ['Vue.js', 'React.js', 'Next.js', 'React Native', 'Laravel', 'Node.js', 'Express.js', 'FastAPI', '.NET', 'TensorFlow', 'PyTorch'],
   libraries: ['Vuex', 'Redux Toolkit', 'PrimeVue', 'Material UI', 'Chart.js', 'Scikit-learn', 'OpenCV', 'CrewAI', 'Librosa', 'Essentia-TensorFlow'],
   databases: ['MySQL', 'PostgreSQL', 'MongoDB', 'Redis', 'Firebase', 'Supabase'],
   methodologies: ['Agile Scrum', 'Modèle MVC2', 'UML'],
-  tools: ['Git (GitHub, GitLab)', 'GitHub Actions (CI/CD)', 'Docker', 'Microsoft Azure', 'Expo', 'Jira', 'Figma', 'Networking'],
+  tools: ['Git (GitHub, GitLab)', 'GitHub Actions (CI/CD)', 'Docker', 'Microsoft Azure', 'Expo', 'Jira', 'Figma', 'Réseaux'],
   languages_spoken: [
-    { language: 'Arabic', level: 'Native' },
-    { language: 'French', level: 'Current' },
-    { language: 'English', level: 'Current' },
+    { language: 'Arabe', level: 'Langue maternelle' },
+    { language: 'Français', level: 'Courant' },
+    { language: 'Anglais', level: 'Courant' },
   ],
 }
 
@@ -214,6 +247,7 @@ const englishData = {
   personalInfo: {
     ...personalInfo,
     title: 'Full-Stack Developer & AI Engineer',
+    subtitle: 'React • Next.js • Vue.js • FastAPI • Laravel Specialist',
     location: 'Marrakech, Morocco',
   },
   education: [
@@ -253,10 +287,10 @@ const englishData = {
         'Automated audio extraction & profiling pipeline: asynchronous analysis of 35+ acoustic, spectral, and emotional features (MFCCs, valence, instruments) via Librosa and Essentia-TensorFlow integration.',
         'Scoring & Batch processing: generated audio centroids and statistical distributions over broadcast history, including algorithmic cold-start handling.',
       ],
-      technologies: ['Microsoft Azure', 'Python', 'Matching', 'Testing and Debugging', 'Docker', 'Microservices', 'GitHub Actions (CI/CD)'],
+      technologies: ['Microsoft Azure', 'Python', 'AI Matching', 'Testing & Debugging', 'Docker', 'Microservices', 'GitHub Actions (CI/CD)'],
     },
     {
-      title: 'FullStack Developer | Freelance',
+      title: 'Full-Stack Developer | Freelance',
       company: 'Melodia',
       location: 'Canada (Remote)',
       period: 'January 2026 - March 2026',
@@ -266,10 +300,10 @@ const englishData = {
         'Full-stack optimization: N+1 query resolution, server-side pagination, full EN/FR internationalization, and JWT/RBAC security.',
         'CI/CD deployment on Microsoft Azure via GitHub Actions (frontend & backend) with Application Insights monitoring.',
       ],
-      technologies: ['React.js', '.NET / C#', 'Microsoft Azure', 'MySQL', 'GitHub Actions', 'Testing and Debugging', 'JavaScript'],
+      technologies: ['React.js', '.NET / C#', 'Microsoft Azure', 'MySQL', 'GitHub Actions', 'Testing & Debugging', 'JavaScript'],
     },
     {
-      title: 'FullStack Developer | Freelance',
+      title: 'Full-Stack Developer | Freelance',
       company: '3ommy',
       location: 'Rabat, Morocco (Remote)',
       period: 'September 2025 - January 2026',
@@ -279,10 +313,10 @@ const englishData = {
         'RESTful API design and fixes with Supabase (PostgreSQL): endpoints, business logic refactoring, JWT/RLS security, and Edge Functions.',
         'Architecture refactoring (maintainability, scalability), critical production bug fixes, and Agile/Scrum collaboration.',
       ],
-      technologies: ['React Native', 'Expo', 'Supabase', 'PostgreSQL', 'TypeScript', 'Testing and Debugging', 'Agile'],
+      technologies: ['React Native', 'Expo', 'Supabase', 'PostgreSQL', 'TypeScript', 'Testing & Debugging', 'Agile'],
     },
     {
-      title: 'FullStack Developer | Final Year Internship',
+      title: 'Full-Stack Developer | Final Year Internship',
       company: 'GRANDE CHARTE Inc',
       location: 'El Jadida, Morocco',
       period: 'April 2025 - June 2025',
@@ -290,10 +324,10 @@ const englishData = {
         'Designed and built an internal e-learning platform: secure JWT authentication, fine-grained roles and permissions, activity logs, notifications and email delivery, backend hardening, and frontend integration.',
         'Quality & stability: wrote unit and integration tests, identified and fixed defects through production release, and deployed from scratch on a VPS.',
       ],
-      technologies: ['Node.js', 'Express.js', 'Next.js', 'React.js', 'PostgreSQL', 'TypeScript', 'TailwindCss', 'VPS', 'Testing and Debugging'],
+      technologies: ['Node.js', 'Express.js', 'Next.js', 'React.js', 'PostgreSQL', 'TypeScript', 'Tailwind CSS', 'VPS', 'Testing & Debugging'],
     },
     {
-      title: 'FullStack Developer | Final Year Internship',
+      title: 'Full-Stack Developer | Final Year Internship',
       company: 'OCP MAINTENANCE SOLUTIONS',
       location: 'Jorf Lasfar, Morocco',
       period: 'April 2024 - May 2024',
@@ -301,7 +335,7 @@ const englishData = {
         'Designed, developed, and integrated new features in an access-management web application (access & activity logs, dashboards, support, badges, etc.).',
         'Tested the application to ensure reliability, and identified and resolved bugs.',
       ],
-      technologies: ['Laravel', 'Vue.js', 'SQL', 'Jira', 'GitLab', 'Bootstrap', 'Git', 'Testing and Debugging', 'Clean Code'],
+      technologies: ['Laravel', 'Vue.js', 'SQL', 'Jira', 'GitLab', 'Bootstrap', 'Git', 'Testing & Debugging', 'Clean Code'],
     },
     {
       title: 'Junior Developer | Introductory Internship',
@@ -313,10 +347,34 @@ const englishData = {
         'Built an automated invoice generation solution.',
         'Optimized features to improve user experience.',
       ],
-      technologies: ['HTML', 'CSS', 'JS', 'PHP', 'SQL', 'MYSQL'],
+      technologies: ['HTML', 'CSS', 'JS', 'PHP', 'SQL', 'MySQL'],
     },
   ],
   projects: [
+    {
+      title: 'Melodia AI — Audio Matching Engine',
+      description: 'Multi-criteria AI recommendation engine evaluating Track/Station affinity with an automated 35+ acoustic feature extraction pipeline (Librosa, Essentia-TensorFlow), cold-start handling, and dynamic justifications.',
+      technologies: ['Python', 'Microsoft Azure', 'Librosa', 'Essentia-TensorFlow', 'Docker', 'Microservices'],
+      type: 'ai',
+      isFreelance: true,
+      image: '/images/projects/melodia_ai.webp',
+    },
+    {
+      title: 'Melodia — Music & Radio Platform',
+      description: 'Production multi-role web platform (Artist, Agent, Station, Admin) featuring Optimistic UI, server-side pagination, JWT/RBAC security, full EN/FR internationalization, and Azure CI/CD deployment.',
+      technologies: ['React.js', '.NET / C#', 'Microsoft Azure', 'MySQL', 'GitHub Actions'],
+      type: 'web',
+      isFreelance: true,
+      image: '/images/projects/melodia_platform.webp',
+    },
+    {
+      title: '3ommy — Private Pool Rental App',
+      description: 'Cross-platform (Web, iOS, Android) private swimming pool booking and rental marketplace built with React Native, Expo, and Supabase (PostgreSQL, Edge Functions, JWT/RLS security).',
+      technologies: ['React Native', 'Expo', 'Supabase', 'PostgreSQL', 'TypeScript'],
+      type: 'mobile',
+      isFreelance: true,
+      image: '/images/projects/3ommy_pool_rental.webp',
+    },
     {
       title: 'AI Radiographic Diagnosis',
       description: 'Automated chest X-ray diagnostic and analysis system powered by EfficientNet and PyTorch.',
@@ -326,8 +384,8 @@ const englishData = {
     },
     {
       title: 'Colon Cancer Prediction',
-      description: 'Medical prediction model built with machine learning (Scikit-Learn) for early colon cancer detection.',
-      technologies: ['Python', 'FastAPI', 'React', 'Scikit-Learn', 'Machine Learning'],
+      description: 'Medical prediction model built with machine learning (Scikit-learn) for early colon cancer detection.',
+      technologies: ['Python', 'FastAPI', 'React', 'Scikit-learn', 'Machine Learning'],
       type: 'ai',
       image: '/images/projects/colon_cancer_prediction.webp',
     },
@@ -361,7 +419,7 @@ const englishData = {
     },
     {
       title: 'Anime Mobile App',
-      description: 'Cross-platform anime streaming and info mobile application featuring offline management and favorites.',
+      description: 'Cross-platform mobile application for anime streaming and discovery, featuring offline support and favorites.',
       technologies: ['React Native', 'Expo', 'Firebase', 'Mobile'],
       type: 'mobile',
       image: '/images/projects/anime_mobile_app.webp',
@@ -387,10 +445,16 @@ const englishData = {
       type: 'web',
       image: '/images/projects/access_management.webp',
     },
-  ],
+  ] as PortfolioProject[],
   skills: {
     ...skills,
     methodologies: ['Agile Scrum', 'MVC2 Pattern', 'UML'],
+    tools: ['Git (GitHub, GitLab)', 'GitHub Actions (CI/CD)', 'Docker', 'Microsoft Azure', 'Expo', 'Jira', 'Figma', 'Networking'],
+    languages_spoken: [
+      { language: 'Arabic', level: 'Native' },
+      { language: 'French', level: 'Fluent' },
+      { language: 'English', level: 'Fluent' },
+    ],
   },
 }
 

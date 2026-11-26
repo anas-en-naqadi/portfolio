@@ -136,6 +136,7 @@ export function StartMenu({
                 <button
                   type="button"
                   onClick={() => setQuery('')}
+                  aria-label={tCommon('clearSearch')}
                   className={isDark ? 'text-white/50 hover:text-white' : 'text-gray-400 hover:text-gray-700'}
                 >
                   <XMarkCircleSymbol className="w-3.5 h-3.5" />

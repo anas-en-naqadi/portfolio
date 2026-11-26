@@ -47,10 +47,10 @@ export default function RecentAppsModal({
             className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 rounded-t-3xl p-6 max-h-[70vh] overflow-y-auto z-50"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="text-xl font-bold mb-6 text-center">Recent Apps</div>
+            <div className="text-xl font-bold mb-6 text-center">{t('mobile.recentApps.title')}</div>
             {apps.length === 0 ? (
               <div className="text-center text-gray-500 dark:text-gray-400 mt-20">
-                No recent apps
+                {t('mobile.recentApps.empty')}
               </div>
             ) : (
               <div className="space-y-3">
@@ -69,10 +69,12 @@ export default function RecentAppsModal({
                     <div className="flex-1">
                       <div className="font-semibold text-gray-900 dark:text-white">{app.name}</div>
                       <div className="text-sm text-gray-500 dark:text-gray-400">
-                        Last opened: {app.time}
+                        {t('mobile.recentApps.lastOpened', { time: app.time })}
                       </div>
                     </div>
                     <button
+                      type="button"
+                      aria-label={t('common.close')}
                       onClick={(e) => {
                         e.stopPropagation()
                         onRemoveApp(app.id)
@@ -87,10 +89,11 @@ export default function RecentAppsModal({
             )}
             {apps.length > 0 && (
               <button
+                type="button"
                 onClick={onCloseAll}
                 className="w-full mt-6 py-4 bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl font-semibold active:scale-95 transition-transform"
               >
-                Close All
+                {t('mobile.recentApps.closeAll')}
               </button>
             )}
           </motion.div>

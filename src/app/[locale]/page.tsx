@@ -76,7 +76,7 @@ export default async function Home() {
         </section>
 
         <section>
-          <h2>{isFr ? 'Projets Principaux' : 'Featured Projects'}</h2>
+          <h2>{isFr ? 'Projets Phares' : 'Featured Projects'}</h2>
           <ul>
             {portfolio.projects.map((project, idx) => (
               <li key={`${project.title}-${idx}`}>
