@@ -99,6 +99,8 @@ export default function IPadProjects({ theme }: IPadProjectsProps) {
       project.technologies.includes('Laravel')
     ) {
       return t('categories.fullstack')
+    } else if (project.type === 'web') {
+      return t('categories.web')
     }
     return t('categories.tools')
   }
@@ -400,7 +402,7 @@ export default function IPadProjects({ theme }: IPadProjectsProps) {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-black/5 dark:border-white/10">
+                <div className="flex flex-wrap items-center justify-end gap-2 pt-2 border-t border-black/5 dark:border-white/10">
                   <button
                     type="button"
                     onClick={() => setSelectedProject(null)}
@@ -416,11 +418,30 @@ export default function IPadProjects({ theme }: IPadProjectsProps) {
                     href={socialLinks.github}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-4 py-2 rounded-xl text-xs font-bold bg-[#007AFF] hover:bg-blue-600 text-white flex items-center gap-1.5 shadow-sm transition active:scale-95"
+                    className={
+                      selectedProject.liveUrl
+                        ? `px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 ${
+                            isDark
+                              ? 'bg-white/10 hover:bg-white/15 text-white'
+                              : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-800'
+                          }`
+                        : 'px-4 py-2 rounded-xl text-xs font-bold bg-[#007AFF] hover:bg-blue-600 text-white flex items-center gap-1.5 shadow-sm transition active:scale-95'
+                    }
                   >
                     <ArrowUpRightSymbol className="w-3.5 h-3.5" />
                     {t('openGithub')}
                   </a>
+                  {selectedProject.liveUrl && (
+                    <a
+                      href={selectedProject.liveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-4 py-2 rounded-xl text-xs font-bold bg-[#007AFF] hover:bg-blue-600 text-white flex items-center gap-1.5 shadow-sm transition active:scale-95"
+                    >
+                      <ArrowUpRightSymbol className="w-3.5 h-3.5" />
+                      {t('visitSite')}
+                    </a>
+                  )}
                 </div>
               </div>
             </motion.div>

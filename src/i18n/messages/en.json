@@ -172,11 +172,13 @@
     },
     "projects": {
       "get": "GET",
+      "visit": "OPEN",
       "categories": {
         "ai": "Artificial Intelligence",
         "ml": "Machine Learning",
         "mobile": "iOS & Android App",
         "fullstack": "Full-Stack Web App",
+        "web": "Web Platform",
         "tools": "Developer Tools"
       }
     },
@@ -328,6 +330,7 @@
       "get": "GET",
       "viewDetails": "Details",
       "openGithub": "Open on GitHub",
+      "visitSite": "Visit Site",
       "technologies": "Technologies",
       "impact": "Impact",
       "close": "Done",
@@ -581,6 +584,7 @@
         "searchPlaceholder": "Filter projects...",
         "subtitle": "{count} Featured Projects",
         "viewCode": "Source Code",
+        "visitSite": "Visit Site",
         "viewDetails": "Inspect Project",
         "technologies": "Technologies",
         "featuredBadge": "Featured"
