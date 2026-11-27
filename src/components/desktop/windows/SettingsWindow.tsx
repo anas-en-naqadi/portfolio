@@ -124,7 +124,7 @@ export function SettingsWindow({
                 onClick={() => setSection(item.id)}
                 className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-[12.5px] font-medium whitespace-nowrap transition-colors ${
                   active
-                    ? 'bg-[#007AFF] text-white'
+                    ? 'bg-[#0066CC] text-white'
                     : isDark
                       ? 'text-white/80 hover:bg-white/[0.07]'
                       : 'text-gray-800 hover:bg-black/[0.05]'
@@ -248,7 +248,7 @@ export function SettingsWindow({
                 href={socialLinks.github}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#007AFF] text-white text-xs font-semibold hover:bg-blue-600 transition-colors"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0066CC] text-white text-xs font-semibold hover:bg-[#0055B3] transition-colors"
               >
                 <span>GitHub</span>
                 <ArrowUpRightSymbol className="w-3.5 h-3.5" />

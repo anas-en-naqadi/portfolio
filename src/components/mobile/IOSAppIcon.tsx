@@ -66,6 +66,7 @@ export default function IOSAppIcon({
         {/* Real iPhone style red notification badge */}
         {badge !== undefined && badge > 0 && (
           <span
+            aria-hidden="true"
             className="absolute -top-1.5 -right-1.5 bg-[#FF3B30] text-white text-[11px] font-semibold leading-none h-[20px] min-w-[20px] px-1.5 rounded-full flex items-center justify-center shadow-[0_2px_6px_rgba(0,0,0,0.35)] z-10 pointer-events-none select-none"
             style={{ fontVariantNumeric: 'tabular-nums' }}
           >

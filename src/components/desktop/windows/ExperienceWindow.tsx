@@ -30,10 +30,16 @@ export function ExperienceWindow({ theme = 'dark' }: ExperienceWindowProps) {
 
   const toolbarButtons = [
     {
-      icon: <BriefcaseSymbol className="w-3.5 h-3.5" />,
+      icon: <CalendarSymbol className="w-3.5 h-3.5" />,
       label: tDesktop('all'),
       active: filter === 'all',
       onClick: () => setFilter('all'),
+    },
+    {
+      icon: <BriefcaseSymbol className="w-3.5 h-3.5" />,
+      label: tDesktop('work'),
+      active: filter === 'work',
+      onClick: () => setFilter('work'),
     },
     {
       icon: <GraduationCapSymbol className="w-3.5 h-3.5" />,
@@ -87,7 +93,7 @@ export function ExperienceWindow({ theme = 'dark' }: ExperienceWindowProps) {
                   onClick={() => setFilter(item.id)}
                   className={`flex items-center justify-between gap-2 px-3 py-1.5 rounded-lg text-[12.5px] font-medium whitespace-nowrap transition-colors ${
                     active
-                      ? 'bg-[#007AFF] text-white'
+                      ? 'bg-[#0066CC] text-white'
                       : isDark
                         ? 'text-white/80 hover:bg-white/[0.07]'
                         : 'text-gray-800 hover:bg-black/[0.05]'

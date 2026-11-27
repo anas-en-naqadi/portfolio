@@ -196,7 +196,7 @@ export function ProjectsWindow({ theme = 'dark', spotlightQuery }: ProjectsWindo
                   onClick={() => setFilter(cat.id)}
                   className={`flex items-center justify-between gap-2 px-3 py-1.5 rounded-lg text-[12.5px] font-medium whitespace-nowrap transition-colors ${
                     active
-                      ? 'bg-[#007AFF] text-white'
+                      ? 'bg-[#0066CC] text-white'
                       : isDark
                         ? 'text-white/80 hover:bg-white/[0.07]'
                         : 'text-gray-800 hover:bg-black/[0.05]'
@@ -239,7 +239,7 @@ export function ProjectsWindow({ theme = 'dark', spotlightQuery }: ProjectsWindo
               onClick={() => setFilter(freelanceCategory.id)}
               className={`flex items-center justify-between gap-2 px-3 py-1.5 rounded-lg text-[12.5px] font-medium whitespace-nowrap transition-colors ${
                 filter === freelanceCategory.id
-                  ? 'bg-[#007AFF] text-white'
+                  ? 'bg-[#0066CC] text-white'
                   : isDark
                     ? 'text-amber-300/90 hover:bg-white/[0.07]'
                     : 'text-amber-700 hover:bg-black/[0.05]'
@@ -516,7 +516,7 @@ export function ProjectsWindow({ theme = 'dark', spotlightQuery }: ProjectsWindo
                                 ? 'bg-white/[0.08] hover:bg-white/[0.15] text-white/90'
                                 : 'bg-black/[0.06] hover:bg-black/[0.1] text-gray-800'
                             }`
-                          : 'inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#007AFF] hover:bg-blue-600 text-white text-xs font-semibold transition-colors'
+                          : 'inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#0066CC] hover:bg-[#0055B3] text-white text-xs font-semibold transition-colors'
                       }
                     >
                       <span>{tDesktop('viewCode')}</span>
@@ -527,7 +527,7 @@ export function ProjectsWindow({ theme = 'dark', spotlightQuery }: ProjectsWindo
                         href={activeProject.liveUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#007AFF] hover:bg-blue-600 text-white text-xs font-semibold transition-colors"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#0066CC] hover:bg-[#0055B3] text-white text-xs font-semibold transition-colors"
                       >
                         <span>{tDesktop('visitSite')}</span>
                         <ArrowUpRightSymbol className="w-3.5 h-3.5" />

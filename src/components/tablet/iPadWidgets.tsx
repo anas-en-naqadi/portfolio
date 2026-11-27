@@ -171,7 +171,6 @@ export default function IPadWidgets({ theme, onDownloadCV }: IPadWidgetsProps) {
             <div
               className={`${textColorClass} font-bold leading-none tracking-tight text-3xl sm:text-4xl short:text-3xl tabular-nums`}
               aria-live="polite"
-              aria-label={timeShort}
             >
               {timeShort}
             </div>

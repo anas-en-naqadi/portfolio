@@ -69,13 +69,15 @@ export default function IPadStatusBar({
           )}
         </span>
 
-        <span className="flex items-center opacity-90" aria-label={t('wifiConnected')}>
+        <span className="flex items-center opacity-90" aria-hidden="true">
           <WifiSymbol className="w-4 h-3.5 shrink-0" />
         </span>
 
-        <span className="text-[11px] font-semibold opacity-90 tabular-nums">85%</span>
+        <span className="text-[11px] font-semibold opacity-90 tabular-nums" aria-hidden="true">
+          85%
+        </span>
 
-        <span className="flex items-center opacity-90" aria-label={t('batteryLevel')}>
+        <span className="flex items-center opacity-90" aria-hidden="true">
           <BatterySymbol className="w-5 h-2.5 shrink-0" />
         </span>
       </button>

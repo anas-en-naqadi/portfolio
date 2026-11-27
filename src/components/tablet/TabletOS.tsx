@@ -502,7 +502,7 @@ export default function TabletOS() {
                             aria-label={localeNames[loc]}
                             className={`py-1.5 rounded-[9px] text-[11px] font-bold uppercase tracking-wide transition ${
                               active
-                                ? 'bg-[#007AFF] text-white shadow-sm'
+                                ? 'bg-[#0066CC] text-white shadow-sm'
                                 : isDark
                                 ? 'text-zinc-300 hover:bg-white/10'
                                 : 'text-zinc-700 hover:bg-white/70'
@@ -589,7 +589,7 @@ export default function TabletOS() {
                           onClick={() => selectTrack(idx)}
                           className={`py-1.5 px-2.5 rounded-xl text-[11px] font-semibold truncate transition ${
                             selected
-                              ? 'bg-[#007AFF] text-white shadow-sm'
+                              ? 'bg-[#0066CC] text-white shadow-sm'
                               : isDark
                                 ? 'bg-white/[0.07] hover:bg-white/[0.13] text-zinc-200'
                                 : 'bg-black/[0.06] hover:bg-white/75 text-zinc-700'
@@ -672,7 +672,7 @@ export default function TabletOS() {
                       closeSheet()
                       closeControlCenter()
                     }}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 rounded-[16px] text-xs font-semibold bg-[#007AFF] text-white hover:bg-blue-600 transition active:scale-[0.98] shadow-sm"
+                    className="w-full flex items-center justify-center gap-2 py-2.5 rounded-[16px] text-xs font-semibold bg-[#0066CC] text-white hover:bg-[#0055B3] transition active:scale-[0.98] shadow-sm"
                   >
                     <HouseSymbol className="w-3.5 h-3.5" />
                     {t('controlCenter.returnHome')}
