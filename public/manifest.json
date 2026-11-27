@@ -9,15 +9,15 @@
   "orientation": "any",
   "icons": [
     {
-      "src": "/images/me.png",
+      "src": "/images/me.webp",
       "sizes": "192x192",
-      "type": "image/png",
+      "type": "image/webp",
       "purpose": "any maskable"
     },
     {
-      "src": "/images/me.png",
+      "src": "/images/me.webp",
       "sizes": "512x512",
-      "type": "image/png",
+      "type": "image/webp",
       "purpose": "any maskable"
     }
   ],

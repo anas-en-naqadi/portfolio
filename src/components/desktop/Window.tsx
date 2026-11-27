@@ -32,7 +32,7 @@ const MIN_HEIGHT = 380
 const TITLEBAR_SAFE_VISIBLE = 180
 const RIGHT_ICONS_CLEARANCE = 124
 
-const DEFAULT_WIDTH = 870
+const DEFAULT_WIDTH = 960
 const DEFAULT_HEIGHT = 580
 
 function getSafeInitialGeometry(
@@ -341,7 +341,7 @@ export function Window({
           >
             {/* Traffic Light Controls */}
             <div
-              className="window-controls macos-controls flex items-center gap-2 z-10"
+              className="window-controls macos-controls flex items-center -ml-1.5 z-10"
               onMouseEnter={() => setControlsHovered(true)}
               onMouseLeave={() => setControlsHovered(false)}
               onMouseDown={(e) => e.stopPropagation()}
@@ -354,15 +354,20 @@ export function Window({
                   e.stopPropagation()
                   onClose()
                 }}
-                className="macos-control-btn w-3 h-3 rounded-full flex items-center justify-center transition-colors"
-                style={{
-                  background: showColoredDots ? '#FF5F57' : inactiveDotColor,
-                  border: showColoredDots
-                    ? '0.5px solid rgba(224, 68, 62, 0.9)'
-                    : `0.5px solid ${inactiveDotBorder}`,
-                }}
+                className="macos-control-btn w-6 h-6 flex items-center justify-center bg-transparent border-0 p-0 cursor-pointer"
               >
-                {controlsHovered && <CloseGlyph className="w-[7px] h-[7px] text-[#4d0000]" />}
+                <span
+                  aria-hidden="true"
+                  className="w-3 h-3 rounded-full flex items-center justify-center transition-colors"
+                  style={{
+                    background: showColoredDots ? '#FF5F57' : inactiveDotColor,
+                    boxShadow: showColoredDots
+                      ? 'inset 0 0 0 0.5px rgba(224, 68, 62, 0.9)'
+                      : `inset 0 0 0 0.5px ${inactiveDotBorder}`,
+                  }}
+                >
+                  {controlsHovered && <CloseGlyph className="w-2 h-2 block text-[#4d0000]" />}
+                </span>
               </button>
               <button
                 type="button"
@@ -372,15 +377,20 @@ export function Window({
                   e.stopPropagation()
                   onMinimize()
                 }}
-                className="macos-control-btn w-3 h-3 rounded-full flex items-center justify-center transition-colors"
-                style={{
-                  background: showColoredDots ? '#FEBC2E' : inactiveDotColor,
-                  border: showColoredDots
-                    ? '0.5px solid rgba(216, 158, 36, 0.9)'
-                    : `0.5px solid ${inactiveDotBorder}`,
-                }}
+                className="macos-control-btn w-6 h-6 flex items-center justify-center bg-transparent border-0 p-0 cursor-pointer"
               >
-                {controlsHovered && <MinusGlyph className="w-[7px] h-[7px] text-[#5c3c00]" />}
+                <span
+                  aria-hidden="true"
+                  className="w-3 h-3 rounded-full flex items-center justify-center transition-colors"
+                  style={{
+                    background: showColoredDots ? '#FEBC2E' : inactiveDotColor,
+                    boxShadow: showColoredDots
+                      ? 'inset 0 0 0 0.5px rgba(216, 158, 36, 0.9)'
+                      : `inset 0 0 0 0.5px ${inactiveDotBorder}`,
+                  }}
+                >
+                  {controlsHovered && <MinusGlyph className="w-2 h-2 block text-[#5c3c00]" />}
+                </span>
               </button>
               {onMaximize && (
                 <button
@@ -391,17 +401,22 @@ export function Window({
                     e.stopPropagation()
                     onMaximize()
                   }}
-                  className="macos-control-btn w-3 h-3 rounded-full flex items-center justify-center transition-colors"
-                  style={{
-                    background: showColoredDots ? '#28C840' : inactiveDotColor,
-                    border: showColoredDots
-                      ? '0.5px solid rgba(26, 171, 41, 0.9)'
-                      : `0.5px solid ${inactiveDotBorder}`,
-                  }}
+                  className="macos-control-btn w-6 h-6 flex items-center justify-center bg-transparent border-0 p-0 cursor-pointer"
                 >
-                  {controlsHovered && (
-                    <MaximizeDiagonalGlyph className="w-[7px] h-[7px] text-[#004d0c]" />
-                  )}
+                  <span
+                    aria-hidden="true"
+                    className="w-3 h-3 rounded-full flex items-center justify-center transition-colors"
+                    style={{
+                      background: showColoredDots ? '#28C840' : inactiveDotColor,
+                      boxShadow: showColoredDots
+                        ? 'inset 0 0 0 0.5px rgba(26, 171, 41, 0.9)'
+                        : `inset 0 0 0 0.5px ${inactiveDotBorder}`,
+                    }}
+                  >
+                    {controlsHovered && (
+                      <MaximizeDiagonalGlyph className="w-2 h-2 block text-[#004d0c]" />
+                    )}
+                  </span>
                 </button>
               )}
             </div>

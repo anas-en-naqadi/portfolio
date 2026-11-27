@@ -36,13 +36,23 @@ export default function IOSStatusBar({ theme = 'dark', isAppOpen = false }: IOSS
       {/* Status Icons */}
       <div className="flex items-center gap-1.5 pointer-events-auto">
         {/* Wi-Fi Icon */}
-        <div className="flex items-center opacity-90" aria-label={t('mobile.statusBar.wifiConnected')}>
+        <div
+          className="flex items-center opacity-90"
+          role="img"
+          aria-label={t('mobile.statusBar.wifiConnected')}
+        >
           <WifiSymbol className="w-4 h-3.5 shrink-0" />
         </div>
 
         {/* Battery */}
-        <div className="flex items-center gap-1" aria-label={t('mobile.statusBar.batteryLevel')}>
-          <span className="text-[10px] opacity-90 font-medium">85%</span>
+        <div
+          className="flex items-center gap-1"
+          role="img"
+          aria-label={t('mobile.statusBar.batteryLevel')}
+        >
+          <span className="text-[10px] opacity-90 font-medium" aria-hidden="true">
+            85%
+          </span>
           <BatterySymbol className="w-5 h-2.5 shrink-0" />
         </div>
       </div>

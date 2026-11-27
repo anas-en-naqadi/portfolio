@@ -500,6 +500,7 @@ export function DesktopOS() {
       {/* Top-Right Desktop Icons (Authentic macOS Alignment) */}
       <div
         className="absolute top-[42px] right-4 z-10 flex flex-col gap-2 items-end"
+        role="region"
         aria-label={tDesktop('desktopIconsLabel')}
       >
         {desktopIcons.map((item) => (
@@ -656,7 +657,7 @@ export function DesktopOS() {
             <button
               type="button"
               onClick={() => openWindow('about')}
-              className="w-full px-3 py-1.5 rounded-lg text-left text-[12.5px] font-medium flex items-center gap-2.5 hover:bg-[#007AFF] hover:text-white transition-colors"
+              className="w-full px-3 py-1.5 rounded-lg text-left text-[12.5px] font-medium flex items-center gap-2.5 hover:bg-[#0066CC] hover:text-white transition-colors"
             >
               <PersonSymbol className="w-3.5 h-3.5 opacity-80" />
               <span>{tCtx('openAbout')}</span>
@@ -667,7 +668,7 @@ export function DesktopOS() {
                 setContextMenu(null)
                 setIsSpotlightOpen(true)
               }}
-              className="w-full px-3 py-1.5 rounded-lg text-left text-[12.5px] font-medium flex items-center gap-2.5 hover:bg-[#007AFF] hover:text-white transition-colors"
+              className="w-full px-3 py-1.5 rounded-lg text-left text-[12.5px] font-medium flex items-center gap-2.5 hover:bg-[#0066CC] hover:text-white transition-colors"
             >
               <SearchSymbol className="w-3.5 h-3.5 opacity-80" />
               <span>{tCtx('openSpotlight')}</span>
@@ -679,7 +680,7 @@ export function DesktopOS() {
                 setContextMenu(null)
                 toggleTheme()
               }}
-              className="w-full px-3 py-1.5 rounded-lg text-left text-[12.5px] font-medium flex items-center gap-2.5 hover:bg-[#007AFF] hover:text-white transition-colors"
+              className="w-full px-3 py-1.5 rounded-lg text-left text-[12.5px] font-medium flex items-center gap-2.5 hover:bg-[#0066CC] hover:text-white transition-colors"
             >
               {isDark ? (
                 <SunSymbol className="w-3.5 h-3.5 opacity-80" />
@@ -692,7 +693,7 @@ export function DesktopOS() {
             <button
               type="button"
               onClick={() => openWindow('settings')}
-              className="w-full px-3 py-1.5 rounded-lg text-left text-[12.5px] font-medium flex items-center gap-2.5 hover:bg-[#007AFF] hover:text-white transition-colors"
+              className="w-full px-3 py-1.5 rounded-lg text-left text-[12.5px] font-medium flex items-center gap-2.5 hover:bg-[#0066CC] hover:text-white transition-colors"
             >
               <GearSymbol className="w-3.5 h-3.5 opacity-80" />
               <span>{tCtx('openSettings')}</span>
@@ -703,7 +704,7 @@ export function DesktopOS() {
                 setContextMenu(null)
                 handleDownloadCV()
               }}
-              className="w-full px-3 py-1.5 rounded-lg text-left text-[12.5px] font-medium flex items-center gap-2.5 hover:bg-[#007AFF] hover:text-white transition-colors"
+              className="w-full px-3 py-1.5 rounded-lg text-left text-[12.5px] font-medium flex items-center gap-2.5 hover:bg-[#0066CC] hover:text-white transition-colors"
             >
               <DownloadSymbol className="w-3.5 h-3.5 opacity-80" />
               <span>{tCtx('downloadCV')}</span>

@@ -156,7 +156,7 @@ export function CVDownloadModal({
                     }`}
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <span className="w-8 h-8 rounded-lg bg-[#007AFF] text-white text-[11px] font-bold flex items-center justify-center shrink-0 shadow-sm">
+                      <span className="w-8 h-8 rounded-lg bg-[#0066CC] text-white text-[11px] font-bold flex items-center justify-center shrink-0 shadow-sm">
                         {opt.code}
                       </span>
                       <div className="min-w-0">

@@ -424,14 +424,14 @@ body {
 }
 
 .toolbar-btn.active {
-  background: #007aff;
-  border-color: #007aff;
+  background: #0066cc;
+  border-color: #0066cc;
   color: #ffffff;
 }
 
 .light .toolbar-btn.active {
-  background: #007aff;
-  border-color: #007aff;
+  background: #0066cc;
+  border-color: #0066cc;
   color: #ffffff;
 }
 
@@ -1366,8 +1366,8 @@ body {
   --macos-light-elevated: #ffffff;
   --macos-light-border: #e5e5ea;
 
-  /* macOS Accent */
-  --macos-accent: #007aff;
+  /* macOS Accent (WCAG AA contrast >= 4.5:1 with white text) */
+  --macos-accent: #0066cc;
   --macos-red: #ff3b30;
   --macos-yellow: #ffcc00;
   --macos-green: #34c759;
@@ -1539,6 +1539,10 @@ body {
 
 .macos-window-content {
   padding: 0;
+}
+
+.macos-controls {
+  gap: 0;
 }
 
 .macos-control-btn {

@@ -221,6 +221,7 @@ export function buildPortfolioJsonLd(locale: string): Record<string, unknown> {
             description: project.description,
             programmingLanguage: project.technologies,
             image: `${siteUrl}${project.image}`,
+            ...(project.liveUrl ? { url: project.liveUrl } : {}),
             author: { '@id': personId },
           },
         })),
