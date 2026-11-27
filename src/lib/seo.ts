@@ -4,10 +4,11 @@ import { routing } from '@/i18n/routing'
 export type SupportedSeoLocale = 'en' | 'fr'
 
 const PLACEHOLDER_URL = 'https://yourdomain.com'
+const DEFAULT_SITE_URL = 'https://anas-en-naqadi.vercel.app'
 
 function normalizeOrigin(rawUrl: string): string {
   const trimmed = rawUrl.trim().replace(/\/+$/, '')
-  if (!trimmed) return PLACEHOLDER_URL
+  if (!trimmed) return DEFAULT_SITE_URL
   if (/^https?:\/\//i.test(trimmed)) {
     return trimmed
   }
@@ -34,7 +35,7 @@ export function getSiteUrl(): string {
     return normalizeOrigin(vercelPreviewUrl)
   }
 
-  return PLACEHOLDER_URL
+  return DEFAULT_SITE_URL
 }
 
 export function resolveSeoLocale(locale: string): SupportedSeoLocale {
