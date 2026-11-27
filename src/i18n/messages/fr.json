@@ -172,11 +172,13 @@
     },
     "projects": {
       "get": "OBTENIR",
+      "visit": "OUVRIR",
       "categories": {
         "ai": "Intelligence Artificielle",
         "ml": "Machine Learning",
         "mobile": "Application iOS & Android",
         "fullstack": "Application Web Full-Stack",
+        "web": "Plateforme Web",
         "tools": "Outils Développeur"
       }
     },
@@ -328,6 +330,7 @@
       "get": "OBTENIR",
       "viewDetails": "Détails",
       "openGithub": "Ouvrir sur GitHub",
+      "visitSite": "Visiter le site",
       "technologies": "Technologies",
       "impact": "Impact",
       "close": "OK",
@@ -581,6 +584,7 @@
         "searchPlaceholder": "Filtrer les projets...",
         "subtitle": "{count} projets d'ingénierie",
         "viewCode": "Code source",
+        "visitSite": "Visiter le site",
         "viewDetails": "Voir les détails",
         "technologies": "Technologies",
         "featuredBadge": "Phare"

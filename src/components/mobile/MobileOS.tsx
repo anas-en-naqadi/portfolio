@@ -554,6 +554,8 @@ export default function MobileOS() {
                 category = t('mobile.projects.categories.mobile')
               } else if (project.technologies.includes('React.js') || project.technologies.includes('Vue.js') || project.technologies.includes('Laravel')) {
                 category = t('mobile.projects.categories.fullstack')
+              } else if (project.type === 'web') {
+                category = t('mobile.projects.categories.web')
               }
 
               return (
@@ -607,14 +609,14 @@ export default function MobileOS() {
                           </div>
                         </div>
 
-                        {/* Standard iOS GET Button */}
+                        {/* Standard iOS GET / OPEN Button */}
                         <a
-                          href={socialLinks.github}
+                          href={project.liveUrl ?? socialLinks.github}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700 text-[#007AFF] dark:text-[#0A84FF] font-extrabold text-xs px-5 py-1.5 rounded-full tracking-wide active:scale-95 transition-all duration-100 flex-shrink-0 shadow-sm"
                         >
-                          {t('mobile.projects.get')}
+                          {project.liveUrl ? t('mobile.projects.visit') : t('mobile.projects.get')}
                         </a>
                       </div>
 

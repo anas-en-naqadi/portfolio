@@ -130,9 +130,19 @@ export interface PortfolioProject {
   type: 'ai' | 'web' | 'mobile'
   image: string
   isFreelance?: boolean
+  liveUrl?: string
 }
 
 export const projects: PortfolioProject[] = [
+  {
+    title: "GAP-TECH — Aides Gouvernementales & Financement",
+    description: "Site vitrine haute conversion pour une firme canadienne (Laval, Québec) spécialisée en aides gouvernementales, subventions, financement adapté et innovation technologique : 5 piliers thématiques, navigation sticky avec barre de progression dynamique, pré-sélection intelligente du formulaire Web3Forms et SEO structuré JSON-LD.",
+    technologies: ["HTML5", "CSS3", "JavaScript", "Bootstrap", "Web3Forms", "SEO"],
+    type: "web",
+    isFreelance: true,
+    liveUrl: "https://gap-tech.ca/",
+    image: "/images/projects/gap_tech.webp"
+  },
   {
     title: "Melodia AI — Moteur de Matching Audio",
     description: "Moteur de recommandation IA multi-critères évaluant l'affinité Titre/Station avec pipeline d'extraction de 35+ features acoustiques (Librosa, Essentia-TensorFlow), gestion des démarrages à froid et justifications dynamiques.",
@@ -351,6 +361,15 @@ const englishData = {
     },
   ],
   projects: [
+    {
+      title: 'GAP-TECH — Government Grants & Tech Financing',
+      description: 'High-conversion corporate landing page for a Canadian consulting firm (Laval, Québec) specializing in government grants, tailored financing, and tech innovation — featuring 5 color-coded service pillars, sticky scroll-spy progress navigation, smart CTA form pre-selection, serverless Web3Forms lead capture, and Schema.org JSON-LD SEO.',
+      technologies: ['HTML5', 'CSS3', 'JavaScript', 'Bootstrap', 'Web3Forms', 'SEO'],
+      type: 'web',
+      isFreelance: true,
+      liveUrl: 'https://gap-tech.ca/',
+      image: '/images/projects/gap_tech.webp',
+    },
     {
       title: 'Melodia AI — Audio Matching Engine',
       description: 'Multi-criteria AI recommendation engine evaluating Track/Station affinity with an automated 35+ acoustic feature extraction pipeline (Librosa, Essentia-TensorFlow), cold-start handling, and dynamic justifications.',
