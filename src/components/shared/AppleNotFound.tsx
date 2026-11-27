@@ -225,7 +225,7 @@ export function AppleNotFound({ defaultLocale }: AppleNotFoundProps) {
 
               <Link
                 href={`/${lang}`}
-                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#007AFF] hover:bg-blue-600 text-white text-xs sm:text-[13px] font-semibold shadow-sm no-underline transition-colors"
+                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#0066CC] hover:bg-[#0055B3] text-white text-xs sm:text-[13px] font-semibold shadow-sm no-underline transition-colors"
               >
                 <HouseSymbol size={14} className="w-3.5 h-3.5 shrink-0" />
                 <span>{copy.primaryAction}</span>

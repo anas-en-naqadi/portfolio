@@ -236,8 +236,8 @@ export function MacOSMenuBar({
 
   const itemClass = `w-full px-3 py-1.5 rounded-lg text-left text-[12.5px] font-medium flex items-center justify-between gap-4 transition-colors ${
     isDark
-      ? 'text-white/90 hover:bg-[#007AFF] hover:text-white disabled:opacity-40 disabled:hover:bg-transparent'
-      : 'text-gray-900 hover:bg-[#007AFF] hover:text-white disabled:opacity-40 disabled:hover:bg-transparent'
+      ? 'text-white/90 hover:bg-[#0066CC] hover:text-white disabled:opacity-40 disabled:hover:bg-transparent'
+      : 'text-gray-900 hover:bg-[#0066CC] hover:text-white disabled:opacity-40 disabled:hover:bg-transparent'
   }`
 
   const dividerClass = `my-1 h-px ${isDark ? 'bg-white/10' : 'bg-black/10'}`
@@ -245,7 +245,7 @@ export function MacOSMenuBar({
   const menuTriggerClass = (key: Exclude<OpenMenuKey, null>) =>
     `px-2 h-[22px] rounded-[5px] text-[12.5px] font-normal flex items-center transition-colors ${
       openMenu === key
-        ? 'bg-[#007AFF] text-white'
+        ? 'bg-[#0066CC] text-white'
         : isDark
           ? 'text-white/90 hover:bg-white/15'
           : 'text-gray-900 hover:bg-black/10'
@@ -283,7 +283,7 @@ export function MacOSMenuBar({
             aria-expanded={openMenu === 'apple'}
             className={`px-2.5 h-[22px] rounded-[5px] flex items-center justify-center transition-colors ${
               openMenu === 'apple'
-                ? 'bg-[#007AFF] text-white'
+                ? 'bg-[#0066CC] text-white'
                 : isDark
                   ? 'text-white hover:bg-white/15'
                   : 'text-gray-900 hover:bg-black/10'
@@ -622,7 +622,7 @@ export function MacOSMenuBar({
           aria-expanded={openMenu === 'nowPlaying'}
           className={`px-1.5 h-[22px] rounded-[5px] flex items-center gap-1.5 transition-colors ${
             openMenu === 'nowPlaying'
-              ? 'bg-[#007AFF] text-white'
+              ? 'bg-[#0066CC] text-white'
               : isDark
                 ? 'hover:bg-white/15'
                 : 'hover:bg-black/10'
@@ -671,7 +671,7 @@ export function MacOSMenuBar({
           aria-expanded={openMenu === 'controlCenter'}
           className={`px-1.5 h-[22px] rounded-[5px] flex items-center justify-center transition-colors ${
             openMenu === 'controlCenter'
-              ? 'bg-[#007AFF] text-white'
+              ? 'bg-[#0066CC] text-white'
               : isDark
                 ? 'hover:bg-white/15'
                 : 'hover:bg-black/10'
@@ -726,7 +726,7 @@ export function MacOSMenuBar({
                   type="button"
                   onClick={togglePlay}
                   aria-label={isPlaying ? tAudio('pause') : tAudio('play')}
-                  className="w-7 h-7 rounded-lg bg-[#007AFF] text-white flex items-center justify-center hover:bg-blue-600 transition-colors"
+                  className="w-7 h-7 rounded-lg bg-[#0066CC] text-white flex items-center justify-center hover:bg-[#0055B3] transition-colors"
                 >
                   {isPlaying ? <PauseSymbol className="w-3.5 h-3.5" /> : <PlaySymbol className="w-3.5 h-3.5" />}
                 </button>
@@ -753,7 +753,7 @@ export function MacOSMenuBar({
                     onClick={() => selectTrack(idx)}
                     className={`px-2.5 py-1.5 rounded-lg text-[11px] font-semibold truncate transition-colors ${
                       selected
-                        ? 'bg-[#007AFF] text-white'
+                        ? 'bg-[#0066CC] text-white'
                         : isDark
                           ? 'bg-white/[0.08] hover:bg-white/[0.15]'
                           : 'bg-black/[0.05] hover:bg-black/[0.1]'
@@ -891,7 +891,7 @@ export function MacOSMenuBar({
                     type="button"
                     onClick={togglePlay}
                     aria-label={isPlaying ? tAudio('pause') : tAudio('play')}
-                    className="w-7 h-7 rounded-lg bg-[#007AFF] text-white flex items-center justify-center hover:bg-blue-600 transition-colors"
+                    className="w-7 h-7 rounded-lg bg-[#0066CC] text-white flex items-center justify-center hover:bg-[#0055B3] transition-colors"
                   >
                     {isPlaying ? <PauseSymbol className="w-3.5 h-3.5" /> : <PlaySymbol className="w-3.5 h-3.5" />}
                   </button>

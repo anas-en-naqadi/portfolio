@@ -304,7 +304,7 @@ export function ContactWindow({ theme = 'dark', onNotify }: ContactWindowProps) 
                   onClick={() => setActiveChannel(ch.id)}
                   className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-left transition-colors whitespace-nowrap ${
                     active
-                      ? 'bg-[#007AFF] text-white'
+                      ? 'bg-[#0066CC] text-white'
                       : isDark
                         ? 'text-white/85 hover:bg-white/[0.07]'
                         : 'text-gray-800 hover:bg-black/[0.05]'
@@ -359,7 +359,7 @@ export function ContactWindow({ theme = 'dark', onNotify }: ContactWindowProps) 
                   <button
                     type="button"
                     onClick={focusComposeForm}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#007AFF] hover:bg-blue-600 text-white text-xs font-semibold transition-colors"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#0066CC] hover:bg-[#0055B3] text-white text-xs font-semibold transition-colors"
                   >
                     <span>{currentChannel.actionLabel}</span>
                     <PaperPlaneSymbol className="w-3.5 h-3.5" />
@@ -373,7 +373,7 @@ export function ContactWindow({ theme = 'dark', onNotify }: ContactWindowProps) 
                         ? 'noopener noreferrer'
                         : undefined
                     }
-                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#007AFF] hover:bg-blue-600 text-white text-xs font-semibold transition-colors"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#0066CC] hover:bg-[#0055B3] text-white text-xs font-semibold transition-colors"
                   >
                     <span>{currentChannel.actionLabel}</span>
                     <ArrowUpRightSymbol className="w-3.5 h-3.5" />
@@ -543,7 +543,7 @@ export function ContactWindow({ theme = 'dark', onNotify }: ContactWindowProps) 
               <button
                 type="submit"
                 disabled={isSending}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#007AFF] hover:bg-blue-600 disabled:opacity-60 disabled:cursor-not-allowed text-white text-xs font-semibold transition-colors"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#0066CC] hover:bg-[#0055B3] disabled:opacity-60 disabled:cursor-not-allowed text-white text-xs font-semibold transition-colors"
               >
                 <PaperPlaneSymbol className="w-3.5 h-3.5" />
                 <span>{isSending ? tDesktop('sendingBtn') : tDesktop('sendBtn')}</span>

@@ -139,7 +139,7 @@ export function AboutWindow({ theme = 'dark', onNotify, onDownloadCV }: AboutWin
                   onClick={() => setSection(item.id)}
                   className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-[12.5px] font-medium whitespace-nowrap transition-colors ${
                     active
-                      ? 'bg-[#007AFF] text-white'
+                      ? 'bg-[#0066CC] text-white'
                       : isDark
                         ? 'text-white/80 hover:bg-white/[0.07]'
                         : 'text-gray-800 hover:bg-black/[0.05]'

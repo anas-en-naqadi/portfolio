@@ -65,6 +65,7 @@ export default function IPadAppIcon({
         {/* Real iPadOS red notification badge */}
         {badge !== undefined && badge > 0 && (
           <span
+            aria-hidden="true"
             className="absolute -top-1.5 -right-1.5 bg-[#FF3B30] text-white text-[11px] font-semibold leading-none h-[22px] min-w-[22px] px-1.5 rounded-full flex items-center justify-center shadow-[0_2px_6px_rgba(0,0,0,0.35)] z-10 pointer-events-none select-none tabular-nums"
           >
             {badge}

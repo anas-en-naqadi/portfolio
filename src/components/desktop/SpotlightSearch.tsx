@@ -411,7 +411,7 @@ export function SpotlightSearch({
                       onClick={item.onSelect}
                       className={`w-full flex items-center justify-between gap-3 px-3 py-2 rounded-xl text-left transition-colors ${
                         isSelected
-                          ? 'bg-[#007AFF] text-white'
+                          ? 'bg-[#0066CC] text-white'
                           : isDark
                             ? 'text-white/90 hover:bg-white/[0.06]'
                             : 'text-gray-900 hover:bg-black/[0.05]'

@@ -105,10 +105,10 @@ export async function generateMetadata({
     manifest: '/manifest.json',
     icons: {
       icon: [
-        { url: '/images/me.png', sizes: '192x192', type: 'image/png' },
-        { url: '/images/me.png', sizes: '512x512', type: 'image/png' },
+        { url: '/images/favicon.webp', sizes: '64x64', type: 'image/webp' },
+        { url: '/images/me.webp', sizes: '512x512', type: 'image/webp' },
       ],
-      apple: [{ url: '/images/me.png', sizes: '180x180', type: 'image/png' }],
+      apple: [{ url: '/images/me.webp', sizes: '180x180', type: 'image/webp' }],
     },
     other: {
       'geo.region': 'MA',

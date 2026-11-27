@@ -10,7 +10,7 @@ interface IconProps {
 export function FinderIcon({ size = 48, className }: IconProps) {
   const uid = useId()
   return (
-    <svg width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg aria-hidden="true" focusable="false" width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id={`finderL-${uid}`} x1="0" y1="0" x2="0" y2="512" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#65C7FF" />
@@ -55,7 +55,7 @@ export function CalendarIcon({ size = 48, className }: IconProps) {
   const dateNum = now.getDate()
 
   return (
-    <svg width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg aria-hidden="true" focusable="false" width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id={`calTop-${uid}`} x1="0" y1="0" x2="0" y2="146" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#FF5B52" />
@@ -106,7 +106,7 @@ export function CalendarIcon({ size = 48, className }: IconProps) {
 export function AppStoreIcon({ size = 48, className }: IconProps) {
   const uid = useId()
   return (
-    <svg width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg aria-hidden="true" focusable="false" width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id={`asGrad-${uid}`} x1="256" y1="0" x2="256" y2="512" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#35B8FF" />
@@ -136,7 +136,7 @@ export function AppStoreIcon({ size = 48, className }: IconProps) {
 export function SettingsIcon({ size = 48, className }: IconProps) {
   const uid = useId()
   return (
-    <svg width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg aria-hidden="true" focusable="false" width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id={`setBg-${uid}`} x1="0" y1="0" x2="0" y2="512" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#D6D9DF" />
@@ -178,7 +178,7 @@ export function SettingsIcon({ size = 48, className }: IconProps) {
 export function MailIcon({ size = 48, className }: IconProps) {
   const uid = useId()
   return (
-    <svg width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg aria-hidden="true" focusable="false" width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id={`mailBg-${uid}`} x1="256" y1="0" x2="256" y2="512" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#1B82FF" />
@@ -207,7 +207,7 @@ export function MailIcon({ size = 48, className }: IconProps) {
 export function SafariIcon({ size = 48, className }: IconProps) {
   const uid = useId()
   return (
-    <svg width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg aria-hidden="true" focusable="false" width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id={`safBg-${uid}`} x1="0" y1="0" x2="0" y2="512" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#FFFFFF" />
@@ -261,7 +261,7 @@ export function LaunchpadIcon({ size = 48, className }: IconProps) {
     ['#FFD60A', '#5E5CE6', '#FF375F'],
   ]
   return (
-    <svg width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg aria-hidden="true" focusable="false" width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id={`lpBg-${uid}`} x1="0" y1="0" x2="0" y2="512" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#F5F6FA" />
@@ -295,7 +295,7 @@ export function LaunchpadIcon({ size = 48, className }: IconProps) {
 export function DownloadsIcon({ size = 48, className }: IconProps) {
   const uid = useId()
   return (
-    <svg width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg aria-hidden="true" focusable="false" width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id={`dlBg-${uid}`} x1="0" y1="0" x2="0" y2="512" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#FFFFFF" />
@@ -323,7 +323,7 @@ export function DownloadsIcon({ size = 48, className }: IconProps) {
 export function GitHubIcon({ size = 48, className }: IconProps) {
   const uid = useId()
   return (
-    <svg width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg aria-hidden="true" focusable="false" width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id={`ghBg-${uid}`} x1="0" y1="0" x2="0" y2="512" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#323338" />
@@ -345,7 +345,7 @@ export function GitHubIcon({ size = 48, className }: IconProps) {
 export function LinkedInIcon({ size = 48, className }: IconProps) {
   const uid = useId()
   return (
-    <svg width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg aria-hidden="true" focusable="false" width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id={`lnBg-${uid}`} x1="0" y1="0" x2="0" y2="512" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#1A7FE0" />
@@ -367,7 +367,7 @@ export function LinkedInIcon({ size = 48, className }: IconProps) {
 export function PhoneIcon({ size = 48, className }: IconProps) {
   const uid = useId()
   return (
-    <svg width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg aria-hidden="true" focusable="false" width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id={`phGrad-${uid}`} x1="0" y1="0" x2="0" y2="512" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#65F57E" />
@@ -392,7 +392,7 @@ export function PhoneIcon({ size = 48, className }: IconProps) {
 export function InstagramIcon({ size = 48, className }: IconProps) {
   const uid = useId()
   return (
-    <svg width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg aria-hidden="true" focusable="false" width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id={`igGrad-${uid}`} x1="60" y1="452" x2="452" y2="60" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#FED976" />
@@ -417,7 +417,7 @@ export function InstagramIcon({ size = 48, className }: IconProps) {
 export function WhatsAppIcon({ size = 48, className }: IconProps) {
   const uid = useId()
   return (
-    <svg width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg aria-hidden="true" focusable="false" width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id={`waBg-${uid}`} x1="0" y1="0" x2="0" y2="512" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#5FF57B" />
@@ -440,7 +440,7 @@ export function WhatsAppIcon({ size = 48, className }: IconProps) {
 export function FaceTimeIcon({ size = 48, className }: IconProps) {
   const uid = useId()
   return (
-    <svg width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg aria-hidden="true" focusable="false" width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id={`ftGrad-${uid}`} x1="0" y1="0" x2="0" y2="512" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#62F27D" />
@@ -472,7 +472,7 @@ export function PhotosIcon({ size = 48, className }: IconProps) {
     { color: '#FF2D55', angle: 315 },
   ]
   return (
-    <svg width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg aria-hidden="true" focusable="false" width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <clipPath id={`phClip-${uid}`}>
           <rect width="512" height="512" rx="114" />
@@ -504,7 +504,7 @@ export function PhotosIcon({ size = 48, className }: IconProps) {
 export function CameraIcon({ size = 48, className }: IconProps) {
   const uid = useId()
   return (
-    <svg width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg aria-hidden="true" focusable="false" width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id={`camBg-${uid}`} x1="0" y1="0" x2="0" y2="512" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#ECEEF2" />
@@ -528,7 +528,7 @@ export function CameraIcon({ size = 48, className }: IconProps) {
 export function NotesIcon({ size = 48, className }: IconProps) {
   const uid = useId()
   return (
-    <svg width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg aria-hidden="true" focusable="false" width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id={`notesTop-${uid}`} x1="0" y1="0" x2="0" y2="128" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#FFE033" />
@@ -565,7 +565,7 @@ export function RemindersIcon({ size = 48, className }: IconProps) {
     { y: 358, color: '#FF3B30' },
   ]
   return (
-    <svg width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg aria-hidden="true" focusable="false" width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <clipPath id={`remClip-${uid}`}>
           <rect width="512" height="512" rx="114" />
@@ -588,7 +588,7 @@ export function RemindersIcon({ size = 48, className }: IconProps) {
 export function ClockIcon({ size = 48, className }: IconProps) {
   const uid = useId()
   return (
-    <svg width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg aria-hidden="true" focusable="false" width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <clipPath id={`clkClip-${uid}`}>
           <rect width="512" height="512" rx="114" />
@@ -609,7 +609,7 @@ export function ClockIcon({ size = 48, className }: IconProps) {
 export function MessagesIcon({ size = 48, className }: IconProps) {
   const uid = useId()
   return (
-    <svg width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg aria-hidden="true" focusable="false" width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id={`msgGrad-${uid}`} x1="0" y1="0" x2="0" y2="512" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#65F57E" />
@@ -630,7 +630,7 @@ export function MessagesIcon({ size = 48, className }: IconProps) {
 export function WalletIcon({ size = 48, className }: IconProps) {
   const uid = useId()
   return (
-    <svg width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg aria-hidden="true" focusable="false" width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <clipPath id={`walClip-${uid}`}>
           <rect width="512" height="512" rx="114" />
@@ -652,7 +652,7 @@ export function WalletIcon({ size = 48, className }: IconProps) {
 export function HealthIcon({ size = 48, className }: IconProps) {
   const uid = useId()
   return (
-    <svg width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg aria-hidden="true" focusable="false" width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id={`hltHeart-${uid}`} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#FF5277" />
@@ -677,7 +677,7 @@ export function HealthIcon({ size = 48, className }: IconProps) {
 export function ContactsIcon({ size = 48, className }: IconProps) {
   const uid = useId()
   return (
-    <svg width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg aria-hidden="true" focusable="false" width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id={`cntBg-${uid}`} x1="0" y1="0" x2="0" y2="512" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#D7BFA8" />
@@ -707,7 +707,7 @@ export function ContactsIcon({ size = 48, className }: IconProps) {
 export function TrashIcon({ size = 48, className }: IconProps) {
   const uid = useId()
   return (
-    <svg width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg aria-hidden="true" focusable="false" width={size} height={size} className={className} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id={`trBody-${uid}`} x1="120" y1="112" x2="392" y2="440" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#E4E7EC" />

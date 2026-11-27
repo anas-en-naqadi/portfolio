@@ -222,7 +222,7 @@ export function SkillsWindow({ theme = 'dark', spotlightQuery }: SkillsWindowPro
               onClick={() => handleSelectCategory('all')}
               className={`flex items-center justify-between gap-2 px-3 py-1.5 rounded-lg text-[12.5px] font-medium whitespace-nowrap transition-colors ${
                 category === 'all'
-                  ? 'bg-[#007AFF] text-white'
+                  ? 'bg-[#0066CC] text-white'
                   : isDark
                     ? 'text-white/80 hover:bg-white/[0.07]'
                     : 'text-gray-800 hover:bg-black/[0.05]'
@@ -257,7 +257,7 @@ export function SkillsWindow({ theme = 'dark', spotlightQuery }: SkillsWindowPro
                   onClick={() => handleSelectCategory(group.id)}
                   className={`flex items-center justify-between gap-2 px-3 py-1.5 rounded-lg text-[12.5px] font-medium whitespace-nowrap transition-colors ${
                     active
-                      ? 'bg-[#007AFF] text-white'
+                      ? 'bg-[#0066CC] text-white'
                       : isHiddenByCore
                         ? isDark
                           ? 'text-white/35 hover:bg-white/[0.05]'

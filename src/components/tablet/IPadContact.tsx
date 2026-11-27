@@ -215,7 +215,7 @@ export default function IPadContact({ theme }: IPadContactProps) {
                   href={activeMail.href}
                   target={activeMail.external ? '_blank' : undefined}
                   rel={activeMail.external ? 'noopener noreferrer' : undefined}
-                  className="px-6 py-3 rounded-2xl bg-[#007AFF] hover:bg-blue-600 active:scale-[0.98] transition-all text-white font-bold text-xs shadow-md shadow-blue-500/10 flex items-center justify-center gap-2 min-w-[180px]"
+                  className="px-6 py-3 rounded-2xl bg-[#0066CC] hover:bg-[#0055B3] active:scale-[0.98] transition-all text-white font-bold text-xs shadow-md shadow-blue-500/10 flex items-center justify-center gap-2 min-w-[180px]"
                 >
                   {activeMail.id === 'phone' && (
                     <PhoneFillSymbol className="w-4 h-4 text-white shrink-0" />

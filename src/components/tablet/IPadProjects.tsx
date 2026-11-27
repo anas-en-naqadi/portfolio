@@ -425,7 +425,7 @@ export default function IPadProjects({ theme }: IPadProjectsProps) {
                               ? 'bg-white/10 hover:bg-white/15 text-white'
                               : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-800'
                           }`
-                        : 'px-4 py-2 rounded-xl text-xs font-bold bg-[#007AFF] hover:bg-blue-600 text-white flex items-center gap-1.5 shadow-sm transition active:scale-95'
+                        : 'px-4 py-2 rounded-xl text-xs font-bold bg-[#0066CC] hover:bg-[#0055B3] text-white flex items-center gap-1.5 shadow-sm transition active:scale-95'
                     }
                   >
                     <ArrowUpRightSymbol className="w-3.5 h-3.5" />
@@ -436,7 +436,7 @@ export default function IPadProjects({ theme }: IPadProjectsProps) {
                       href={selectedProject.liveUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-4 py-2 rounded-xl text-xs font-bold bg-[#007AFF] hover:bg-blue-600 text-white flex items-center gap-1.5 shadow-sm transition active:scale-95"
+                      className="px-4 py-2 rounded-xl text-xs font-bold bg-[#0066CC] hover:bg-[#0055B3] text-white flex items-center gap-1.5 shadow-sm transition active:scale-95"
                     >
                       <ArrowUpRightSymbol className="w-3.5 h-3.5" />
                       {t('visitSite')}
